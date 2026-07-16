@@ -17,31 +17,10 @@ function start(){let captain=one(WRESTLERS);S.team=[captain];window.opts=pick(WR
 function partner(i){S.team.push(opts[i]);discover(()=>team())}
 function discover(next){let r=rel(...S.team);if(r&&r.type==='legendary'){overlay.innerHTML=`<div class="overlay"><div class="discover"><p>LEGENDARY TEAM DISCOVERED</p><div class="pair">${card(S.team[0])}${card(S.team[1])}</div><h1>${r.teamName}</h1><button class="btn" id="continue">CONTINUE</button></div></div>`;document.getElementById('continue').onclick=()=>{overlay.innerHTML='';next()}}else next()}
 function team(){clearStoryTimer();render(`<section class="panel"><h1 class="title">Your Team</h1><p class="sub">${rel(...S.team)?.teamName||S.team.map(x=>x.name).join(' & ')}</p><div class="cards two">${S.team.map(x=>card(x)).join('')}</div><div class="actions"><button class="btn" onclick="opponent()">FIND OPPONENT</button></div></section>`)}
-function opponent(){let ids=new Set(S.team.map(x=>x.id)),eligible=WRESTLERS.filter(x=>!ids.has(x.id));S.opp=pick(eligible,2);render(`<section class="panel"><div class="build-stamp">MATCH BROADCAST REWRITE</div><h1 class="title">Tonight's Main Event</h1><div class="battle"><div><div class="cards">${S.team.map(x=>card(x)).join('')}</div></div><div class="vs">VS</div><div><div class="cards">${S.opp.map(x=>card(x)).join('')}</div></div></div><div class="actions"><button class="btn watch-btn" onclick="match()">▶ WATCH MATCH</button></div></section>`)}
+function opponent(){let ids=new Set(S.team.map(x=>x.id)),eligible=WRESTLERS.filter(x=>!ids.has(x.id));S.opp=pick(eligible,2);render(`<section class="panel"><h1 class="title">Next Match</h1><div class="battle"><div><div class="cards">${S.team.map(x=>card(x)).join('')}</div></div><div class="vs">VS</div><div><div class="cards">${S.opp.map(x=>card(x)).join('')}</div></div></div><div class="actions"><button class="btn" onclick="match()">START MATCH</button></div></section>`)}
 function walkout(){let[a,b]=S.team,c=chemistry(a,b),risk=((100-(a.loyalty+b.loyalty)/2)*.0007)+Math.max(0,75-c)*.0008;if(rel(a,b)?.type==='rivalry')risk+=.018;if(rel(a,b)?.type==='legendary')risk*=.08;return Math.random()<risk?(a.loyalty<b.loyalty?a:b):null}
 
-const PERSONALITY={
- 'jack-mercer':['raises a fist and invites the opposition to hit harder','turns the exchange into a rough Southern brawl'],
- 'victor-royale':['orders the ring around him with a royal gesture','slows the pace and dictates every movement'],
- 'jett-valentine':['blows a kiss to the crowd and steals the spotlight','poses for the cameras before snapping back into the fight'],
- 'revenant':['sits straight up as the arena lights flicker','walks through the punishment without expression'],
- 'nightwatch':['appears from the blind side with perfect timing','raises the black bat from ringside and fixes a cold stare on the ring'],
- 'titan':['grins for the cameras before landing a blockbuster shot','turns the arena into his personal main event'],
- 'cameron-tremblay':['dissects the opponent with flawless technique','counters as though he planned the exchange three moves ago'],
- 'hollowman':['slowly rises again, refusing to stay down','stalks forward while the front row backs away'],
- 'damian-blackwell':['waits patiently, then strikes without warning','finds the smallest opening and exploits it'],
- 'elias-crowe':['laughs through the pain and creates total chaos','pulls at the loose straps of the straitjacket and charges'],
- 'el-rey-del-cielo':['springs into the air with impossible balance','turns the ropes into a launchpad'],
- 'max-justice':['rallies the crowd and refuses to surrender','fights back for everyone who believes in him'],
- 'primal':['lets out a roar and overwhelms the opposition','hunts the opponent across the ring'],
- 'lucas-bennett':['shoots for a takedown with championship precision','turns the match into an elite wrestling clinic'],
- 'marcus-king':['fires off a rapid street-fighting combination','feeds off the crowd and finishes the exchange standing tall'],
- 'mateo-vega':['fakes one direction and attacks from another','distracts the referee just long enough to steal control'],
- 'ryder-phoenix':['grabs the microphone at ringside and mouths off mid-match','turns a basic exchange into a sold-out concert moment'],
- 'sterling-sinclair':['checks his hair after a perfectly executed counter','wrestles with effortless, expensive-looking confidence'],
- 'dax-maddox':['finds another gear when everyone thinks he is finished','keeps grinding forward through sheer work rate'],
- 'logan-steele':['cups an ear to the crowd and draws on their energy','powers back like the living legend he is']
-};
+const PERSONALITY_PROFILES={"jack-mercer":{"archetype":"Rebel Brawler","events":["raises a fist and invites the opposition to hit harder","turns the exchange into a rough Southern brawl","fires back with heavy right hands as the crowd chants Iceman","shrugs off the shot and dares the opponent to try again","drags the fight toward the ropes and makes it ugly","stomps to the centre of the ring and refuses to back down"]},"victor-royale":{"archetype":"Royal Strategist","events":["orders the ring around him with a royal gesture","slows the pace and dictates every movement","smirks after escaping danger and points to his crown","uses the referee as a shield before reclaiming control","demands his partner follow the plan","turns a simple counter into a statement of superiority"]},"jett-valentine":{"archetype":"Heartbreaker Showman","events":["blows a kiss to the crowd and steals the spotlight","poses for the cameras before snapping back into the fight","fixes his hair after a dazzling escape","spins away from danger and points at himself","plays to the crowd instead of making the cover","turns the ropes into a stage and the match into his show"]},"revenant":{"archetype":"Supernatural Force","events":["sits straight up as the arena lights flicker","walks through the punishment without expression","raises his head slowly and the crowd falls silent","stands motionless while the opponent hesitates","surges forward as green light flashes across the arena","absorbs the strike as though pain means nothing"]},"nightwatch":{"archetype":"Dark Enforcer","events":["appears from the blind side with perfect timing","raises the black bat from ringside and fixes a cold stare on the ring","stalks the legal wrestler without wasting a step","points toward Revenant before striking","uses the ropes to cut off every escape route","lets the face paint and silence do the intimidating"]},"titan":{"archetype":"Hollywood Megastar","events":["grins for the cameras before landing a blockbuster shot","turns the arena into his personal main event","pauses for the hard camera and then explodes forward","talks to the crowd while controlling the exchange","throws his arms wide as if accepting an award","delivers the hit and immediately checks which camera caught it"]},"cameron-tremblay":{"archetype":"Technical Purist","events":["dissects the opponent with flawless technique","counters as though he planned the exchange three moves ago","targets a limb and refuses to lose position","transitions from hold to hold without giving space","uses perfect balance to reverse the momentum","turns the contest into a clinic in precision"]},"hollowman":{"archetype":"Urban Legend","events":["slowly rises again, refusing to stay down","stalks forward while the front row backs away","tilts the stitched mask and keeps advancing","absorbs a huge shot without changing expression","stands in the corner breathing heavily before charging","makes the entire arena feel like the woods after midnight"]},"damian-blackwell":{"archetype":"Silent Assassin","events":["waits patiently, then strikes without warning","finds the smallest opening and exploits it","circles quietly until the perfect angle appears","cuts off the comeback with one precise blow","never changes expression as control shifts his way","turns stillness into sudden violence"]},"elias-crowe":{"archetype":"Unhinged Hardcore","events":["laughs through the pain and creates total chaos","pulls at the loose straps of the straitjacket and charges","welcomes the punishment with a crooked grin","rolls outside and turns the match into a street fight","scrapes at the canvas and crawls back toward danger","looks happiest when the match becomes impossible to control"]},"el-rey-del-cielo":{"archetype":"Lucha Aerialist","events":["springs into the air with impossible balance","turns the ropes into a launchpad","lands on his feet and points toward the sky","changes direction in mid-air and leaves everyone stunned","flies across the ring before the opponent can react","makes gravity look optional"]},"max-justice":{"archetype":"Heroic Powerhouse","events":["rallies the crowd and refuses to surrender","fights back for everyone who believes in him","checks on his partner before charging into danger","raises a fist and the arena answers","absorbs the punishment and stands for one more fight","turns courage into a powerful comeback"]},"primal":{"archetype":"Apex Beast","events":["lets out a roar and overwhelms the opposition","hunts the opponent across the ring","drops low like a predator before exploding forward","drives through the defence with raw force","paces behind the opponent and waits to strike","abandons technique and unleashes pure instinct"]},"lucas-bennett":{"archetype":"Elite Olympian","events":["shoots for a takedown with championship precision","turns the match into an elite wrestling clinic","chains two takedowns together without losing control","forces the opponent to wrestle at his pace","uses world-class conditioning to win the scramble","treats every exchange like the final of a tournament"]},"marcus-king":{"archetype":"Street Fighter","events":["fires off a rapid street-fighting combination","feeds off the crowd and finishes the exchange standing tall","slips a strike and answers with a heavy combination","turns the centre of the ring into his neighbourhood","talks through the exchange and keeps swinging","fights with rhythm, power and complete confidence"]},"mateo-vega":{"archetype":"Aerial Con Artist","events":["fakes one direction and attacks from another","distracts the referee just long enough to steal control","pretends to be hurt before springing into the air","points behind the opponent and steals the opening","turns a rope escape into a flying counter","smiles because everybody fell for the trick again"]},"ryder-phoenix":{"archetype":"Rockstar Ego","events":["grabs the microphone at ringside and mouths off mid-match","turns a basic exchange into a sold-out concert moment","plays air guitar after a successful counter","demands the spotlight before delivering a sharp strike","shouts that the crowd came to see him","misses a cover because he is busy performing"]},"sterling-sinclair":{"archetype":"Luxury Playboy","events":["checks his hair after a perfectly executed counter","wrestles with effortless, expensive-looking confidence","dusts off his shoulder and looks offended by the contact","waves dismissively before taking control","smiles as if the result has already been purchased","makes every movement look tailored and exclusive"]},"dax-maddox":{"archetype":"Veteran Workhorse","events":["finds another gear when everyone thinks he is finished","keeps grinding forward through sheer work rate","drags himself up and immediately asks for more","wins a long exchange through patience and effort","refuses the easy way out and keeps working","turns exhaustion into one more burst of offence"]},"logan-steele":{"archetype":"Living Legend","events":["cups an ear to the crowd and draws on their energy","powers back like the living legend he is","points around the arena as the noise rises","shakes off the damage and stands taller","uses veteran timing to land the perfect counter","reminds everyone why generations still believe"]}};
 const STORY_TYPES={
  classic:{name:'Classic Wrestling Match',min:12,max:16,decisions:2,bias:0},
  war:{name:'Back-and-Forth War',min:16,max:21,decisions:3,bias:0,nearFall:.18},
@@ -67,6 +46,13 @@ const MOVES={
  climax:['connects with the biggest move of the match so far','launches into a frantic finishing sequence','catches the opponent flush and hooks the leg','turns a counter into a spectacular impact','empties the tank in one final surge']
 };
 
+
+function profileFor(w){return PERSONALITY_PROFILES[w.id]||{archetype:'Wrestler',events:['shows a flash of individual style']}}
+function wrestlerIntro(w){return `${w.title.toUpperCase()} — ${w.name.toUpperCase()} · ${w.faction.toUpperCase()}`}
+function personalityEvent(w){return one(profileFor(w).events)}
+function setSpotlight(w,tagline){M.spotlight={name:w.name,title:w.title,move:w.finisher,tagline:tagline||one(['THIS COULD BE IT!','THE CROWD IS ON ITS FEET!','A DEFINING MOMENT!'])};}
+function clearSpotlight(){if(M)M.spotlight=null}
+
 function chooseStory(){
  const keys=['classic','war','comeback','sprint','domination','tagClinic','upset'];
  const weights=[28,24,13,10,8,11,6];let r=Math.random()*weights.reduce((a,b)=>a+b,0);
@@ -78,42 +64,26 @@ function match(){
  const teamPower=score(S.team),oppPower=score(S.opp)+S.streak*.7;
  let hiddenEdge=(teamPower-oppPower)/7+story.bias+rnd(-8,8);
  if(story.upset)hiddenEdge=teamPower>=oppPower?rnd(-10,-3):rnd(3,10);
- M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',auto:false,started:false};
- addBroadcast('broadcast',`${S.team[0].name} & ${S.team[1].name} face ${S.opp[0].name} & ${S.opp[1].name}.`);
+ M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{}};
+ addBroadcast('broadcast',`YOUR TEAM: ${wrestlerIntro(S.team[0])} / ${wrestlerIntro(S.team[1])}`); addBroadcast('broadcast',`OPPOSITION: ${wrestlerIntro(S.opp[0])} / ${wrestlerIntro(S.opp[1])}`);
  addBroadcast('phase','OPENING BELL');
  addBroadcast('normal',one(['The bell rings and both teams circle cautiously.','The crowd rises as the opening wrestlers lock up.','No feeling-out process—both teams charge immediately.','A tense stare-down gives way to the first exchange.']));
- renderMatch();
+ renderMatch();scheduleNext(900);
 }
 function decisionPoints(total,count){const pts=[];for(let i=1;i<=count;i++)pts.push(Math.round(total*(i/(count+1)))+Math.round(rnd(-1,1)));return [...new Set(pts)].filter(x=>x>1&&x<total-1).sort((a,b)=>a-b)}
 function phaseForEvent(i,total){const p=i/total;if(p<.14)return 0;if(p<.34)return 1;if(p<.55)return 2;if(p<.72)return 3;if(p<.9)return 4;return 5}
 function addBroadcast(type,text,meta={}){M.log.push({type,text,...meta});M.latest=text;if(meta.highlight){M.highlights.push(text);if(!M.bestMoment||meta.weight>=(M.bestWeight||0)){M.bestMoment=text;M.bestWeight=meta.weight||1}}}
-function scheduleNext(ms=1550){clearStoryTimer();if(M&&M.auto&&!M.waiting&&!M.ended)storyTimer=setTimeout(()=>advanceStory(),ms)}
-function broadcastIcon(type){return ({phase:'◆',broadcast:'📺',personality:'✦',tag:'🤝',nearfall:'2.9',finisher:'★',counter:'↺',choice:'▶',pin:'3',result:'🏆'}[type]||'●')}
-function toggleBroadcast(){if(!M||M.ended)return;M.auto=!M.auto;M.started=true;renderMatch();if(M.auto)scheduleNext(350)}
-function nextMoment(){if(!M||M.waiting||M.ended)return;M.started=true;advanceStory()}
+function scheduleNext(ms=1050){clearStoryTimer();storyTimer=setTimeout(()=>advanceStory(),ms)}
 function renderMatch(){
- const p=S.team[M.activeP],o=S.opp[M.activeO],control=clamp(M.playerControl,5,95),latest=M.log[M.log.length-1]||{type:'broadcast',text:'The broadcast is ready.'};
- const timeline=PHASES.map((x,i)=>`<div class="phase-step ${i<M.phaseIndex?'done':''} ${i===M.phaseIndex?'active':''}"><i></i><span>${x.label}</span></div>`).join('');
- render(`<section class="broadcast-screen">
- <div class="broadcast-banner"><span class="live-pill">● LIVE</span><div><small>TAG TEAM GAUNTLET PRESENTS</small><h1>${S.team.map(x=>x.name).join(' & ')} <em>VS</em> ${S.opp.map(x=>x.name).join(' & ')}</h1></div><span class="build-stamp">BROADCAST BUILD</span></div>
- <div class="phase-timeline">${timeline}</div>
- <div class="broadcast-scoreboard">
-   <div class="corner player"><div class="corner-team">${S.team.map(x=>x.name).join(' & ')}</div><div class="legal">LEGAL: ${p.name}</div><div class="mini-meters"><span>MOMENTUM</span><b><i style="width:${M.playerMom}%"></i></b></div></div>
-   <div class="control-dial"><strong>${Math.round(control)}</strong><span>CONTROL</span></div>
-   <div class="corner enemy"><div class="corner-team">${S.opp.map(x=>x.name).join(' & ')}</div><div class="legal">LEGAL: ${o.name}</div><div class="mini-meters"><span>MOMENTUM</span><b><i style="width:${M.oppMom}%"></i></b></div></div>
- </div>
- <div class="broadcast-main">
-   <aside class="wrestler-portrait left">${card(p,'',true)}</aside>
-   <div class="broadcast-center">
-     <div class="on-air-label"><span>${M.phaseLabel}</span><small>${M.story.name}</small></div>
-     <article class="moment-card ${latest.type}"><div class="moment-icon">${broadcastIcon(latest.type)}</div><div><small>CURRENT MOMENT</small><h2>${latest.text}</h2></div></article>
-     <div id="broadcastFeed" class="broadcast-ticker">${M.log.slice(-6,-1).reverse().map(e=>`<p class="${e.type}"><b>${broadcastIcon(e.type)}</b>${e.text}</p>`).join('')||'<p>The teams are entering the arena...</p>'}</div>
-   </div>
-   <aside class="wrestler-portrait right">${card(o,'',true)}</aside>
- </div>
- <div class="broadcast-footer"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} / ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>
- ${M.waiting?decisionHTML():M.ended?'':`<div class="broadcast-controls"><button class="btn secondary" onclick="nextMoment()">NEXT MOMENT</button><button class="btn ${M.auto?'pause':'play'}" onclick="toggleBroadcast()">${M.auto?'Ⅱ PAUSE BROADCAST':'▶ AUTO-PLAY BROADCAST'}</button></div>`}
+ const p=S.team[M.activeP],o=S.opp[M.activeO],control=clamp(M.playerControl,5,95);
+ render(`<section class="panel story-panel">
+ <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div>
+ <div class="control-strip"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
+ <div class="broadcast-layout"><div class="broadcast-card">${card(p,'',true)}<small>LEGAL WRESTLER</small></div><div id="broadcastFeed" class="broadcast-feed">${M.log.slice(-10).map((e,i)=>`<div class="broadcast-line ${e.type} ${i===M.log.slice(-10).length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div><div class="broadcast-card">${card(o,'',true)}<small>LEGAL WRESTLER</small></div></div>
+ ${M.spotlight?`<div class="signature-spotlight"><small>★ SIGNATURE MOVE ★</small><h2>${M.spotlight.move}</h2><h3>${M.spotlight.name}</h3><p>${M.spotlight.tagline}</p></div>`:''}<div class="broadcast-status"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>
+ ${M.waiting?decisionHTML():`<div class="auto-play"><span class="live-dot"></span> MATCH IN PROGRESS</div>`}
  </section>`);
+ const feed=document.getElementById('broadcastFeed');if(feed)feed.scrollTop=feed.scrollHeight;
 }
 function decisionHTML(){const d=getDecision();return `<div class="story-decision"><small>CRITICAL DECISION</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid">${d.options.map(x=>`<button class="choice" onclick="storyChoice('${x.id}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`}
 function getDecision(){
@@ -124,13 +94,14 @@ function getDecision(){
 }
 async function advanceStory(){
  if(!M||M.ended||M.waiting)return;
+ clearSpotlight();
  M.eventIndex++;
  const newPhase=phaseForEvent(M.eventIndex,M.eventTarget);
  if(newPhase!==M.phaseIndex){M.phaseIndex=newPhase;M.phaseLabel=PHASES[newPhase].label;addBroadcast('phase',PHASES[newPhase].label.toUpperCase());}
  if(M.nextDecisionAt.includes(M.eventIndex)){M.waiting=true;renderMatch();return}
  generateAutomaticBeat();renderMatch();
  if(M.eventIndex>=M.eventTarget)return resolveFinish();
- scheduleNext(M.phaseIndex>=4?1900:1550);
+ scheduleNext(M.phaseIndex>=4?1150:900);
 }
 function eventWrestler(teamSide){return teamSide==='player'?S.team[M.activeP]:S.opp[M.activeO]}
 function shiftControl(amount,reason){const before=M.playerControl;M.playerControl=clamp(M.playerControl+amount,5,95);if(Math.abs(M.playerControl-before)>=9&&!M.turningPoint)M.turningPoint=reason}
@@ -143,7 +114,7 @@ function generateAutomaticBeat(){
  addBroadcast('normal',`${actor.name} ${move}.`);
  shiftControl(amount,`${actor.name} changed the match by ${move}.`);
  if(playerActs)M.playerMom=clamp(M.playerMom+rnd(5,11),0,100);else M.oppMom=clamp(M.oppMom+rnd(5,11),0,100);
- if(Math.random()<.32){const line=one(PERSONALITY[actor.id]||['shows a glimpse of a unique fighting style']);addBroadcast('personality',`${actor.name} ${line}.`,{highlight:true,weight:1});}
+ if(Math.random()<.58){const line=personalityEvent(actor);M.personalityMoments[actor.id]=(M.personalityMoments[actor.id]||0)+1;addBroadcast('personality',`${actor.name} ${line}.`,{highlight:true,weight:1.25});}
  if((M.story.tags||Math.random()<.16)&&M.phaseIndex>0){
    if(playerActs){const old=actor;M.activeP=1-M.activeP;const fresh=S.team[M.activeP];addBroadcast('tag',`${old.name} makes the tag—${fresh.name} explodes into the match!`,{highlight:true,weight:1.3});shiftControl(5,`${fresh.name}'s hot tag changed the momentum.`)}
    else{const old=actor;M.activeO=1-M.activeO;const fresh=S.opp[M.activeO];addBroadcast('tag',`${old.name} tags out and ${fresh.name} storms through the ropes.`,{highlight:true,weight:1.2});shiftControl(-4,`${fresh.name}'s tag changed the momentum.`)}
@@ -154,16 +125,16 @@ function generateAutomaticBeat(){
 }
 function createNearFall(playerSide){const attacker=eventWrestler(playerSide?'player':'opp'),defender=eventWrestler(playerSide?'opp':'player');M.nearFalls++;addBroadcast('nearfall',`${attacker.name} hooks the leg—ONE... TWO... ${defender.name} kicks out!`,{highlight:true,weight:2});}
 function attemptAIFinisher(playerSide){const attacker=eventWrestler(playerSide?'player':'opp'),defender=eventWrestler(playerSide?'opp':'player');const success=Math.random()<.62;M.finishers++;
- if(success){addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});
+ if(success){setSpotlight(attacker);addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});
 }
 function storyChoice(id){if(!M||!M.waiting)return;M.waiting=false;M.decisionsMade++;const p=S.team[M.activeP],o=S.opp[M.activeO];
  if(id==='tag'){const old=p;M.activeP=1-M.activeP;const incoming=S.team[M.activeP];M.playerMom=clamp(M.playerMom+14,0,100);shiftControl(8,`${incoming.name}'s hot tag was the turning point.`);M.tags++;addBroadcast('choice',`${old.name} reaches the corner—${incoming.name} makes the hot tag and takes over!`,{highlight:true,weight:2});}
- else if(id==='finisher'){M.finishers++;const chance=.52+(p.technique+p.charisma-o.resilience)/520+(M.playerControl-50)/180;M.playerMom=clamp(M.playerMom-45,0,100);if(Math.random()<chance){shiftControl(15,`${p.name} hit ${p.finisher}.`);addBroadcast('finisher',`${p.name} hits ${p.finisher}! The entire arena rises!`,{highlight:true,weight:3.2});if(M.phaseIndex>=4&&Math.random()<.48){M.eventIndex=Math.max(M.eventIndex,M.eventTarget-1)}else createNearFall(true)}else{shiftControl(-14,`${o.name} countered ${p.finisher}.`);addBroadcast('counter',`${o.name} counters ${p.finisher}! The gamble backfires!`,{highlight:true,weight:2.5});}}
+ else if(id==='finisher'){M.finishers++;const chance=.52+(p.technique+p.charisma-o.resilience)/520+(M.playerControl-50)/180;M.playerMom=clamp(M.playerMom-45,0,100);if(Math.random()<chance){setSpotlight(p,'THE GAMBLE PAYS OFF!');shiftControl(15,`${p.name} hit ${p.finisher}.`);addBroadcast('finisher',`${p.name} hits ${p.finisher}! The entire arena rises!`,{highlight:true,weight:3.2});if(M.phaseIndex>=4&&Math.random()<.48){M.eventIndex=Math.max(M.eventIndex,M.eventTarget-1)}else createNearFall(true)}else{shiftControl(-14,`${o.name} countered ${p.finisher}.`);addBroadcast('counter',`${o.name} counters ${p.finisher}! The gamble backfires!`,{highlight:true,weight:2.5});}}
  else if(id==='comeback'){if(Math.random()<.62){shiftControl(18,`${p.name} launched an unforgettable comeback.`);M.playerMom=clamp(M.playerMom+22,0,100);addBroadcast('choice',`${p.name} digs deep and launches a furious comeback!`,{highlight:true,weight:2.5})}else{shiftControl(-7,`${p.name}'s comeback attempt was stopped.`);addBroadcast('counter',`${p.name} tries to rally, but ${o.name} cuts the comeback off.`)}}
  else if(id==='risk'){if(Math.random()<.62){shiftControl(13,`${p.name}'s spectacular risk paid off.`);M.playerMom=clamp(M.playerMom+18,0,100);addBroadcast('choice',`${p.name} creates a breathtaking highlight and changes the match!`,{highlight:true,weight:2.4})}else{shiftControl(-11,`${p.name}'s high-risk attempt failed.`);addBroadcast('counter',`${p.name} takes a huge risk—but crashes and burns!`,{highlight:true,weight:1.8})}}
  else if(id==='survive'){shiftControl(4,`${p.name} survived the opposition's strongest stretch.`);M.playerMom=clamp(M.playerMom+8,0,100);addBroadcast('choice',`${p.name} covers up, survives the storm, and waits for an opening.`)}
  else if(id==='pressure'||id==='control'){shiftControl(7,`${p.name} controlled the decisive stretch.`);M.playerMom=clamp(M.playerMom+10,0,100);addBroadcast('choice',`${p.name} stays disciplined and keeps the match under control.`)}
- renderMatch();scheduleNext(1650);
+ renderMatch();scheduleNext(1250);
 }
 function resolveFinish(){
  if(M.ended)return;M.phaseIndex=5;M.phaseLabel='Finish';addBroadcast('phase','FINISH');
@@ -171,7 +142,7 @@ function resolveFinish(){
  const win=playerRating>=oppRating;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
  let winner=winnerTeam[M.activeP],loser=loserTeam[M.activeO];if(!win){winner=winnerTeam[M.activeO];loser=loserTeam[M.activeP]}
  if(Math.random()<.48)winner=one(winnerTeam);if(Math.random()<.48)loser=one(loserTeam);
- M.finishers++;addBroadcast('finisher',`${winner.name} catches ${loser.name} with ${winner.finisher}!`,{highlight:true,weight:4});addBroadcast('pin','ONE... TWO... THREE!');addBroadcast('result',`${winnerTeam.map(x=>x.name).join(' & ')} win the match!`);
+ M.finishers++;setSpotlight(winner,'THE MATCH ENDS HERE!');addBroadcast('finisher',`${winner.name} catches ${loser.name} with ${winner.finisher}!`,{highlight:true,weight:4});addBroadcast('pin','ONE... TWO... THREE!');addBroadcast('result',`${winnerTeam.map(x=>x.name).join(' & ')} win the match!`);
  M.ended=true;M.winner=winner;M.loser=loser;M.mvp=selectMVP(winnerTeam,winner);if(win)S.streak++;
  renderMatch();storyTimer=setTimeout(()=>showSummary(win),1500);
 }
@@ -179,8 +150,9 @@ function selectMVP(team,finisherWinner){const sorted=[...team].sort((a,b)=>(b.ov
 function showSummary(win){
  clearStoryTimer();const length=formatTime(M.matchSeconds),rating=clamp(2.15+M.highlights.length*.16+M.nearFalls*.28+M.finishers*.2+M.tags*.08+M.eventTarget*.055,1,5),rounded=Math.round(rating),stars='★'.repeat(rounded)+'☆'.repeat(5-rounded);
  const highlights=[...M.highlights].slice(-5);const story=buildSummaryStory();M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
- render(`<section class="panel match-result summary-panel"><h1 class="title" style="color:${win?'#65e98a':'#ff6b6b'}">${win?'You Win!':'You Lose'}</h1><div class="rating"><span>${stars}</span><strong>${rating.toFixed(1)} MATCH RATING · ${length}</strong></div><div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${M.mvp.title}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div><div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div><div class="actions">${win?`<button class="btn" onclick="rewards()">CHOOSE REWARD</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`}</div></section>`)
+ render(`<section class="panel match-result summary-panel"><h1 class="title" style="color:${win?'#65e98a':'#ff6b6b'}">${win?'You Win!':'You Lose'}</h1><div class="rating"><span>${stars}</span><strong>${rating.toFixed(1)} MATCH RATING · ${length}</strong></div><div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div><div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div><div class="actions">${win?`<button class="btn" onclick="rewards()">CHOOSE REWARD</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`}</div></section>`)
 }
+function mvpReason(w){const moments=M.personalityMoments[w.id]||0;const reasons=[];if(w.id===M.winner.id)reasons.push(`sealed the victory with ${w.finisher}`);if(moments)reasons.push(`delivered ${moments} signature personality moment${moments===1?'':'s'}`);if(M.nearFalls>1)reasons.push('survived a match filled with near falls');if(M.tags>2)reasons.push('made a major impact in the tag exchanges');return reasons.length?reasons.slice(0,2).join(' and ')+'.':`${w.title} controlled the defining stretch of the match.`}
 function buildSummaryStory(){const winnerSide=M.winner&&S.team.some(x=>x.id===M.winner.id)?'Your team':'The opposition';const opener=M.storyKey==='comeback'?'The match became an underdog survival story':M.storyKey==='war'?'Both teams traded control in a relentless war':M.storyKey==='sprint'?'The contest exploded into a frantic sprint':M.storyKey==='domination'?'One team seized control early and refused to release it':M.storyKey==='tagClinic'?'Quick tags and team combinations defined the match':M.storyKey==='upset'?'The favourites were dragged into a dangerous upset attempt':'Both teams built the contest carefully through every phase';return `${opener}. ${M.turningPoint||'The decisive momentum swing came late'}. ${winnerSide} closed the story when ${M.winner.name} landed ${M.winner.finisher}.`}
 function formatTime(total){const m=Math.floor(total/60),s=String(total%60).padStart(2,'0');return `${m}:${s}`}
 function handleLoss(){lose(M.lossMessage)}

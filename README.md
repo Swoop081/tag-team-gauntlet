@@ -1,14 +1,13 @@
-# Tag Team Gauntlet — Match Broadcast Rewrite
+# Tag Team Gauntlet — Sprint 3.2 Personality Engine
 
-This build replaces the previous match presentation with a dedicated televised Match Broadcast screen.
+This build adds wrestler-specific personality profiles and broadcast events for all 20 Founding wrestlers.
 
-## Key changes
-- `START MATCH` is now `WATCH MATCH`.
-- Every match opens in a new full-screen broadcast presentation.
-- A large Current Moment card makes each event easy to follow.
-- Match phases are shown on a timeline from Opening Bell to Finish.
-- Legal wrestlers, team momentum, match control, elapsed time and story type remain visible.
-- Use **Next Moment** to advance manually or **Auto-Play Broadcast** to watch the match unfold.
-- Major decisions interrupt the broadcast only at important turning points.
-- Finishers, near falls and results receive distinct visual treatment.
-- The existing Gauntlet roster, rewards, relationships, Second Wind and progression are preserved.
+## New in Sprint 3.2
+- Six handcrafted personality events per wrestler (120 total)
+- Personality moments appear much more frequently during matches
+- Dynamic introductions using nickname, name and faction
+- Full-screen signature-move spotlight presentation
+- Personality moments tracked for the post-match MVP explanation
+- Existing Match Broadcast, Gauntlet progression, rewards, walkouts and Second Wind preserved
+
+Open `index.html` or upload all files to the GitHub Pages repository.
