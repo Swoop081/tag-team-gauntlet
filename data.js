@@ -15,7 +15,7 @@ const WRESTLERS = [
     "versatility": 91,
     "loyalty": 96,
     "resilience": 99,
-    "image": "assets/jack-mercer.webp",
+    "image": "assets/jack-mercer.png",
     "finisher": "Ice Breaker"
   },
   {
@@ -34,7 +34,7 @@ const WRESTLERS = [
     "versatility": 94,
     "loyalty": 78,
     "resilience": 95,
-    "image": "assets/victor-royale.webp",
+    "image": "assets/victor-royale.png",
     "finisher": "Royal Decree"
   },
   {
@@ -53,7 +53,7 @@ const WRESTLERS = [
     "versatility": 98,
     "loyalty": 84,
     "resilience": 94,
-    "image": "assets/jett-valentine.webp",
+    "image": "assets/jett-valentine.png",
     "finisher": "Heart Stopper"
   },
   {
@@ -72,7 +72,7 @@ const WRESTLERS = [
     "versatility": 82,
     "loyalty": 98,
     "resilience": 100,
-    "image": "assets/revenant.webp",
+    "image": "assets/revenant.png",
     "finisher": "Blackout Piledriver"
   },
   {
@@ -91,7 +91,7 @@ const WRESTLERS = [
     "versatility": 95,
     "loyalty": 99,
     "resilience": 97,
-    "image": "assets/nightwatch.webp",
+    "image": "assets/nightwatch.png",
     "finisher": "Midnight Mass"
   },
   {
@@ -110,7 +110,7 @@ const WRESTLERS = [
     "versatility": 92,
     "loyalty": 90,
     "resilience": 97,
-    "image": "assets/titan.webp",
+    "image": "assets/titan.png",
     "finisher": "Ground Zero"
   },
   {
@@ -129,7 +129,7 @@ const WRESTLERS = [
     "versatility": 100,
     "loyalty": 97,
     "resilience": 96,
-    "image": "assets/cameron-tremblay.webp",
+    "image": "assets/cameron-tremblay.png",
     "finisher": "Precision Lock"
   },
   {
@@ -148,7 +148,7 @@ const WRESTLERS = [
     "versatility": 69,
     "loyalty": 95,
     "resilience": 100,
-    "image": "assets/hollowman.webp",
+    "image": "assets/hollowman.png",
     "finisher": "Last Breath"
   },
   {
@@ -167,7 +167,7 @@ const WRESTLERS = [
     "versatility": 96,
     "loyalty": 84,
     "resilience": 96,
-    "image": "assets/damian-blackwell.webp",
+    "image": "assets/damian-blackwell.png",
     "finisher": "Kill Shot"
   },
   {
@@ -186,7 +186,7 @@ const WRESTLERS = [
     "versatility": 91,
     "loyalty": 94,
     "resilience": 100,
-    "image": "assets/elias-crowe.webp",
+    "image": "assets/elias-crowe.png",
     "finisher": "Asylum Drop"
   },
   {
@@ -205,7 +205,7 @@ const WRESTLERS = [
     "versatility": 99,
     "loyalty": 96,
     "resilience": 92,
-    "image": "assets/el-rey-del-cielo.webp",
+    "image": "assets/el-rey-del-cielo.png",
     "finisher": "Zero Gravity"
   },
   {
@@ -224,7 +224,7 @@ const WRESTLERS = [
     "versatility": 93,
     "loyalty": 100,
     "resilience": 99,
-    "image": "assets/max-justice.webp",
+    "image": "assets/max-justice.png",
     "finisher": "Hero's End"
   },
   {
@@ -243,7 +243,7 @@ const WRESTLERS = [
     "versatility": 79,
     "loyalty": 94,
     "resilience": 98,
-    "image": "assets/primal.webp",
+    "image": "assets/primal.png",
     "finisher": "Primal Rage"
   },
   {
@@ -262,7 +262,7 @@ const WRESTLERS = [
     "versatility": 99,
     "loyalty": 95,
     "resilience": 98,
-    "image": "assets/lucas-bennett.webp",
+    "image": "assets/lucas-bennett.png",
     "finisher": "Gold Standard"
   },
   {
@@ -281,7 +281,7 @@ const WRESTLERS = [
     "versatility": 97,
     "loyalty": 97,
     "resilience": 95,
-    "image": "assets/marcus-king.webp",
+    "image": "assets/marcus-king.png",
     "finisher": "Street Justice"
   },
   {
@@ -300,7 +300,7 @@ const WRESTLERS = [
     "versatility": 100,
     "loyalty": 83,
     "resilience": 94,
-    "image": "assets/mateo-vega.webp",
+    "image": "assets/mateo-vega.png",
     "finisher": "Sky Heist"
   },
   {
@@ -319,7 +319,7 @@ const WRESTLERS = [
     "versatility": 99,
     "loyalty": 76,
     "resilience": 95,
-    "image": "assets/ryder-phoenix.webp",
+    "image": "assets/ryder-phoenix.png",
     "finisher": "Mic Drop"
   },
   {
@@ -338,7 +338,7 @@ const WRESTLERS = [
     "versatility": 97,
     "loyalty": 80,
     "resilience": 96,
-    "image": "assets/sterling-sinclair.webp",
+    "image": "assets/sterling-sinclair.png",
     "finisher": "Golden Touch"
   },
   {
@@ -357,7 +357,7 @@ const WRESTLERS = [
     "versatility": 97,
     "loyalty": 100,
     "resilience": 100,
-    "image": "assets/dave-maddox.webp",
+    "image": "assets/dave-maddox.png",
     "finisher": "Maddox Cutter"
   },
   {
@@ -376,7 +376,7 @@ const WRESTLERS = [
     "versatility": 89,
     "loyalty": 98,
     "resilience": 99,
-    "image": "assets/logan-steele.webp",
+    "image": "assets/logan-steele.png",
     "finisher": "Icon Slam"
   }
 ];

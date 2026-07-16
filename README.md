@@ -1,17 +1,23 @@
-# Tag Team Gauntlet — Sprint 3.5
+# Tag Team Gauntlet — Sprint 3.7.1
 
-## Image-ready presentation polish
+## Character Presentation Overhaul
 
-This build is based on the verified Sprint 3.4.1 Match Score Engine.
+Gameplay now uses the transparent full-body PNG artwork for all Founding Twenty wrestlers.
 
-### New in Sprint 3.5
-- Screen-to-screen fade/slide polish.
-- Character-specific winner celebration presentation.
-- Safe missing-art placeholders instead of broken-image icons.
-- Exact asset filenames already wired for all Founding Twenty.
-- `image-check.html` provides a complete visual check of all 20 image files.
-- `ASSET-GUIDE.md` lists every required filename.
+### Updated screens
+- Main menu spotlight
+- Partner selection
+- Your Team
+- Match cards
+- Match Broadcast legal wrestlers
+- Singles challenges
+- Featured singles introductions
+- Legendary team discoveries
+- New wrestler rewards
+- Winner celebrations
 
-### Adding final wrestler images
-Replace the matching `.webp` files inside `assets/`. Do not change the filenames.
-Then open `image-check.html` and verify every card says `LOADED`.
+### Asset policy
+- `assets/*.png` — canonical gameplay wrestler artwork
+- `assets/*.webp` — retained collectible cards for the future Collection screen
+
+All Sprint 3.6 gameplay systems remain intact.
