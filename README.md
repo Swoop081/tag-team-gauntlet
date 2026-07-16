@@ -1,13 +1,6 @@
-# Tag Team Gauntlet — Sprint 3.2 Personality Engine
+# Tag Team Gauntlet — Sprint 3.4.1 Verified UI Fix
 
-This build adds wrestler-specific personality profiles and broadcast events for all 20 Founding wrestlers.
+This build is based directly on Sprint 3.4 and contains two verified changes:
 
-## New in Sprint 3.2
-- Six handcrafted personality events per wrestler (120 total)
-- Personality moments appear much more frequently during matches
-- Dynamic introductions using nickname, name and faction
-- Full-screen signature-move spotlight presentation
-- Personality moments tracked for the post-match MVP explanation
-- Existing Match Broadcast, Gauntlet progression, rewards, walkouts and Second Wind preserved
-
-Open `index.html` or upload all files to the GitHub Pages repository.
+1. Forward/progression controls are rendered before screen headings and content, including Start Gauntlet, Find Opponent, Start Match, Continue Broadcast, Begin Singles Match, team unlock Continue, replacement choices, Continue Run and Play Again.
+2. Critical Decision is displayed as a fixed overlay outside document flow. It no longer scrolls or shifts the page when it appears.
