@@ -24,7 +24,7 @@ Recommended format: **WebP**, portrait orientation, consistent dimensions across
 | Mateo Vega | `mateo-vega.webp` |
 | Ryder Phoenix | `ryder-phoenix.webp` |
 | Sterling Sinclair | `sterling-sinclair.webp` |
-| Dax Maddox | `dax-maddox.webp` |
+| Dave Maddox | `dave-maddox.webp` |
 | Logan Steele | `logan-steele.webp` |
 
 After replacing the images, open `image-check.html` to preview all 20 slots and confirm that every file loads.

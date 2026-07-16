@@ -342,11 +342,11 @@ const WRESTLERS = [
     "finisher": "Golden Touch"
   },
   {
-    "id": "dax-maddox",
-    "name": "Dax Maddox",
+    "id": "dave-maddox",
+    "name": "Dave Maddox",
     "title": "The Workhorse",
     "faction": "Guardians",
-    "signature": "Second Wind",
+    "signature": "Maddox Cutter",
     "overall": 97,
     "rarity": "Legendary",
     "tag": 98,
@@ -357,8 +357,8 @@ const WRESTLERS = [
     "versatility": 97,
     "loyalty": 100,
     "resilience": 100,
-    "image": "assets/dax-maddox.webp",
-    "finisher": "Second Wind"
+    "image": "assets/dave-maddox.webp",
+    "finisher": "Maddox Cutter"
   },
   {
     "id": "logan-steele",
@@ -426,7 +426,7 @@ const RELATIONSHIPS = [
   },
   {
     "a": "max-justice",
-    "b": "dax-maddox",
+    "b": "dave-maddox",
     "teamName": "True Grit",
     "chemistry": 97,
     "type": "legendary"
