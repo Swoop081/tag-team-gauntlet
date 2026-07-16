@@ -61,3 +61,15 @@ html,body,#app{overflow-anchor:none}
 .decision-layer:empty{display:none}
 .decision-layer .story-decision{pointer-events:auto;position:relative;top:auto;width:min(920px,calc(100vw - 28px));max-height:calc(100dvh - 92px);overflow:auto;margin:0;border:2px solid #d19a2a;background:linear-gradient(#1c160c,#090909);box-shadow:0 18px 70px rgba(0,0,0,.92),0 0 30px rgba(255,193,61,.28);animation:decisionPulse 1.6s ease-in-out infinite}
 @media(max-width:760px){.decision-layer{padding:64px 8px 8px}.decision-layer .story-decision{width:calc(100vw - 16px);max-height:calc(100dvh - 72px)}}
+
+/* Sprint 3.5 — presentation polish and image-ready roster */
+#app.screen-enter{animation:screenEnter .28s ease-out both}
+@keyframes screenEnter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.card img{display:block;width:100%;height:auto;background:#090a0d}
+.card.missing-art{min-height:240px;background:radial-gradient(circle at top,#2c3038,#090a0d 70%)}
+.art-placeholder{aspect-ratio:2/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-bottom:1px solid #444;background:linear-gradient(145deg,#20242b,#090a0d)}
+.art-placeholder b{font:italic clamp(42px,8vw,76px) Impact;color:#ffcf48;text-shadow:3px 3px #7f1119}
+.art-placeholder small{font-size:9px;letter-spacing:2px;color:#9ea4ad;font-weight:900}
+.winner-celebration{max-width:900px;margin:16px auto 20px;display:grid;grid-template-columns:130px 1fr;gap:18px;align-items:center;text-align:left;border:1px solid #a57b26;background:radial-gradient(circle at left,#3e290a,#090a0d 62%);padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.winner-celebration .winner-card .card{width:120px;margin:0}.winner-celebration .winner-card .name{display:none}.winner-celebration small{color:#ffcf48;font-weight:900;letter-spacing:2px}.winner-celebration h2{font:italic 34px Impact;text-transform:uppercase;margin:4px 0}.winner-celebration p{margin:0;color:#d4d4d8;line-height:1.5}
+@media(max-width:600px){.winner-celebration{grid-template-columns:86px 1fr;gap:11px;padding:10px}.winner-celebration .winner-card .card{width:82px}.winner-celebration h2{font-size:24px}.winner-celebration p{font-size:12px}}

@@ -1,6 +1,17 @@
-# Tag Team Gauntlet — Sprint 3.4.1 Verified UI Fix
+# Tag Team Gauntlet — Sprint 3.5
 
-This build is based directly on Sprint 3.4 and contains two verified changes:
+## Image-ready presentation polish
 
-1. Forward/progression controls are rendered before screen headings and content, including Start Gauntlet, Find Opponent, Start Match, Continue Broadcast, Begin Singles Match, team unlock Continue, replacement choices, Continue Run and Play Again.
-2. Critical Decision is displayed as a fixed overlay outside document flow. It no longer scrolls or shifts the page when it appears.
+This build is based on the verified Sprint 3.4.1 Match Score Engine.
+
+### New in Sprint 3.5
+- Screen-to-screen fade/slide polish.
+- Character-specific winner celebration presentation.
+- Safe missing-art placeholders instead of broken-image icons.
+- Exact asset filenames already wired for all Founding Twenty.
+- `image-check.html` provides a complete visual check of all 20 image files.
+- `ASSET-GUIDE.md` lists every required filename.
+
+### Adding final wrestler images
+Replace the matching `.webp` files inside `assets/`. Do not change the filenames.
+Then open `image-check.html` and verify every card says `LOADED`.

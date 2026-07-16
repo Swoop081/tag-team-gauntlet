@@ -9,8 +9,9 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 function rel(a,b){return RELATIONSHIPS.find(r=>(r.a===a.id&&r.b===b.id)||(r.a===b.id&&r.b===a.id))}
 function chemistry(a,b){let r=rel(a,b);return r?r.chemistry:Math.round((a.versatility+b.versatility)/2)}
 function score(t){let[a,b]=t;if(!b)return a.overall*.34+a.technique*.2+a.power*.14+a.speed*.12+a.charisma*.1+a.resilience*.1+S.momentum;let av=k=>(a[k]+b[k])/2;return av('overall')*.3+av('tag')*.25+(chemistry(a,b)+S.chem)*.2+av('technique')*.1+av('power')*.05+av('speed')*.05+av('charisma')*.05+S.momentum}
-function card(w,onclick='',compact=false){return `<article class="card${compact?' compact':''}" ${onclick?`onclick="${onclick}"`:''}><img src="${w.image}"><div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
-function render(x){app.innerHTML=x;document.getElementById('streak').textContent=S.streak}
+function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
+function card(w,onclick='',compact=false){return `<article class="card${compact?' compact':''}" ${onclick?`onclick="${onclick}"`:''}><img src="${w.image}" alt="${w.name}" onerror="imageFallback(this,'${w.name.replace(/'/g,"\\'")}')"><div class="name">${w.name}<small>${w.title} · ${w.faction}</small></div></article>`}
+function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
 function home(){clearStoryTimer();M=null;S={team:[],streak:0,chem:0,momentum:0,wind:false,windAwarded:false,challengeSeen:false,specialSingles:false,tagBackup:null};render(`<section class="panel home"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button></div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team and survive the Gauntlet. Matches now play as televised wrestling stories, pausing only when your decision can change the outcome.</p></section>`)}
 function start(){let captain=one(WRESTLERS);S.team=[captain];window.opts=pick(WRESTLERS.filter(w=>w.id!==captain.id),2);render(`<section class="panel"><h1 class="title">Choose Your Partner</h1><p class="sub">Your first wrestler is ${captain.name}</p><div class="cards two">${opts.map((w,i)=>card(w,`partner(${i})`)).join('')}</div><div class="actions" style="max-width:320px;margin:25px auto">${card(captain)}</div></section>`)}
@@ -171,11 +172,34 @@ function resolveFinish(){
  renderMatch();storyTimer=setTimeout(()=>showSummary(win),1500);
 }
 function selectMVP(team,finisherWinner){const sorted=[...team].sort((a,b)=>(b.overall+b.charisma+b.technique)-(a.overall+a.charisma+a.technique));return Math.random()<.65?finisherWinner:sorted[0]}
+const VICTORY_CELEBRATIONS={
+ 'jack-mercer':'raises his fists and shares the victory with the crowd.',
+ 'victor-royale':'stands over the fallen opposition and demands they acknowledge the Kingmaker.',
+ 'jett-valentine':'blows a kiss to the hard camera and poses beneath the spotlight.',
+ 'revenant':'stands motionless as the arena lights flicker around him.',
+ 'nightwatch':'rests the black bat across his shoulders and silently surveys the ring.',
+ 'titan':'finds the hard camera and turns the victory into a Hollywood ending.',
+ 'cameron-tremblay':'adjusts his sunglasses and calmly accepts another display of excellence.',
+ 'hollowman':'remains beside the fallen opponent, breathing heavily behind the mask.',
+ 'damian-blackwell':'walks away without celebration—the assignment is complete.',
+ 'elias-crowe':'laughs wildly as the referee keeps a cautious distance.',
+ 'el-rey-del-cielo':'climbs the turnbuckle and salutes the crowd from above the ring.',
+ 'max-justice':'raises both arms and points toward the fans who carried him through.',
+ 'primal':'roars over the opposition and pounds his chest.',
+ 'lucas-bennett':'raises one finger, treating the victory like another championship final.',
+ 'marcus-king':'celebrates with the front row and declares the street belongs to him.',
+ 'mateo-vega':'grins at the referee as though the entire finish was planned from the start.',
+ 'ryder-phoenix':'demands a microphone and treats the victory like an encore.',
+ 'sterling-sinclair':'poses with effortless confidence as if victory were already purchased.',
+ 'dax-maddox':'leans on the ropes, exhausted but still standing after another hard-earned win.',
+ 'logan-steele':'cups an ear to the crowd and lets the arena celebrate with the Living Legend.'
+};
+function victoryCelebration(w){return VICTORY_CELEBRATIONS[w.id]||`${w.name} celebrates a defining victory.`}
 function showSummary(win){
  clearStoryTimer();const length=formatTime(M.matchSeconds),rating=clamp(2.15+M.highlights.length*.16+M.nearFalls*.28+M.finishers*.2+M.tags*.08+M.eventTarget*.055,1,5),rounded=Math.round(rating),stars='★'.repeat(rounded)+'☆'.repeat(5-rounded);
  const highlights=[...M.highlights].slice(-5);const story=buildSummaryStory();M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
  const playerCrowd=Math.round(M.crowdPlayer*.12),oppCrowd=Math.round(M.crowdOpp*.12);
- render(`<section class="panel match-result summary-panel"><div class="actions top-actions">${win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`}</div><h1 class="title" style="color:${win?'#65e98a':'#ff6b6b'}">${win?'You Win!':'You Lose'}</h1><div class="rating"><span>${stars}</span><strong>${rating.toFixed(1)} MATCH RATING · ${length} · ${M.finishType.toUpperCase()}</strong></div><div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Starting Score</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Bonus</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div><div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div><div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div></section>`)
+ render(`<section class="panel match-result summary-panel"><div class="actions top-actions">${win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`}</div><h1 class="title" style="color:${win?'#65e98a':'#ff6b6b'}">${win?'You Win!':'You Lose'}</h1>${win?`<div class="winner-celebration"><div class="winner-card">${card(M.winner,'',true)}</div><div><small>WINNER CELEBRATION</small><h2>${M.winner.name}</h2><p>${victoryCelebration(M.winner)}</p></div></div>`:''}<div class="rating"><span>${stars}</span><strong>${rating.toFixed(1)} MATCH RATING · ${length} · ${M.finishType.toUpperCase()}</strong></div><div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Starting Score</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Bonus</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div><div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div><div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div></section>`)
 }
 
 function postMatchFlow(){
