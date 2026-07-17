@@ -1,8 +1,17 @@
-Tag Team Gauntlet 3.8.0 Build 1 — Broadcast 2.0
+TAG TEAM GAUNTLET 3.8.0 BUILD 1 R2
 
-- 400 wrestler-exclusive decision labels across 20 founding wrestlers
-- Dynamic opening, control, crisis, and finish situations
-- Attribute-driven success chances
-- Personalized success and failure commentary
-- Existing three-choice layout preserved
-- Cache version: 3.8.0b1
+BROADCAST 2.0
+- All 20 founding wrestlers retain their personality profiles.
+- 400 wrestler-specific decisions remain available across opening, control, crisis, and finish phases.
+- Decision cards now show only the choice name and description.
+- Hidden success values, attribute numbers, and developer-facing labels are no longer rendered.
+- The duplicated YOUR CALL wording has been removed.
+
+CLASSIC GAUNTLET ONBOARDING
+- The first match of every new gauntlet run is guaranteed to be won.
+- Walkouts are disabled for the opening match.
+- Normal difficulty and walkout rules return from Match 2 onward.
+- This guarantees the player reaches the first reward choice.
+
+CACHE
+- Asset query version updated to 3.8.0b1-r2.

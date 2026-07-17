@@ -250,7 +250,7 @@ function chooseStory(){
 }
 function match(){
  tvSting(isSinglesMatch()?'FEATURED SINGLES MATCH':(S.exhibition?'TAG TEAM EXHIBITION':'TAG TEAM GAUNTLET'),isSinglesMatch()?'ONE-ON-ONE':'THE BELL IS NEXT',`${currentVenue()} · ${attendance()} fans`);
- clearStoryTimer();const q=S.exhibition?null:walkout();if(q)return lose(`${q.name} walks away before the bell!`);
+ clearStoryTimer();const isOpeningGauntlet=!S.exhibition&&S.streak===0;const q=(S.exhibition||isOpeningGauntlet)?null:walkout();if(q)return lose(`${q.name} walks away before the bell!`);
  const storyKey=chooseStory(),story=STORY_TYPES[storyKey],eventTarget=Math.round(rnd(story.min,story.max));
  const teamPower=score(S.team),oppPower=score(S.opp)+S.streak*.7;
  let hiddenEdge=(teamPower-oppPower)/7+story.bias+rnd(-8,8);
@@ -279,7 +279,7 @@ function renderMatch(){
  </section>`);
  const feed=document.getElementById('broadcastFeed');if(feed)feed.scrollTop=feed.scrollHeight
 }
-function decisionHTML(){const d=getDecision();M.currentDecision=d;return `<div class="story-decision"><small>YOUR CALL · ${d.phase.toUpperCase()} DECISION</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid">${d.options.map((x,i)=>`<button class="choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small><em>${x.exclusive?'WRESTLER EXCLUSIVE':'TACTICAL'} · ${x.attr}</em></button>`).join('')}</div></div>`}
+function decisionHTML(){const d=getDecision();M.currentDecision=d;return `<div class="story-decision"><small>${d.phase.toUpperCase()} DECISION</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid">${d.options.map((x,i)=>`<button class="choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`}
 function getDecision(){
  const p=S.team[M.activeP],partner=S.team.length>1?S.team[1-M.activeP]:null,phase=decisionPhase(),situation=one(DECISION_SITUATIONS[phase]);
  let pool=buildPersonalOptions(p,phase);
@@ -351,7 +351,9 @@ function resolveFinish(){
  M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer+rnd(-3,3));
  M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+crowdBonusOpp+rnd(-3,3));
  const gap=Math.abs(M.finalPlayer-M.finalOpp);M.finishType=gap>=22?'Decisive Finish':gap>=10?'Competitive Finish':'Photo Finish';
- const win=M.finalPlayer>=M.finalOpp;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
+ const openingGauntletMatch=!S.exhibition&&S.streak===0;
+ if(openingGauntletMatch&&M.finalPlayer<=M.finalOpp){M.finalPlayer=M.finalOpp+Math.max(8,Math.round(rnd(8,14)));M.finishType='Competitive Finish';addBroadcast('commentary','The opening gauntlet match becomes the perfect introduction—and your team finds a way through!');}
+ const win=openingGauntletMatch||M.finalPlayer>=M.finalOpp;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
  let winner=winnerTeam[M.activeP],loser=loserTeam[M.activeO];if(!win){winner=winnerTeam[M.activeO];loser=loserTeam[M.activeP]}
  if(Math.random()<.48)winner=one(winnerTeam);if(Math.random()<.48)loser=one(loserTeam);
  M.finishers++;setSpotlight(winner,M.finishType==='Photo Finish'?'A LAST-SECOND OPENING!':'THE MATCH ENDS HERE!');

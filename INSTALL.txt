@@ -1,1 +1,9 @@
-Replace only game.js, styles.css, and index.html. Keep .nojekyll, .git, assets, and data.js unchanged. Test locally before commit and push.
+TAG TEAM GAUNTLET 3.8.0 BUILD 1 R2
+
+Replace only these three files in the repository root:
+- game.js
+- styles.css
+- index.html
+
+Keep .nojekyll, .git, assets/, and data.js unchanged.
+Test locally before committing and pushing.

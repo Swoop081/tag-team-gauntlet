@@ -138,3 +138,6 @@ html,body,#app{overflow-anchor:none}
 @media(max-width:620px){.stats-detail-grid{grid-template-columns:1fr 1fr}.stats-detail-grid article{min-height:125px;padding:17px}.stats-detail-grid b{font-size:2rem}.stats-row{grid-template-columns:minmax(120px,2fr) repeat(4,42px);padding:13px 10px;font-size:.82rem}.mode-preview-label{bottom:6px;left:6px;right:6px}}
 
 .choice em{display:block;margin-top:9px;color:#ffd15b;font:700 9px Arial;letter-spacing:1.2px;font-style:normal}.story-decision>small{display:inline-block;background:#ffd15b;color:#130d05!important;padding:7px 13px}.choice b{line-height:1.05}
+
+/* 3.8.0 Build 1 R2: clean player-facing decision cards */
+.choice em{display:none!important}.story-decision>small{background:transparent!important;color:#ffd15b!important;padding:0!important;margin-left:8px}.story-decision:before{vertical-align:middle;margin-right:8px}.choice{display:flex;flex-direction:column;justify-content:center}.choice small{line-height:1.45}
