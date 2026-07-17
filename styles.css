@@ -106,3 +106,12 @@ html,body,#app{overflow-anchor:none}
 /* Build 2 Step 2: singles results use one centered winner portrait. */
 .winning-team-art.singles-winner{grid-template-columns:minmax(160px,300px)}
 .winning-team-art.singles-winner .hero-portrait{width:100%;margin:0 auto}
+
+
+/* Build 2 Step 4: broadcast and result presentation */
+.broadcast-line.commentary{border-left:3px solid #ffcf48;background:linear-gradient(90deg,#3d2b0d88,transparent);color:#ffe9a6;font-style:italic}
+.result-broadcast-header{text-align:center;padding:18px 14px 24px;border-bottom:1px solid #6a2c31;background:radial-gradient(circle at center,#461217,#09090b 72%)}
+.result-broadcast-header small{color:#ffcf48;font-weight:900;letter-spacing:2.4px}.result-broadcast-header h1{font:italic clamp(42px,7vw,78px) Impact;margin:4px 0;text-transform:uppercase}.result-broadcast-header p{margin:0;color:#aeb1b8;letter-spacing:1px}
+.presentation-summary .winner-celebration{margin-top:14px}.presentation-summary .result-loss{border-color:#6a2b30;background:radial-gradient(circle at 50% 20%,#4a151a,#09090b 75%)}
+.result-accolades{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.result-accolades article{min-height:120px;padding:16px;border:1px solid #4c3336;background:linear-gradient(145deg,#211113,#08090b);display:flex;flex-direction:column;justify-content:center;text-align:center}.result-accolades small{color:#ffcf48;font-size:9px;font-weight:900;letter-spacing:1.8px}.result-accolades b{font:italic 25px Impact;margin:8px 0}.result-accolades strong{color:#b9bbc1;font-size:11px}.result-stars{display:block;color:#ffcf48;font-size:clamp(24px,4vw,38px);letter-spacing:3px;margin:6px 0}
+@media(max-width:700px){.result-accolades{grid-template-columns:1fr}.result-accolades article{min-height:95px}.result-broadcast-header h1{font-size:42px}}

@@ -8,6 +8,46 @@ const rnd=(min,max)=>Math.random()*(max-min)+min;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const VENUES=['Liberty Arena','Crown Coliseum','MetroPlex Pavilion','Titan Dome','Victory Gardens Arena','Iron City Center','Skyline Stadium'];
 const MATCH_LABELS=['MAIN EVENT','FEATURED CONTEST','GAUNTLET SHOWCASE','PRIME-TIME MATCH'];
+
+const BROADCAST_COMMENTARY={
+ openingSingles:['The atmosphere changes the instant the bell rings.','Both wrestlers know one mistake could decide this contest.','There is no partner to save either competitor tonight.','The crowd settles in for a true one-on-one test.'],
+ openingTag:['Four wrestlers, two corners, and one chance to make a statement.','The opening teams are studying every possible tag lane.','Chemistry could matter as much as power in this contest.','The crowd is already calling for the first explosive tag.'],
+ phase:{
+  control:['The pace is settling, and one side is beginning to dictate the match.','This is where discipline starts to separate the competitors.','The opening exchanges are over; control now matters.'],
+  shift:['Momentum is changing hands in a hurry.','The entire match has turned on one sharp exchange.','The crowd senses that the balance is beginning to move.'],
+  crisis:['This is now a survival test.','Every mistake carries twice the danger at this stage.','The match has reached the point where instinct takes over.'],
+  climax:['The arena is on its feet for the finishing stretch.','One decisive move could end this at any second.','Neither side can afford to hesitate now.'],
+  finish:['The final opening is here.','Everything comes down to this last exchange.']
+ },
+ close:['Nobody has been able to create real separation.','This remains balanced enough to turn on a single counter.','The next major mistake may be the last one.'],
+ dominant:['The advantage is becoming impossible to ignore.','One side is imposing its style with authority.','This is turning into a commanding performance.'],
+ hotCrowd:['Listen to this crowd—the building is completely alive!','The noise is rising with every exchange!','The audience knows it is watching something special.']
+};
+function phaseCommentary(phaseId){const pool=BROADCAST_COMMENTARY.phase[phaseId]||[];return pool.length?one(pool):''}
+function broadcastPulse(){
+ if(M.crowd>=72&&Math.random()<.45)return one(BROADCAST_COMMENTARY.hotCrowd);
+ if(Math.abs(M.playerControl-50)<=9&&Math.random()<.32)return one(BROADCAST_COMMENTARY.close);
+ if(Math.abs(M.playerControl-50)>=27&&Math.random()<.35)return one(BROADCAST_COMMENTARY.dominant);
+ return '';
+}
+function matchRatingData(rating){
+ const rounded=clamp(Math.round(rating),1,5);
+ const labels=['QUICK CONTEST','SOLID BOUT','STRONG MATCH','SHOW-STEALER','INSTANT CLASSIC'];
+ return {rounded,stars:'★'.repeat(rounded)+'☆'.repeat(5-rounded),label:labels[rounded-1]};
+}
+function crowdReaction(){
+ if(M.crowd>=85)return 'STANDING OVATION';
+ if(M.crowd>=68)return 'ELECTRIC';
+ if(M.crowd>=50)return 'LOUD APPROVAL';
+ if(M.finishType==='Photo Finish')return 'SHOCKED SILENCE';
+ return 'RESPECTFUL APPLAUSE';
+}
+function finishHeadline(){
+ if(M.finishType==='Photo Finish')return 'A LAST-SECOND ESCAPE';
+ if(M.finishType==='Decisive Finish')return 'A COMMANDING STATEMENT';
+ if(M.storyKey==='upset')return 'THE UPSET IS COMPLETE';
+ return 'A HARD-FOUGHT VICTORY';
+}
 function currentVenue(){if(!S.venue)S.venue=one(VENUES);return S.venue}
 function attendance(){if(!S.attendance)S.attendance=Math.floor(rnd(11800,19800));return S.attendance.toLocaleString()}
 function teamName(team){return team.length>1?(rel(...team)?.teamName||team.map(x=>x.name).join(' & ')):team[0].name}
@@ -174,7 +214,7 @@ function match(){
  M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{},startPlayer,startOpp,performancePlayer:0,performanceOpp:0,decisionPlayer:0,decisionOpp:0,crowd:8,crowdPlayer:0,crowdOpp:0,finalPlayer:0,finalOpp:0,finishType:''};
  addBroadcast('broadcast',`${isSinglesMatch()?'YOUR WRESTLER':'YOUR TEAM'}: ${S.team.map(wrestlerIntro).join(' / ')}`); addBroadcast('broadcast',`${isSinglesMatch()?'OPPONENT':'OPPOSITION'}: ${S.opp.map(wrestlerIntro).join(' / ')}`);
  addBroadcast('phase','OPENING BELL');
- addBroadcast('normal',one(isSinglesMatch()?['The bell rings and both wrestlers circle cautiously.','The crowd rises as the wrestlers lock up.','No feeling-out process—both wrestlers charge immediately.','A tense stare-down gives way to the first exchange.']:['The bell rings and both teams circle cautiously.','The crowd rises as the opening wrestlers lock up.','No feeling-out process—both teams charge immediately.','A tense stare-down gives way to the first exchange.']));
+ addBroadcast('normal',one(isSinglesMatch()?BROADCAST_COMMENTARY.openingSingles:BROADCAST_COMMENTARY.openingTag));
  renderMatch();scheduleNext(900);
 }
 function decisionPoints(total,count){const pts=[];for(let i=1;i<=count;i++)pts.push(Math.round(total*(i/(count+1)))+Math.round(rnd(-1,1)));return [...new Set(pts)].filter(x=>x>1&&x<total-1).sort((a,b)=>a-b)}
@@ -207,9 +247,9 @@ async function advanceStory(){
  clearSpotlight();
  M.eventIndex++;
  const newPhase=phaseForEvent(M.eventIndex,M.eventTarget);
- if(newPhase!==M.phaseIndex){M.phaseIndex=newPhase;M.phaseLabel=PHASES[newPhase].label;addBroadcast('phase',PHASES[newPhase].label.toUpperCase());}
+ if(newPhase!==M.phaseIndex){M.phaseIndex=newPhase;M.phaseLabel=PHASES[newPhase].label;addBroadcast('phase',PHASES[newPhase].label.toUpperCase());const call=phaseCommentary(PHASES[newPhase].id);if(call)addBroadcast('commentary',call);}
  if(M.nextDecisionAt.includes(M.eventIndex)){M.waiting=true;renderMatch();return}
- generateAutomaticBeat();renderMatch();
+ generateAutomaticBeat();const pulse=broadcastPulse();if(pulse)addBroadcast('commentary',pulse);renderMatch();
  if(M.eventIndex>=M.eventTarget)return resolveFinish();
  scheduleNext(M.phaseIndex>=4?1150:900);
 }
@@ -301,10 +341,22 @@ const VICTORY_CELEBRATIONS={
 };
 function victoryCelebration(w){return VICTORY_CELEBRATIONS[w.id]||`${w.name} celebrates a defining victory.`}
 function showSummary(win){
- clearStoryTimer();const length=formatTime(M.matchSeconds),rating=clamp(2.15+M.highlights.length*.16+M.nearFalls*.28+M.finishers*.2+M.tags*.08+M.eventTarget*.055,1,5),rounded=Math.round(rating),stars='★'.repeat(rounded)+'☆'.repeat(5-rounded);
- const highlights=[...M.highlights].slice(-5);const story=buildSummaryStory();M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
+ clearStoryTimer();
+ const length=formatTime(M.matchSeconds);
+ const rating=clamp(2.15+M.highlights.length*.16+M.nearFalls*.28+M.finishers*.2+M.tags*.08+M.eventTarget*.055,1,5);
+ const ratingData=matchRatingData(rating),highlights=[...M.highlights].slice(-5),story=buildSummaryStory();
+ M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
  const playerCrowd=Math.round(M.crowdPlayer*.12),oppCrowd=Math.round(M.crowdOpp*.12);
- render(`<section class="panel match-result summary-panel"><div class="actions top-actions">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div><h1 class="title" style="color:${win?'#65e98a':'#ff6b6b'}">${win?'You Win!':'You Lose'}</h1>${win?`<div class="winner-celebration television-winners"><div class="confetti-field"></div><div class="winning-team-art ${isSinglesMatch()?'singles-winner':''}">${S.team.map(w=>heroPortrait(w,'winner')).join('')}</div><div class="winner-copy"><small>${isSinglesMatch()?'WINNER':'WINNERS'}</small><h2>${teamName(S.team)}</h2><p>${victoryCelebration(M.winner)}</p></div></div>`:''}<div class="rating"><span>${stars}</span><strong>${rating.toFixed(1)} MATCH RATING · ${length} · ${M.finishType.toUpperCase()}</strong></div><div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Starting Score</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Bonus</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div><div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div><div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div></section>`)
+ const winningSide=win?S.team:S.opp;
+ const resultArt=winningSide.map(w=>heroPortrait(w,'winner')).join('');
+ render(`<section class="panel match-result summary-panel presentation-summary">
+ <div class="actions top-actions">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
+ <div class="result-broadcast-header"><small>${S.exhibition?'EXHIBITION RESULT':'GAUNTLET RESULT'} · ${isSinglesMatch()?'SINGLES':'TAG TEAM'}</small><h1>${finishHeadline()}</h1><p>${currentVenue()} · ${length}</p></div>
+ <div class="winner-celebration television-winners result-${win?'win':'loss'}"><div class="confetti-field"></div><div class="winning-team-art ${isSinglesMatch()?'singles-winner':''}">${resultArt}</div><div class="winner-copy"><small>${isSinglesMatch()?'MATCH WINNER':'WINNING TEAM'}</small><h2>${teamName(winningSide)}</h2><p>${victoryCelebration(M.winner)}</p></div></div>
+ <div class="result-accolades"><article><small>MATCH RATING</small><span class="result-stars">${ratingData.stars}</span><strong>${rating.toFixed(1)} · ${ratingData.label}</strong></article><article><small>CROWD REACTION</small><b>${crowdReaction()}</b><strong>EXCITEMENT ${Math.round(M.crowd)}%</strong></article><article><small>FINISH</small><b>${M.finishType.toUpperCase()}</b><strong>${M.winner.name} · ${M.winner.finisher}</strong></article></div>
+ <div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Starting Score</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Bonus</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div>
+ <div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div>
+ <div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div></section>`)
 }
 
 function postMatchFlow(){

@@ -1,19 +1,23 @@
-TAG TEAM GAUNTLET — 3.7.2 BUILD 2 STEP 3
+TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 4
+BROADCAST & MATCH PRESENTATION
 
 ADDED
-- Active PLAY NOW · SINGLES button on every Collection profile.
-- The selected profile wrestler is automatically assigned as the player's Singles wrestler.
-- Opponent selection opens immediately.
-- A PROFILE back button returns to the same Collection profile before a match begins.
+- Context-aware broadcast calls at major match phases
+- Commentary for close contests, dominant stretches and hot crowds
+- New result broadcast header
+- Match rating label and star presentation
+- Crowd reaction and excitement percentage
+- Finish classification and winning move presentation
 
-PRESERVED
-- Quick Match Singles
-- Quick Match Tag Team
-- Rematches
-- Classic Gauntlet
-- Step 2 singles result presentation fixes
-- All assets and wrestler data
+IMPROVED
+- Singles and Tag Team openings now use mode-specific commentary
+- Result screens now present the actual winning side even after a player loss
+- Mobile layout for the new result accolades
+- Cache-busting updated to 3.7.2b2-step4
 
-FILES CHANGED
-- game.js
-- index.html (cache-busting only)
+UNCHANGED
+- Match rules and scoring
+- Classic Gauntlet progression
+- Wrestler data
+- Assets
+- .nojekyll

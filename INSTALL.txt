@@ -1,27 +1,21 @@
-TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 3
-COLLECTION PLAY NOW
+TAG TEAM GAUNTLET 3.7.2 BUILD 2 — STEP 4
 
 REPLACE ONLY:
-1. game.js
-2. index.html
-
-KEEP UNTOUCHED:
-- .git
-- .nojekyll
-- assets folder
-- data.js
+- game.js
 - styles.css
+- index.html
 
-SAFE TEST:
-1. Back up your current game.js and index.html.
-2. Copy the new game.js and index.html into the GitHub project root.
-3. Open index.html locally.
-4. Open Collection and choose any wrestler profile.
-5. Press PLAY NOW · SINGLES.
-6. Confirm that wrestler is already selected and only the opponent must be chosen.
-7. Use the PROFILE back button and confirm it returns to the same profile.
-8. Complete the match and confirm Rematch still works.
-9. Confirm normal Quick Match Singles and Tag Team still work.
-10. Commit and push only after local testing passes.
+DO NOT DELETE OR REPLACE:
+- .nojekyll
+- .git
+- assets/
+- data.js
 
-The index file increments cache-busting to 3.7.2b2-step3.
+TEST LOCALLY FIRST:
+1. Classic Gauntlet match and result screen
+2. Quick Match Singles and result screen
+3. Quick Match Tag Team and result screen
+4. Collection > Play Now
+5. Confirm new commentary lines, rating card, crowd reaction and finish card appear
+
+After testing, commit and push the three replacement files.
