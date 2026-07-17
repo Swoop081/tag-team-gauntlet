@@ -1,4 +1,4 @@
-/* Tag Team Gauntlet — Character Image Manager 4.0
+/* Tag Team Gauntlet — Character Image Manager 3.0 — Screen Presets
    Each upgraded wrestler has independent transforms for full, portrait and victory art.
    IDs match data.js. Internal legacy IDs can be retained while folders use display-friendly names. */
 window.TTG_IMAGE_MANAGER = {
@@ -12,6 +12,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.50, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.15, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
   'jett-valentine': {
@@ -24,6 +32,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.58, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.18, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.580, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.454, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.580, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.180, x: 0, y: 0, anchor: 'feet' }
     }
   },
   'victor-royale': {
@@ -36,6 +52,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.52, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.16, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.520, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.398, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.520, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.160, x: 0, y: 0, anchor: 'feet' }
     }
   },
   'revenant': {
@@ -48,6 +72,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.50, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.15, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
   'nightwatch': {
@@ -60,6 +92,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.50, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.15, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
   'titan': {
@@ -72,6 +112,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.50, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.15, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
   'mason-marks': {
@@ -84,6 +132,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.50, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.15, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
   'hollowman': {
@@ -96,6 +152,14 @@ window.TTG_IMAGE_MANAGER = {
       full: { scale: 1.50, x: 0, y: 0 },
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.15, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
+      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   }
 

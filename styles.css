@@ -326,3 +326,22 @@ html,body,#app{overflow-anchor:none}
   .entrance-preview,.broadcast-desk-preview{padding:12px;margin:14px 0}
   .entrance-preview p,.broadcast-desk-preview p{font-size:13px}
 }
+
+/* 4.2 — Image Manager 3.0 screen presets */
+.collection-tile > .wrestler-art.framework-custom[data-image-screen="collection"]{
+  transform:translate(calc(-50% + var(--custom-x,0px)),var(--custom-y,0px)) scale(var(--custom-scale,1))!important;
+  transform-origin:center bottom!important;
+}
+.featured-superstar{position:relative;overflow:hidden}
+.featured-superstar > .wrestler-art.framework-custom[data-image-screen="homeFeature"]{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;padding:0!important;
+  object-fit:contain!important;object-position:center center!important;
+  transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(var(--custom-scale,1))!important;
+  transform-origin:center center!important;
+}
+.featured-superstar .live-chip,.featured-superstar .featured-lower-third{position:relative;z-index:3}
+@media(max-width:600px){
+  .collection-tile > .wrestler-art.framework-custom[data-image-screen="collection"]{
+    transform:translate(calc(-50% + var(--custom-x,0px)),calc(var(--custom-y,0px) + 8px)) scale(var(--custom-scale,1))!important;
+  }
+}

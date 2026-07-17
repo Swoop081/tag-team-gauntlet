@@ -83,15 +83,18 @@ function advanceImageFallback(img){
  if(next<candidates.length){img.dataset.sourceIndex=String(next);img.src=candidates[next];return;}
  img.style.display='none';img.parentElement?.classList.add('missing-art');
 }
-function imageTransform(config,type='full'){
+function imageTransform(config,type='full',screen='default'){
+ const screens=config?.screens||{};
+ if(screens[screen])return screens[screen];
  const map=config?.transforms||{};
- return map[type]||map.full||config?.transform||{scale:1,x:0,y:0};
+ return map[type]||map.full||config?.transform||{scale:1,x:0,y:0,anchor:'feet'};
 }
-function imageWithFallback(w,type,extraClass=''){
- const sources=wrestlerImageCandidates(w,type),config=characterImageConfig(w),t=imageTransform(config,type);
+function imageWithFallback(w,type,extraClass='',screen='default'){
+ const sources=wrestlerImageCandidates(w,type),config=characterImageConfig(w),t=imageTransform(config,type,screen);
  const custom=config?' framework-custom':'';
+ const anchor=t.anchor||'feet';
  const st=`--custom-scale:${t.scale??1};--custom-x:${t.x??0}px;--custom-y:${t.y??0}px;`;
- return `<img class="wrestler-art wrestler-${w.id}${custom} ${extraClass}" style="${st}" data-art-type="${type}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
+ return `<img class="wrestler-art wrestler-${w.id}${custom} ${extraClass}" style="${st}" data-art-type="${type}" data-image-screen="${screen}" data-image-anchor="${anchor}" src="${sources[0]}" data-sources="${sources.join('|')}" data-source-index="0" alt="${w.name}" onerror="advanceImageFallback(this)">`;
 }
 function wrestlerPng(w){return wrestlerImage(w,'full')}
 function heroPortrait(w,side='',artType='auto'){const resolvedType=artType==='auto'?(characterImageConfig(w)?'portrait':'full'):artType;return `<article class="hero-portrait ${side} image-framework ${characterImageConfig(w)?'has-render':'legacy-render'}">${imageWithFallback(w,resolvedType,`art-${resolvedType}`)}<div><small>${w.title}</small><h3>${w.name}</h3><span>${w.finisher}</span></div></article>`}
@@ -113,18 +116,18 @@ function featuredSuperstar(){return one(WRESTLERS)}
 function home(){
  clearStoryTimer();M=null;overlay.innerHTML='';
  const w=featuredSuperstar();
- render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and unlock the Founding Twenty.</p><nav class="hub-menu"><button class="hub-option primary" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibition framework.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your legacy framework.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>OPTIONS</b><small>Presentation settings coming soon.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
+ render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and unlock the Founding Twenty.</p><nav class="hub-menu"><button class="hub-option primary" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibition framework.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your legacy framework.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>OPTIONS</b><small>Presentation settings coming soon.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
 }
 function classicHome(){
  resetClassicState();S.previewCaptain=one(WRESTLERS);const captain=S.previewCaptain;
  render(`<section class="panel mode-landing"><div class="actions top-actions"><button class="btn" onclick="start()">START GAUNTLET</button>${shellBack()}</div><div class="mode-landing-art">${imageWithFallback(captain,'full','art-full')}<div class="mode-preview-label"><small>YOUR STARTING WRESTLER</small><b>${captain.name}</b></div></div><div class="mode-landing-copy"><div class="tv-kicker">CLASSIC MODE</div><h1>SURVIVE THE GAUNTLET</h1><p>Your run begins with <strong>${captain.name}</strong>. Choose a partner and survive as long as possible. Every broadcast, decision and reward matters. Lose once and the run is over.</p></div></section>`)
 }
 function collection(){
- render(`<section class="collection-screen">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">THE FOUNDING TWENTY</div><h1>COLLECTION</h1><p>Character profiles, signatures and future career history.</p></div><strong>${WRESTLERS.length}/${WRESTLERS.length}</strong></header><div class="collection-grid">${WRESTLERS.map(w=>`<button class="collection-tile" onclick="collectionProfile('${w.id}')">${imageWithFallback(w,'full','art-full')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
+ render(`<section class="collection-screen">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">THE FOUNDING TWENTY</div><h1>COLLECTION</h1><p>Character profiles, signatures and future career history.</p></div><strong>${WRESTLERS.length}/${WRESTLERS.length}</strong></header><div class="collection-grid">${WRESTLERS.map(w=>`<button class="collection-tile" onclick="collectionProfile('${w.id}')">${imageWithFallback(w,'full','art-full','collection')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
 }
 function collectionProfile(id){
  const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();
- render(`<section class="profile-screen"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button><button class="profile-play" onclick="playNowFromCollection('${w.id}')">PLAY NOW · SINGLES</button></div><div class="profile-art image-framework-profile">${imageWithFallback(w,'full','art-full')}</div><div class="profile-copy"><div class="profile-status">FOUNDING TWENTY · AVAILABLE</div><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${BIOS[w.id]||`${w.name} is a ${w.faction} competitor in Tag Team Gauntlet.`}</p><div class="profile-facts"><div><small>FACTION</small><b>${w.faction}</b></div><div><small>STYLE</small><b>${(typeof profileFor==='function'?profileFor(w).archetype:'Wrestler')}</b></div><div><small>OVERALL</small><b>${w.overall}</b></div><div><small>RARITY</small><b>${w.rarity}</b></div></div></div></section>`)
+ render(`<section class="profile-screen"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button><button class="profile-play" onclick="playNowFromCollection('${w.id}')">PLAY NOW · SINGLES</button></div><div class="profile-art image-framework-profile">${imageWithFallback(w,'full','art-full','profile')}</div><div class="profile-copy"><div class="profile-status">FOUNDING TWENTY · AVAILABLE</div><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${BIOS[w.id]||`${w.name} is a ${w.faction} competitor in Tag Team Gauntlet.`}</p><div class="profile-facts"><div><small>FACTION</small><b>${w.faction}</b></div><div><small>STYLE</small><b>${(typeof profileFor==='function'?profileFor(w).archetype:'Wrestler')}</b></div><div><small>OVERALL</small><b>${w.overall}</b></div><div><small>RARITY</small><b>${w.rarity}</b></div></div></div></section>`)
 }
 function playNowFromCollection(id){
  const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();
@@ -172,7 +175,7 @@ function quickTagSelect(){
  const chosen=new Set(S.quickSelections.map(w=>w.id));
  const slot=S.quickSelections.length;
  if(slot>=4)return confirmQuickTag();
- render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="${slot?'undoQuickTagSelection()':'quickMatchMenu()'}">← ${slot?'UNDO LAST PICK':'QUICK MATCH'}</button></div><div class="tv-kicker">QUICK MATCH · TAG TEAM</div><h1 class="title">Choose ${slots[slot]}</h1><p class="sub">${slot?`${S.quickSelections.map(w=>w.name).join(' · ')} selected`:'Build your team first, then choose the opposition.'}</p><div class="collection-grid">${WRESTLERS.filter(w=>!chosen.has(w.id)).map(w=>`<button class="collection-tile" onclick="selectQuickTagWrestler('${w.id}')">${imageWithFallback(w,'full','art-full')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
+ render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="${slot?'undoQuickTagSelection()':'quickMatchMenu()'}">← ${slot?'UNDO LAST PICK':'QUICK MATCH'}</button></div><div class="tv-kicker">QUICK MATCH · TAG TEAM</div><h1 class="title">Choose ${slots[slot]}</h1><p class="sub">${slot?`${S.quickSelections.map(w=>w.name).join(' · ')} selected`:'Build your team first, then choose the opposition.'}</p><div class="collection-grid">${WRESTLERS.filter(w=>!chosen.has(w.id)).map(w=>`<button class="collection-tile" onclick="selectQuickTagWrestler('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
 }
 function selectQuickTagWrestler(id){
  const w=WRESTLERS.find(x=>x.id===id);if(!w||S.quickSelections.some(x=>x.id===id))return quickTagSelect();
