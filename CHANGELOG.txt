@@ -1,6 +1,9 @@
-3.8.0 BUILD 2 R1 HOTFIX
-
-- Fixed a startup JavaScript error that left the page blank below the header.
-- Corrected the Broadcast 2.1 momentum-shift commentary library reference.
-- Preserved all Build 2 Broadcast and Reward Screen features.
-- Updated cache busting to 3.8.0b2-r1.
+3.8.0 Build 3
+- Temporary two-person commentary team framework
+- Unique entrance writing for all Founding Twenty wrestlers
+- Faction and team identity presentation
+- Branded weekly-show presentation
+- Richer opponent introductions
+- Commentary exchanges during match simulation
+- Milestone announcements after victories
+- Persistent foundations for partners, opponents, teams and faction history

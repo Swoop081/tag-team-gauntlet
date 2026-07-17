@@ -1,8 +1,8 @@
-TAG TEAM GAUNTLET 3.8.0 BUILD 2 R1 HOTFIX
+TAG TEAM GAUNTLET 3.8.0 BUILD 3 — ATMOSPHERE & PERSONALITY
 
-Replace only:
+Replace:
 - game.js
+- styles.css
 - index.html
 
-styles.css is included only for convenience and is unchanged from Build 2.
-Keep .nojekyll, .git, assets, and data.js untouched.
+Keep .nojekyll, .git, assets and data.js unchanged.
