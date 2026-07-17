@@ -249,3 +249,7 @@ html,body,#app{overflow-anchor:none}
     height:150px !important;
   }
 }
+
+/* Version 4.0 — independent artwork transforms and roster status */
+.roster-status{max-width:1080px;margin:20px auto}.roster-status>p{max-width:760px;margin:0 auto 22px;color:#bfc1c8;text-align:center}.roster-status-grid{display:grid;gap:8px}.roster-status-row{display:grid;grid-template-columns:minmax(220px,1.4fr) 110px repeat(3,minmax(90px,.7fr));gap:10px;align-items:center;padding:12px 14px;border:1px solid #30323a;background:#101116}.roster-status-row b,.roster-status-row small{display:block}.roster-status-row small{color:#92959d;margin-top:3px}.status-pill{display:inline-flex;justify-content:center;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:1px}.status-pill.configured{background:#183c28;color:#7ff0aa}.status-pill.legacy{background:#34343b;color:#c4c5ca}.asset-ok{color:#7ff0aa}.asset-bad{color:#ff737a}.image-dev-panel select{padding:7px;background:#11131a;color:#fff;border:1px solid #4b4e58}
+@media(max-width:760px){.roster-status-row{grid-template-columns:1fr 90px}.roster-status-row [data-check]{font-size:11px}.roster-status-row [data-check="portrait"],.roster-status-row [data-check="victory"]{display:none}}

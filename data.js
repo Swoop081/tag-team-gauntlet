@@ -96,8 +96,8 @@ const WRESTLERS = [
   },
   {
     "id": "titan",
-    "name": "Titan",
-    "title": "Hollywood",
+    "name": "\"Hollywood\" Titan",
+    "title": "The Blockbuster",
     "faction": "Titans",
     "signature": "Ground Zero",
     "overall": 98,
@@ -114,8 +114,8 @@ const WRESTLERS = [
     "finisher": "Ground Zero"
   },
   {
-    "id": "cameron-tremblay",
-    "name": "Cameron Tremblay",
+    "id": "mason-marks",
+    "name": "Mason Marks",
     "title": "The Canadian Icon",
     "faction": "Excellence",
     "signature": "Precision Lock",
@@ -129,7 +129,7 @@ const WRESTLERS = [
     "versatility": 100,
     "loyalty": 97,
     "resilience": 96,
-    "image": "assets/cameron-tremblay.webp",
+    "image": "assets/mason-marks.webp",
     "finisher": "Precision Lock"
   },
   {
@@ -404,7 +404,7 @@ const RELATIONSHIPS = [
     "type": "legendary"
   },
   {
-    "a": "cameron-tremblay",
+    "a": "mason-marks",
     "b": "lucas-bennett",
     "teamName": "Standard of Excellence",
     "chemistry": 100,
@@ -495,7 +495,7 @@ const RELATIONSHIPS = [
     "type": "rivalry"
   },
   {
-    "a": "cameron-tremblay",
+    "a": "mason-marks",
     "b": "sterling-sinclair",
     "teamName": "Craft vs Vanity",
     "chemistry": 58,
