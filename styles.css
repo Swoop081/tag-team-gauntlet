@@ -355,3 +355,30 @@ html,body,#app{overflow-anchor:none}
 .framework-art.image-framework-profile > .wrestler-art.framework-custom[data-image-screen="quickLanding"]{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;padding:0!important;object-fit:contain!important;object-position:center bottom!important;transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(var(--custom-scale,1))!important;transform-origin:center center!important}
 .collection-tile > .wrestler-art.framework-custom[data-image-screen="collection"]{object-position:center bottom!important}
 @media(max-width:700px){.featured-superstar .featured-lower-third{inset:auto 12px 14px 12px!important;padding:52px 12px 12px!important}.featured-superstar .featured-lower-third h2{font-size:clamp(30px,10vw,48px)!important;white-space:normal!important}.featured-superstar .featured-lower-third p{font-size:14px!important}}
+
+
+/* 4.6 Match UI Overhaul — portrait-led broadcast stage */
+.match-ui-v2{overflow:hidden}
+.match-stage{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 84px minmax(0,1fr);gap:10px;align-items:stretch;margin:20px 0 24px;min-height:430px;background:radial-gradient(circle at 50% 35%,rgba(119,24,30,.3),transparent 45%),linear-gradient(180deg,#111218,#06070a);border:1px solid #4d3034;box-shadow:inset 0 0 60px #000}
+.match-competitor{position:relative;min-width:0;overflow:hidden;border-bottom:4px solid #ae252c;background:linear-gradient(180deg,rgba(95,16,22,.25),rgba(0,0,0,.92));display:flex;flex-direction:column;justify-content:flex-end}
+.match-competitor.opponent{border-bottom-color:#385b9b;background:linear-gradient(180deg,rgba(20,42,82,.28),rgba(0,0,0,.92))}
+.match-role{position:absolute;top:14px;z-index:3;padding:8px 12px;background:#bb2028;color:#fff;font-weight:900;font-size:10px;letter-spacing:2px}
+.match-competitor.player .match-role{left:14px}.match-competitor.opponent .match-role{right:14px;background:#294b83}
+.match-stage-art{position:absolute;inset:0 0 76px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.match-stage-art .wrestler-art{display:block;width:auto!important;height:100%!important;max-width:none!important;object-fit:contain;object-position:center bottom;transform:translate(var(--custom-x,0),var(--custom-y,0)) scale(var(--custom-scale,1));transform-origin:center bottom;filter:drop-shadow(0 12px 14px rgba(0,0,0,.85))}
+.match-nameplate{position:relative;z-index:4;padding:18px 18px 16px;background:linear-gradient(0deg,#030303 65%,transparent);text-shadow:0 2px 4px #000}
+.match-nameplate small{color:#ffd15b;font-weight:900;letter-spacing:2px}.match-nameplate h2{font:italic clamp(27px,4vw,46px) Impact;margin:3px 0;text-transform:uppercase}.match-nameplate span{color:#aeb1b8;font-size:11px;font-weight:800;letter-spacing:.7px}
+.match-stage-centre{position:relative;z-index:5;align-self:center;text-align:center}.match-stage-centre span{display:block;color:#ff5259;font-size:9px;font-weight:900;letter-spacing:3px}.match-stage-centre b{display:block;font:italic 52px Impact;color:#fff;text-shadow:4px 4px #8b1118}.match-stage-centre small{display:block;color:#ffd15b;font-size:9px;font-weight:900;letter-spacing:1px}
+.match-partner{position:absolute;z-index:6;bottom:86px;display:flex;align-items:center;gap:8px;width:min(175px,72%);padding:6px;background:rgba(4,5,8,.88);border:1px solid #5a3338}.match-partner.player{left:10px}.match-partner.opponent{right:10px;flex-direction:row-reverse;text-align:right;border-color:#334e79}.match-partner img{position:relative!important;width:48px!important;height:48px!important;object-fit:contain!important;transform:none!important;background:#120b0d}.match-partner small,.match-partner b,.match-partner span{display:block}.match-partner small{font-size:7px;letter-spacing:1.4px;color:#ffd15b}.match-partner b{font-size:10px;text-transform:uppercase}.match-partner span{font-size:8px;color:#888}
+.commentary-deck{margin-top:6px;border:1px solid #303841;background:#080a0e}.commentary-deck-head{display:flex;align-items:end;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #303841;background:linear-gradient(90deg,#191015,#0b1018)}.commentary-deck-head small{color:#ff5c63;font-weight:900;letter-spacing:2px}.commentary-deck-head h2{font:italic 28px Impact;margin:2px 0}.commentary-deck-head>div:last-child{display:flex;gap:18px;color:#888;font-size:10px;font-weight:900}.match-ui-v2 .broadcast-feed{min-height:260px;max-height:390px;border:0;box-shadow:inset 0 0 45px #000;padding:18px 22px}.match-ui-v2 .broadcast-status{display:none}
+@media(max-width:760px){
+ .match-stage{grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr);min-height:370px;gap:2px;margin-top:14px}
+ .match-stage-centre b{font-size:30px;text-shadow:2px 2px #8b1118}.match-stage-centre small{display:none}
+ .match-role{top:8px;padding:6px 7px;font-size:7px;letter-spacing:1px}.match-competitor.player .match-role{left:6px}.match-competitor.opponent .match-role{right:6px}
+ .match-stage-art{inset:24px 0 92px}.match-stage-art .wrestler-art{height:100%!important}
+ .match-nameplate{padding:13px 8px 11px}.match-nameplate h2{font-size:22px;line-height:.95}.match-nameplate small{font-size:8px;letter-spacing:1px}.match-nameplate span{font-size:8px}
+ .match-partner{bottom:75px;width:calc(100% - 12px);padding:4px;gap:4px}.match-partner.player{left:6px}.match-partner.opponent{right:6px}.match-partner img{width:35px!important;height:35px!important}.match-partner span{display:none}.match-partner b{font-size:8px}
+ .commentary-deck-head{padding:11px 10px;align-items:center}.commentary-deck-head h2{font-size:22px}.commentary-deck-head>div:last-child{display:block;text-align:right}.commentary-deck-head>div:last-child span{display:block;margin:2px 0}
+ .match-ui-v2 .broadcast-feed{min-height:300px;max-height:430px;padding:10px;font-size:12px}
+}
+@media(max-width:430px){.match-stage{min-height:340px}.match-stage-art{inset:30px 0 88px}.match-nameplate h2{font-size:19px}.match-partner{display:none}}

@@ -14,7 +14,7 @@ Recommended format: **WebP**, portrait orientation, consistent dimensions across
 | Titan | `titan.webp` |
 | Cameron Tremblay | `cameron-tremblay.webp` |
 | Hollowman | `hollowman.webp` |
-| Damian Blackwell | `damian-blackwell.webp` |
+| Damian Black | `damian-black.webp` |
 | Elias Crowe | `elias-crowe.webp` |
 | El Rey del Cielo | `el-rey-del-cielo.webp` |
 | Max Justice | `max-justice.webp` |

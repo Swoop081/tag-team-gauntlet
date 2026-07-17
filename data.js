@@ -152,8 +152,8 @@ const WRESTLERS = [
     "finisher": "Last Breath"
   },
   {
-    "id": "damian-blackwell",
-    "name": "Damian Blackwell",
+    "id": "damian-black",
+    "name": "Damian Black",
     "title": "The Silent Assassin",
     "faction": "Royal Dynasty",
     "signature": "Kill Shot",
@@ -167,7 +167,7 @@ const WRESTLERS = [
     "versatility": 96,
     "loyalty": 84,
     "resilience": 96,
-    "image": "assets/damian-blackwell.webp",
+    "image": "assets/damian-black.webp",
     "finisher": "Kill Shot"
   },
   {
@@ -454,7 +454,7 @@ const RELATIONSHIPS = [
   },
   {
     "a": "victor-royale",
-    "b": "damian-blackwell",
+    "b": "damian-black",
     "teamName": "Crown & Dagger",
     "chemistry": 98,
     "type": "legendary"
@@ -516,7 +516,7 @@ const RELATIONSHIPS = [
     "type": "rivalry"
   },
   {
-    "a": "damian-blackwell",
+    "a": "damian-black",
     "b": "marcus-king",
     "teamName": "Cold Blooded Rivals",
     "chemistry": 56,

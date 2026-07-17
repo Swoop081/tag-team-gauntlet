@@ -20,6 +20,7 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
@@ -41,6 +42,7 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.580, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.180, x: 0, y: 0, anchor: 'feet' }
     }
   },
@@ -62,6 +64,7 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.520, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.160, x: 0, y: 0, anchor: 'feet' }
     }
   },
@@ -83,6 +86,7 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
@@ -104,6 +108,7 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
@@ -125,6 +130,7 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
@@ -146,6 +152,7 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   },
@@ -167,6 +174,29 @@ window.TTG_IMAGE_MANAGER = {
       homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
+    }
+  }  ,
+  'damian-black': {
+    assets: {
+      full: 'assets/wrestlers/damian-black/full.png',
+      portrait: 'assets/wrestlers/damian-black/portrait.png',
+      victory: 'assets/wrestlers/damian-black/victory.png'
+    },
+    transforms: {
+      full: { scale: 1.50, x: 0, y: 0 },
+      portrait: { scale: 1.00, x: 0, y: 0 },
+      victory: { scale: 1.15, x: 0, y: 0 }
+    },
+    screens: {
+      quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      quickLanding: { scale: 0.760, x: 0, y: 96, anchor: 'centre' },
+      collection: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      homeFeature: { scale: 1.180, x: 0, y: 28, anchor: 'centre' },
+      profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
+      matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
+      matchStage: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
     }
   }
