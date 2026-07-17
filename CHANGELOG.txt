@@ -15,3 +15,9 @@ PRESERVED
 - First Gauntlet match remains guaranteed to be won.
 - Broadcast 2.0 personality decisions remain active for all 20 wrestlers.
 - Decision cards continue to hide internal labels, values and percentages.
+
+R4
+- Opening Gauntlet match now plays as a convincing player victory throughout the broadcast.
+- Momentum/control cannot visually collapse against the player in Match 1.
+- Opening decisions receive a hidden onboarding success boost.
+- Match score breakdown components now add up exactly to the displayed final scores.

@@ -251,9 +251,12 @@ function chooseStory(){
 function match(){
  tvSting(isSinglesMatch()?'FEATURED SINGLES MATCH':(S.exhibition?'TAG TEAM EXHIBITION':'TAG TEAM GAUNTLET'),isSinglesMatch()?'ONE-ON-ONE':'THE BELL IS NEXT',`${currentVenue()} · ${attendance()} fans`);
  clearStoryTimer();const isOpeningGauntlet=!S.exhibition&&S.streak===0;const q=(S.exhibition||isOpeningGauntlet)?null:walkout();if(q)return lose(`${q.name} walks away before the bell!`);
- const storyKey=chooseStory(),story=STORY_TYPES[storyKey],eventTarget=Math.round(rnd(story.min,story.max));
+ let storyKey=chooseStory();
+ if(isOpeningGauntlet&&['comeback','upset'].includes(storyKey))storyKey=one(['classic','war','tagClinic']);
+ const story=STORY_TYPES[storyKey],eventTarget=Math.round(rnd(story.min,story.max));
  const teamPower=score(S.team),oppPower=score(S.opp)+S.streak*.7;
  let hiddenEdge=(teamPower-oppPower)/7+story.bias+rnd(-8,8);
+ if(isOpeningGauntlet)hiddenEdge=Math.max(18,hiddenEdge+22);
  if(story.upset)hiddenEdge=teamPower>=oppPower?rnd(-10,-3):rnd(3,10);
  const startPlayer=Math.round(teamPower),startOpp=Math.round(oppPower);
  M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{},startPlayer,startOpp,performancePlayer:0,performanceOpp:0,decisionPlayer:0,decisionOpp:0,crowd:8,crowdPlayer:0,crowdOpp:0,finalPlayer:0,finalOpp:0,finishType:'',decisionSeen:[],currentDecision:null};
@@ -300,7 +303,7 @@ async function advanceStory(){
  scheduleNext(M.phaseIndex>=4?1150:900);
 }
 function eventWrestler(teamSide){return teamSide==='player'?S.team[M.activeP]:S.opp[M.activeO]}
-function shiftControl(amount,reason){const before=M.playerControl;M.playerControl=clamp(M.playerControl+amount,5,95);if(Math.abs(M.playerControl-before)>=9&&!M.turningPoint)M.turningPoint=reason}
+function shiftControl(amount,reason){const before=M.playerControl;M.playerControl=clamp(M.playerControl+amount,5,95);if(!S.exhibition&&S.streak===0)M.playerControl=Math.max(56,M.playerControl);if(Math.abs(M.playerControl-before)>=9&&!M.turningPoint)M.turningPoint=reason}
 function addMatchScore(side,amount,category='performance'){
  if(!M)return;
  const key=category==='decision'?(side==='player'?'decisionPlayer':'decisionOpp'):(side==='player'?'performancePlayer':'performanceOpp');
@@ -315,7 +318,7 @@ function projectedScore(side){
  return Math.round(start+perf+decision+crowdShare*.12);
 }
 function generateAutomaticBeat(){
- const phase=PHASES[M.phaseIndex].id;let playerActs=Math.random()<(M.playerControl/100),actor=eventWrestler(playerActs?'player':'opp'),victim=eventWrestler(playerActs?'opp':'player');
+ const phase=PHASES[M.phaseIndex].id;const openingGauntlet=!S.exhibition&&S.streak===0;let playerActs=Math.random()<(openingGauntlet?Math.max(.72,M.playerControl/100):(M.playerControl/100)),actor=eventWrestler(playerActs?'player':'opp'),victim=eventWrestler(playerActs?'opp':'player');
  let amount=rnd(3,8)*(playerActs?1:-1);
  if(M.story.comeback&&M.phaseIndex<2)amount=-Math.abs(amount);if(M.story.comeback&&M.phaseIndex>=3)amount=Math.abs(amount)*1.35;
  if(M.storyKey==='domination')amount=Math.abs(amount)*(M.story.bias>0?1:-1);
@@ -338,7 +341,7 @@ function createNearFall(playerSide){const side=playerSide?'player':'opp',attacke
 function attemptAIFinisher(playerSide){const attacker=eventWrestler(playerSide?'player':'opp'),defender=eventWrestler(playerSide?'opp':'player');const success=Math.random()<.62;M.finishers++;
  if(success){setSpotlight(attacker);addMatchScore(playerSide?'player':'opp',15);heatCrowd(12,playerSide?'player':'opp');addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else{addMatchScore(playerSide?'player':'opp',-8);addMatchScore(playerSide?'opp':'player',5);heatCrowd(7,playerSide?'opp':'player');addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});}
 }
-function storyChoice(token){if(!M||!M.waiting)return;const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;M.waiting=false;M.decisionsMade++;const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action,chance=decisionChance(p,o,id),success=Math.random()<chance;
+function storyChoice(token){if(!M||!M.waiting)return;const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;M.waiting=false;M.decisionsMade++;const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action;let chance=decisionChance(p,o,id);if(!S.exhibition&&S.streak===0)chance=Math.max(.82,chance);const success=Math.random()<chance;
  if(id==='tag'){const old=p;M.activeP=1-M.activeP;const incoming=S.team[M.activeP];if(success){M.playerMom=clamp(M.playerMom+14,0,100);shiftControl(9,`${choice.name} changed the match.`);M.tags++;addMatchScore('player',7,'decision');heatCrowd(8,'player');addBroadcast('choice',`${old.name} executes ${choice.name}—${incoming.name} enters with perfect timing!`,{highlight:true,weight:2})}else{shiftControl(-6,`${choice.name} was cut off.`);addMatchScore('player',-4,'decision');addBroadcast('counter',`${old.name} reaches for ${choice.name}, but ${o.name} cuts off the tag!`)}}
  else if(id==='finisher'){M.finishers++;M.playerMom=clamp(M.playerMom-42,0,100);if(success){setSpotlight(p,'THE PERSONAL GAMBLE PAYS OFF!');addMatchScore('player',15);addMatchScore('player',9,'decision');heatCrowd(14,'player');shiftControl(15,`${choice.name} landed.`);addBroadcast('finisher',`${choiceCommentary(choice,p,o,true)} ${p.finisher} connects!`,{highlight:true,weight:3.2});if(M.phaseIndex>=4&&Math.random()<.48)M.eventIndex=Math.max(M.eventIndex,M.eventTarget-1);else createNearFall(true)}else{addMatchScore('player',-10);addMatchScore('player',-6,'decision');addMatchScore('opp',5);heatCrowd(7,'opp');shiftControl(-14,`${choice.name} was countered.`);addBroadcast('counter',choiceCommentary(choice,p,o,false),{highlight:true,weight:2.5})}}
  else if(success){const swing={risk:13,comeback:18,survive:5,pressure:8,control:8}[id]||7,score={risk:8,comeback:8,survive:4,pressure:6,control:6}[id]||5,crowd={risk:12,comeback:11,survive:4,pressure:7,control:6}[id]||6;addMatchScore('player',score,'decision');addMatchScore('player',Math.max(2,score-3));heatCrowd(crowd,'player');shiftControl(swing,`${choice.name} became the turning point.`);M.playerMom=clamp(M.playerMom+(id==='comeback'?22:11),0,100);addBroadcast('choice',choiceCommentary(choice,p,o,true),{highlight:true,weight:id==='risk'||id==='comeback'?2.5:1.8})}
@@ -347,12 +350,19 @@ function storyChoice(token){if(!M||!M.waiting)return;const choice=M.currentDecis
 }
 function resolveFinish(){
  if(M.ended)return;M.phaseIndex=5;M.phaseLabel='Finish';addBroadcast('phase','FINISH');
- const crowdBonusPlayer=M.crowdPlayer*.12,crowdBonusOpp=M.crowdOpp*.12;
- M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer+rnd(-3,3));
- M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+crowdBonusOpp+rnd(-3,3));
- const gap=Math.abs(M.finalPlayer-M.finalOpp);M.finishType=gap>=22?'Decisive Finish':gap>=10?'Competitive Finish':'Photo Finish';
+ const crowdBonusPlayer=Math.round(M.crowdPlayer*.12),crowdBonusOpp=Math.round(M.crowdOpp*.12);
+ const finishVariancePlayer=Math.round(rnd(-3,3)),finishVarianceOpp=Math.round(rnd(-3,3));
+ M.performancePlayer+=finishVariancePlayer;M.performanceOpp+=finishVarianceOpp;
+ M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer);
+ M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+crowdBonusOpp);
  const openingGauntletMatch=!S.exhibition&&S.streak===0;
- if(openingGauntletMatch&&M.finalPlayer<=M.finalOpp){M.finalPlayer=M.finalOpp+Math.max(8,Math.round(rnd(8,14)));M.finishType='Competitive Finish';addBroadcast('commentary','The opening gauntlet match becomes the perfect introduction—and your team finds a way through!');}
+ if(openingGauntletMatch&&M.finalPlayer<=M.finalOpp){
+   const winningMargin=Math.max(8,Math.round(rnd(8,14)));
+   M.performancePlayer+=(M.finalOpp+winningMargin)-M.finalPlayer;
+   M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer);
+   addBroadcast('commentary','The opening gauntlet match becomes the perfect introduction—and your team finds a way through!');
+ }
+ const gap=Math.abs(M.finalPlayer-M.finalOpp);M.finishType=gap>=22?'Decisive Finish':gap>=10?'Competitive Finish':'Photo Finish';
  const win=openingGauntletMatch||M.finalPlayer>=M.finalOpp;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
  let winner=winnerTeam[M.activeP],loser=loserTeam[M.activeO];if(!win){winner=winnerTeam[M.activeO];loser=loserTeam[M.activeP]}
  if(Math.random()<.48)winner=one(winnerTeam);if(Math.random()<.48)loser=one(loserTeam);
