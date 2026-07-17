@@ -375,12 +375,20 @@ function addBroadcast(type,text,meta={}){M.log.push({type,text,...meta});M.lates
 function scheduleNext(ms=1050){clearStoryTimer();storyTimer=setTimeout(()=>advanceStory(),ms)}
 function renderMatch(){
  const p=S.team[M.activeP],o=S.opp[M.activeO],control=clamp(M.playerControl,5,95);
- render(`<section class="panel story-panel">
+ const pPartner=!isSinglesMatch()&&S.team.length>1?S.team[1-M.activeP]:null;
+ const oPartner=!isSinglesMatch()&&S.opp.length>1?S.opp[1-M.activeO]:null;
+ const portraitPanel=(w,side,partner)=>`<article class="match-stage-card ${side}">
+   <div class="match-stage-art">${imageWithFallback(w,'portrait','art-portrait','matchStage')}</div>
+   <div class="match-stage-name"><small>${isSinglesMatch()?(side==='player'?'YOUR WRESTLER':'OPPONENT'):'LEGAL WRESTLER'}</small><h2>${w.name}</h2><span>${w.title}</span></div>
+   ${partner?`<div class="match-stage-partner"><b>PARTNER</b><span>${partner.name}</span></div>`:''}
+ </article>`;
+ render(`<section class="panel story-panel match-ui-v2">
  <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div>
- <div class="control-strip"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL ${Math.round(control)}–${Math.round(100-control)}</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
+ <div class="match-stage">${portraitPanel(p,'player',pPartner)}<div class="match-stage-vs">VS</div>${portraitPanel(o,'opponent',oPartner)}</div>
+ <div class="control-strip match-control"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL ${Math.round(control)}–${Math.round(100-control)}</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
  <div class="scoreboard-strip"><div><small>MATCH SCORE</small><strong>${projectedScore('player')}</strong></div><div class="crowd-meter"><span>🔥 CROWD ${Math.round(M.crowd)}%</span><i style="width:${M.crowd}%"></i></div><div class="right"><small>MATCH SCORE</small><strong>${projectedScore('opp')}</strong></div></div>
  <div class="decision-layer">${M.waiting?decisionHTML():''}</div>
- <div class="broadcast-layout"><div class="broadcast-card">${card(p,'',true)}<small>${isSinglesMatch()?'YOUR WRESTLER':'LEGAL WRESTLER'}</small></div><div id="broadcastFeed" class="broadcast-feed">${M.log.slice(-10).map((e,i)=>`<div class="broadcast-line ${e.type} ${i===M.log.slice(-10).length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div><div class="broadcast-card">${card(o,'',true)}<small>${isSinglesMatch()?'OPPONENT':'LEGAL WRESTLER'}</small></div></div>
+ <div id="broadcastFeed" class="broadcast-feed match-commentary-feed">${M.log.slice(-12).map((e,i)=>`<div class="broadcast-line ${e.type} ${i===M.log.slice(-12).length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div>
  ${M.spotlight?`<div class="signature-spotlight"><small>★ SIGNATURE MOVE ★</small><h2>${M.spotlight.move}</h2><h3>${M.spotlight.name}</h3><p>${M.spotlight.tagline}</p></div>`:''}<div class="broadcast-status"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>
  ${M.waiting?'':`<div class="auto-play"><span class="live-dot"></span> MATCH IN PROGRESS</div>`}
  </section>`);

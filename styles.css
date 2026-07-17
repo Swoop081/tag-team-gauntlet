@@ -430,3 +430,37 @@ html,body,#app{overflow-anchor:none}
   .card.character-tile > .wrestler-art.framework-custom{height:320px !important;max-height:320px !important}
   .card.character-tile.compact > .wrestler-art.framework-custom{height:132px !important;max-height:132px !important}
 }
+
+/* Version 4.8 — Match Stage UI test */
+.match-ui-v2 .broadcast-top{margin-bottom:14px}
+.match-stage{display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);gap:10px;align-items:end;margin:14px 0 16px}
+.match-stage-card{position:relative;min-width:0;border:1px solid #573038;background:radial-gradient(circle at 50% 30%,rgba(122,30,39,.34),rgba(7,8,12,.98) 72%);overflow:hidden}
+.match-stage-card.opponent{border-color:#34435f;background:radial-gradient(circle at 50% 30%,rgba(28,50,91,.35),rgba(7,8,12,.98) 72%)}
+.match-stage-art{position:relative;height:clamp(250px,43vw,430px);overflow:hidden}
+.match-stage-art>.wrestler-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;padding:0!important;object-fit:contain!important;object-position:center bottom!important;transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(var(--custom-scale,1))!important;transform-origin:center bottom!important}
+.match-stage-name{position:relative;z-index:2;min-height:92px;padding:12px 12px 14px;background:linear-gradient(180deg,rgba(5,6,9,.55),#050609 28%);border-top:1px solid rgba(255,255,255,.08)}
+.match-stage-name small{display:block;color:#ffd15b;font-size:10px;font-weight:900;letter-spacing:2px}
+.match-stage-card.opponent .match-stage-name small{color:#8eb8ff}
+.match-stage-name h2{font:italic clamp(22px,4vw,34px) Impact;margin:5px 0 2px;text-transform:uppercase;line-height:.95}
+.match-stage-name span{color:#aaa;font-size:11px;letter-spacing:1px}
+.match-stage-partner{position:absolute;z-index:4;top:10px;left:10px;max-width:calc(100% - 20px);padding:6px 8px;border:1px solid rgba(255,209,91,.55);background:rgba(5,6,9,.82);font-size:9px;line-height:1.2}
+.match-stage-card.opponent .match-stage-partner{left:auto;right:10px;border-color:rgba(120,164,240,.55);text-align:right}
+.match-stage-partner b{display:block;color:#ffd15b;letter-spacing:1px}.match-stage-card.opponent .match-stage-partner b{color:#8eb8ff}.match-stage-partner span{color:#ddd}
+.match-stage-vs{align-self:center;text-align:center;font:italic 24px Impact;color:#777}
+.match-ui-v2 .match-control{margin:12px 0}
+.match-ui-v2 .scoreboard-strip{margin-bottom:14px}
+.match-commentary-feed{width:100%;min-height:330px;max-height:520px;margin-top:14px}
+.match-ui-v2 .broadcast-status{margin:9px 0}
+@media(max-width:760px){
+ .match-ui-v2{padding:14px 10px}
+ .match-stage{grid-template-columns:minmax(0,1fr) 26px minmax(0,1fr);gap:5px;margin:10px 0 12px}
+ .match-stage-art{height:clamp(220px,58vw,340px)}
+ .match-stage-name{min-height:78px;padding:9px 7px 10px}
+ .match-stage-name h2{font-size:clamp(17px,5.2vw,24px)}
+ .match-stage-name small{font-size:8px;letter-spacing:1px}
+ .match-stage-name span{font-size:9px}
+ .match-stage-vs{font-size:17px}
+ .match-stage-partner{top:6px;left:6px;padding:4px 5px;font-size:7px}.match-stage-card.opponent .match-stage-partner{right:6px}
+ .match-ui-v2 .control-strip{grid-template-columns:1fr;gap:5px}
+ .match-commentary-feed{min-height:360px;max-height:520px;padding:12px;font-size:12px}
+}
