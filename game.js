@@ -65,15 +65,15 @@ function attendance(){if(!S.attendance)S.attendance=Math.floor(rnd(11800,19800))
 function teamName(team){return team.length>1?(rel(...team)?.teamName||team.map(x=>x.name).join(' & ')):team[0].name}
 function isSinglesMatch(){return S.team.length===1&&S.opp.length===1}
 function isTagMatch(){return S.team.length===2&&S.opp.length===2}
-// IMAGE FRAMEWORK 1.4 — cache-safe loading and explicit per-wrestler sizing
+// IMAGE FRAMEWORK 1.6 — corrected near-native per-wrestler sizing
 const WRESTLER_IMAGE_SETS={
  'jack-mercer':{full:'assets/wrestlers/jack-mercer/full.png',portrait:'assets/wrestlers/jack-mercer/portrait.png',victory:'assets/wrestlers/jack-mercer/victory.png'},
  'jett-valentine':{full:'assets/wrestlers/jett-valentine/full.png',portrait:'assets/wrestlers/jett-valentine/portrait.png',victory:'assets/wrestlers/jett-valentine/victory.png'}
 };
 
 const WRESTLER_IMAGE_TRANSFORMS={
- 'jack-mercer':{scale:1.55,y:0},
- 'jett-valentine':{scale:1.65,y:0}
+ 'jack-mercer':{scale:1.08,y:0},
+ 'jett-valentine':{scale:1.12,y:0}
 };
 function legacyWrestlerImage(w){return `assets/${w.id}.png`}
 function wrestlerImageCandidates(w,type='full'){

@@ -1,11 +1,9 @@
-Tag Team Gauntlet — Image Framework 1.5 targeted size adjustment
+TAG TEAM GAUNTLET — IMAGE FRAMEWORK 1.6 PATCH
 
-Replace only these files in the repository root:
-- game.js
-- index.html
+Replace only game.js and index.html in the repository root.
 
-Changes:
-- Jack Mercer scale reduced from 2.05 to 1.55.
-- Jett Valentine scale reduced from 2.25 to 1.65.
-- Original wrestler image loading remains unchanged.
-- index.html cache version updated so GitHub Pages/Safari loads the new settings.
+Corrected scale values:
+- Jack Mercer: 1.08x
+- Jett Valentine: 1.12x
+
+Legacy wrestler image loading remains unchanged.
