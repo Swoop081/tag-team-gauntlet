@@ -85,5 +85,18 @@ window.TTG_IMAGE_MANAGER = {
       portrait: { scale: 1.00, x: 0, y: 0 },
       victory: { scale: 1.15, x: 0, y: 0 }
     }
+  },
+  'hollowman': {
+    assets: {
+      full: 'assets/wrestlers/hollowman/full.png',
+      portrait: 'assets/wrestlers/hollowman/portrait.png',
+      victory: 'assets/wrestlers/hollowman/victory.png'
+    },
+    transforms: {
+      full: { scale: 1.50, x: 0, y: 0 },
+      portrait: { scale: 1.00, x: 0, y: 0 },
+      victory: { scale: 1.15, x: 0, y: 0 }
+    }
   }
+
 };

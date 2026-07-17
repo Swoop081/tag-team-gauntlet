@@ -253,3 +253,76 @@ html,body,#app{overflow-anchor:none}
 /* Version 4.0 — independent artwork transforms and roster status */
 .roster-status{max-width:1080px;margin:20px auto}.roster-status>p{max-width:760px;margin:0 auto 22px;color:#bfc1c8;text-align:center}.roster-status-grid{display:grid;gap:8px}.roster-status-row{display:grid;grid-template-columns:minmax(220px,1.4fr) 110px repeat(3,minmax(90px,.7fr));gap:10px;align-items:center;padding:12px 14px;border:1px solid #30323a;background:#101116}.roster-status-row b,.roster-status-row small{display:block}.roster-status-row small{color:#92959d;margin-top:3px}.status-pill{display:inline-flex;justify-content:center;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:1px}.status-pill.configured{background:#183c28;color:#7ff0aa}.status-pill.legacy{background:#34343b;color:#c4c5ca}.asset-ok{color:#7ff0aa}.asset-bad{color:#ff737a}.image-dev-panel select{padding:7px;background:#11131a;color:#fff;border:1px solid #4b4e58}
 @media(max-width:760px){.roster-status-row{grid-template-columns:1fr 90px}.roster-status-row [data-check]{font-size:11px}.roster-status-row [data-check="portrait"],.roster-status-row [data-check="victory"]{display:none}}
+
+
+/* 4.1 Layout Stabilisation — between-match screens and decision overlays */
+.decision-layer{
+  background:rgba(2,3,6,.84)!important;
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
+}
+.decision-layer .story-decision{
+  isolation:isolate;
+  background:linear-gradient(180deg,rgba(30,23,11,.99),rgba(7,8,10,.99))!important;
+}
+.television-card .top-actions{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:12}
+.cinematic-versus{align-items:center}
+.hero-portrait.image-framework.has-render{
+  min-height:0;
+  aspect-ratio:4/5;
+  position:relative;
+}
+.hero-portrait.image-framework.has-render>.wrestler-art.art-portrait{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(var(--custom-scale,1))!important;
+  transform-origin:center center!important;
+}
+.hero-portrait.image-framework.has-render>div{z-index:3}
+.hero-team{align-items:start}
+.hero-team>h2,.hero-team>p{position:relative;z-index:4}
+.winning-team-art .hero-portrait.image-framework.has-render{
+  aspect-ratio:3/4;
+}
+.winning-team-art .hero-portrait.image-framework.has-render>.wrestler-art.art-victory{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+}
+@media(max-width:760px){
+  .television-card{padding:14px 10px!important;overflow:hidden}
+  .television-card .top-actions .btn{flex:1 1 190px;margin:0}
+  .cinematic-versus{gap:6px}
+  .hero-portrait.image-framework.has-render{aspect-ratio:3/4;min-height:210px}
+  .hero-portrait.image-framework.has-render>div{padding:38px 5px 8px}
+  .hero-portrait.image-framework.has-render h3{font-size:clamp(13px,4vw,18px)}
+}
+@media(max-width:560px){
+  .cinematic-versus,.singles-cinematic{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    width:100%!important;
+  }
+  .cinematic-versus>.giant-vs{
+    width:64px;height:64px;display:grid;place-items:center;
+    margin:0 auto;font-size:38px;line-height:1;
+  }
+  .hero-team{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .singles-cinematic .hero-team{display:block;width:min(310px,100%);margin:auto}
+  .singles-cinematic .hero-portrait{max-width:none;width:100%}
+  .hero-portrait.image-framework.has-render{min-height:250px}
+  .hero-team>h2{font-size:20px}
+  .entrance-preview,.broadcast-desk-preview{padding:12px;margin:14px 0}
+  .entrance-preview p,.broadcast-desk-preview p{font-size:13px}
+}
