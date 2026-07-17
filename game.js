@@ -137,7 +137,7 @@ function playNowFromCollection(id){
 }
 function quickMatchMenu(){
  const w=one(WRESTLERS);
- render(`<section class="framework-screen quick-framework">${shellBack()}<div class="framework-art image-framework-profile">${imageWithFallback(w,'full','art-full')}</div><div class="framework-copy"><div class="tv-kicker">EXHIBITION</div><h1>QUICK MATCH</h1><p>Create a dream match using any wrestlers from the Founding Twenty.</p><div class="framework-options"><button onclick="beginQuickSingles()"><b>SINGLES MATCH</b><small>Choose one wrestler and one opponent.</small><em>PLAYABLE</em></button><button onclick="beginQuickTag()"><b>TAG TEAM MATCH</b><small>Choose two wrestlers and an opposing team.</small><em>NEW · PLAYABLE</em></button></div></div></section>`)
+ render(`<section class="framework-screen quick-framework">${shellBack()}<div class="framework-art image-framework-profile">${imageWithFallback(w,'full','art-full','quickLanding')}</div><div class="framework-copy"><div class="tv-kicker">EXHIBITION</div><h1>QUICK MATCH</h1><p>Create a dream match using any wrestlers from the Founding Twenty.</p><div class="framework-options"><button onclick="beginQuickSingles()"><b>SINGLES MATCH</b><small>Choose one wrestler and one opponent.</small><em>PLAYABLE</em></button><button onclick="beginQuickTag()"><b>TAG TEAM MATCH</b><small>Choose two wrestlers and an opposing team.</small><em>NEW · PLAYABLE</em></button></div></div></section>`)
 }
 function beginQuickSingles(){
  clearStoryTimer();M=null;overlay.innerHTML='';
@@ -145,7 +145,7 @@ function beginQuickSingles(){
  quickSinglesPlayerSelect();
 }
 function quickSinglesPlayerSelect(){
- render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="quickMatchMenu()">← QUICK MATCH</button></div><div class="tv-kicker">QUICK MATCH · SINGLES</div><h1 class="title">Choose Your Wrestler</h1><p class="sub">Select the wrestler you want to control.</p><div class="collection-grid">${WRESTLERS.map(w=>`<button class="collection-tile" onclick="selectQuickPlayer('${w.id}')">${imageWithFallback(w,'full','art-full')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
+ render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="quickMatchMenu()">← QUICK MATCH</button></div><div class="tv-kicker">QUICK MATCH · SINGLES</div><h1 class="title">Choose Your Wrestler</h1><p class="sub">Select the wrestler you want to control.</p><div class="collection-grid">${WRESTLERS.map(w=>`<button class="collection-tile" onclick="selectQuickPlayer('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
 }
 function selectQuickPlayer(id){
  const w=WRESTLERS.find(x=>x.id===id);if(!w)return quickSinglesPlayerSelect();S.quickPlayer=w;S.quickSourceProfile=null;quickSinglesOpponentSelect();
@@ -155,7 +155,7 @@ function quickSinglesOpponentSelect(){
  const opponents=WRESTLERS.filter(w=>w.id!==player.id);
  const backAction=S.quickSourceProfile?`collectionProfile('${S.quickSourceProfile}')`:'quickSinglesPlayerSelect()';
  const backLabel=S.quickSourceProfile?'PROFILE':'CHANGE WRESTLER';
- render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="${backAction}">← ${backLabel}</button></div><div class="tv-kicker">QUICK MATCH · SINGLES</div><h1 class="title">Choose Your Opponent</h1><p class="sub">${player.name} is ready. Select the opposition.</p><div class="collection-grid">${opponents.map(w=>`<button class="collection-tile" onclick="selectQuickOpponent('${w.id}')">${imageWithFallback(w,'full','art-full')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
+ render(`<section class="panel"><div class="actions top-actions"><button class="btn secondary" onclick="${backAction}">← ${backLabel}</button></div><div class="tv-kicker">QUICK MATCH · SINGLES</div><h1 class="title">Choose Your Opponent</h1><p class="sub">${player.name} is ready. Select the opposition.</p><div class="collection-grid">${opponents.map(w=>`<button class="collection-tile" onclick="selectQuickOpponent('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)
 }
 function selectQuickOpponent(id){
  const opponent=WRESTLERS.find(x=>x.id===id),player=S.quickPlayer;if(!player||!opponent||player.id===opponent.id)return quickSinglesOpponentSelect();

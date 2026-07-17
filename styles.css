@@ -345,3 +345,13 @@ html,body,#app{overflow-anchor:none}
     transform:translate(calc(-50% + var(--custom-x,0px)),calc(var(--custom-y,0px) + 8px)) scale(var(--custom-scale,1))!important;
   }
 }
+
+
+/* 4.3 — Home, Quick Match landing and Collection containment fixes */
+.featured-superstar .live-chip{position:absolute!important;z-index:4}
+.featured-superstar .featured-lower-third{position:absolute!important;z-index:3;inset:auto 22px 24px 22px!important;width:auto!important;max-width:none!important}
+.featured-superstar > .wrestler-art.framework-custom[data-image-screen="homeFeature"]{object-position:center bottom!important}
+.framework-art.image-framework-profile{position:relative;overflow:hidden}
+.framework-art.image-framework-profile > .wrestler-art.framework-custom[data-image-screen="quickLanding"]{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;padding:0!important;object-fit:contain!important;object-position:center bottom!important;transform:translate(var(--custom-x,0px),var(--custom-y,0px)) scale(var(--custom-scale,1))!important;transform-origin:center center!important}
+.collection-tile > .wrestler-art.framework-custom[data-image-screen="collection"]{object-position:center bottom!important}
+@media(max-width:700px){.featured-superstar .featured-lower-third{inset:auto 12px 14px 12px!important;padding:52px 12px 12px!important}.featured-superstar .featured-lower-third h2{font-size:clamp(30px,10vw,48px)!important;white-space:normal!important}.featured-superstar .featured-lower-third p{font-size:14px!important}}

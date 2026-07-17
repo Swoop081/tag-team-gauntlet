@@ -15,8 +15,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.120, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
@@ -35,8 +36,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.580, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.454, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.180, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.580, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.180, x: 0, y: 0, anchor: 'feet' }
@@ -55,8 +57,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.520, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.398, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.150, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.520, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.160, x: 0, y: 0, anchor: 'feet' }
@@ -75,8 +78,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.120, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
@@ -95,8 +99,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.120, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
@@ -115,8 +120,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.120, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
@@ -135,8 +141,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.120, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
@@ -155,8 +162,9 @@ window.TTG_IMAGE_MANAGER = {
     },
     screens: {
       quickMatch: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
-      collection: { scale: 1.380, x: 0, y: 34, anchor: 'feet' },
-      homeFeature: { scale: 0.950, x: 0, y: 0, anchor: 'centre' },
+      quickLanding: { scale: 0.860, x: 0, y: 10, anchor: 'centre' },
+      collection: { scale: 1.120, x: 0, y: 18, anchor: 'feet' },
+      homeFeature: { scale: 0.720, x: 0, y: 18, anchor: 'centre' },
       profile: { scale: 1.500, x: 0, y: 0, anchor: 'feet' },
       matchPortrait: { scale: 1.000, x: 0, y: 0, anchor: 'centre' },
       victory: { scale: 1.150, x: 0, y: 0, anchor: 'feet' }
