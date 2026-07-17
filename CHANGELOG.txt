@@ -1,18 +1,23 @@
-TAG TEAM GAUNTLET 3.8.0 BUILD 2
+TAG TEAM GAUNTLET — 3.8.0 BUILD 1 R3
 
-REWARD SCREEN 2.0
-- Replaced empty reward boxes with four themed presentation panels.
-- Added unique iconography, flavour text, function descriptions and calls to action.
-- Added first-victory messaging and staggered reward reveal animation.
-- Improved mobile layout while preserving all existing reward mechanics.
+GAUNTLET OPENING FLOW
+- Partner selection now displays only the two available partner choices.
+- The already assigned starting wrestler is no longer repeated as a third card.
+- Selecting a partner transitions directly to the Your Team screen.
+- The Your Team screen presents both wrestlers first, with the single Find Opponent button beneath them.
 
-BROADCAST 2.1
-- Expanded opening, momentum, near-fall, tag and crowd commentary pools.
-- Added faction-specific broadcast flavour for all current factions.
-- Faction commentary can now appear naturally alongside wrestler personality moments.
-- Preserved hidden decision probabilities and the existing three-choice interface.
+FIRST-VICTORY FLOW
+- The first Gauntlet victory now goes directly to Choose Reward.
+- A Featured Singles Match can no longer interrupt the first reward.
+- Singles challenges resume normally after later Gauntlet victories.
 
-UNCHANGED
-- First Gauntlet match remains a convincing guaranteed victory.
-- The first reward appears before any optional Singles Challenge.
-- Existing statistics and progression remain intact.
+PRESERVED
+- First Gauntlet match remains guaranteed to be won.
+- Broadcast 2.0 personality decisions remain active for all 20 wrestlers.
+- Decision cards continue to hide internal labels, values and percentages.
+
+R4
+- Opening Gauntlet match now plays as a convincing player victory throughout the broadcast.
+- Momentum/control cannot visually collapse against the player in Match 1.
+- Opening decisions receive a hidden onboarding success boost.
+- Match score breakdown components now add up exactly to the displayed final scores.

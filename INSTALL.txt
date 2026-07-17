@@ -1,14 +1,8 @@
-TAG TEAM GAUNTLET 3.8.0 BUILD 2 — BROADCAST & REWARDS
+TAG TEAM GAUNTLET — 3.8.0 BUILD 1 R3
 
-Replace these files in the repository root:
+Replace these files in the existing working repository:
 - game.js
 - styles.css
 - index.html
 
-Keep these untouched:
-- .git
-- .nojekyll
-- assets/
-- data.js
-
-After uploading, hard refresh the GitHub Pages site. The cache version is 3.8.0b2.
+Keep .git, .nojekyll, assets/ and data.js unchanged.
