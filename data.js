@@ -58,7 +58,7 @@ const WRESTLERS = [
   },
   {
     "id": "revenant",
-    "name": "Revenant",
+    "name": "The Revenant",
     "title": "The Eternal",
     "faction": "Dark Dominion",
     "signature": "Blackout Piledriver",
