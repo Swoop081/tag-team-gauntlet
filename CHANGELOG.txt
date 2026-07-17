@@ -5,3 +5,9 @@ IMAGE FRAMEWORK 1.0
 - Portrait renders appear in compact match simulation panels.
 - Victory renders appear on match result screens.
 - All other wrestlers retain existing artwork through automatic fallback.
+
+Image Framework 1.2
+- Corrected legacy wrestler asset fallback path.
+- Restored all existing roster images.
+- Increased Jack Mercer and Jett Valentine visible-art scale to approximately double.
+- Applied transforms to Collection and Quick Match selection tiles.
