@@ -268,3 +268,22 @@ Object.assign(window.TTG_IMAGE_MANAGER,{
   'ryder-phoenix': { assets: { full: 'assets/wrestlers/ryder-phoenix/full.png', portrait: 'assets/wrestlers/ryder-phoenix/portrait.png', victory: 'assets/wrestlers/ryder-phoenix/victory.png' }, transforms: { full: {scale:0.97,x:0,y:0}, portrait: {scale:1.02,x:0,y:0}, victory: {scale:0.97,x:0,y:0} }, screens: { quickMatch:{scale:0.97,x:0,y:0,anchor:'feet'}, card:{scale:0.97,x:0,y:0,anchor:'feet'}, classicLanding:{scale:0.97,x:0,y:0,anchor:'feet'}, quickLanding:{scale:0.97,x:0,y:0,anchor:'feet'}, collection:{scale:0.97,x:0,y:0,anchor:'feet'}, homeFeature:{scale:0.97,x:0,y:0,anchor:'feet'}, profile:{scale:0.97,x:0,y:0,anchor:'feet'}, preMatch:{scale:1.02,x:0,y:0,anchor:'centre'}, matchPortrait:{scale:1.02,x:0,y:0,anchor:'centre'}, matchStage:{scale:1.02,x:0,y:0,anchor:'centre'}, victory:{scale:0.97,x:0,y:0,anchor:'feet'} } },
   'sterling-sinclair': { assets: { full: 'assets/wrestlers/sterling-sinclair/full.png', portrait: 'assets/wrestlers/sterling-sinclair/portrait.png', victory: 'assets/wrestlers/sterling-sinclair/victory.png' }, transforms: { full: {scale:0.96,x:0,y:0}, portrait: {scale:1.0,x:0,y:0}, victory: {scale:0.96,x:0,y:0} }, screens: { quickMatch:{scale:0.96,x:0,y:0,anchor:'feet'}, card:{scale:0.96,x:0,y:0,anchor:'feet'}, classicLanding:{scale:0.96,x:0,y:0,anchor:'feet'}, quickLanding:{scale:0.96,x:0,y:0,anchor:'feet'}, collection:{scale:0.96,x:0,y:0,anchor:'feet'}, homeFeature:{scale:0.96,x:0,y:0,anchor:'feet'}, profile:{scale:0.96,x:0,y:0,anchor:'feet'}, preMatch:{scale:1.0,x:0,y:0,anchor:'centre'}, matchPortrait:{scale:1.0,x:0,y:0,anchor:'centre'}, matchStage:{scale:1.0,x:0,y:0,anchor:'centre'}, victory:{scale:0.96,x:0,y:0,anchor:'feet'} } }
 });
+
+
+/* Version 5.2.2 — Star Presentation screen presets. */
+(function(manager){
+  const narrow=new Set(['jett-valentine','nightwatch','titan','mason-marks','damian-black','el-rey-del-cielo','mateo-vega','ryder-phoenix']);
+  const veryNarrow=new Set(['nightwatch','damian-black','el-rey-del-cielo','ryder-phoenix']);
+  const broad=new Set(['sterling-sinclair','hollowman','primal','elias-crowe']);
+  Object.keys(manager).forEach(id=>{const c=manager[id];if(!c||!c.screens)return;
+    const selectScale=veryNarrow.has(id)?1.72:narrow.has(id)?1.62:(broad.has(id)?1.48:1.54);
+    c.screens.quickMatch={scale:selectScale,x:0,y:0,anchor:'feet'};
+    c.screens.collection={scale:selectScale,x:0,y:0,anchor:'feet'};
+    c.screens.partner={scale:veryNarrow.has(id)?1.82:narrow.has(id)?1.72:(broad.has(id)?1.54:1.64),x:0,y:0,anchor:'head'};
+    c.screens.profile={scale:veryNarrow.has(id)?1.56:narrow.has(id)?1.50:(broad.has(id)?1.38:1.44),x:0,y:0,anchor:'feet'};
+    c.screens.homeFeature={scale:veryNarrow.has(id)?1.72:narrow.has(id)?1.62:(broad.has(id)?1.48:1.55),x:0,y:0,anchor:'head'};
+    c.screens.quickLanding={scale:veryNarrow.has(id)?1.78:narrow.has(id)?1.68:(broad.has(id)?1.52:1.60),x:0,y:0,anchor:'head'};
+    c.screens.classicLanding={scale:veryNarrow.has(id)?1.74:narrow.has(id)?1.66:(broad.has(id)?1.50:1.58),x:0,y:0,anchor:'head'};
+    c.screens.resultVictory={scale:veryNarrow.has(id)?1.86:narrow.has(id)?1.76:(broad.has(id)?1.60:1.68),x:0,y:0,anchor:'head'};
+  });
+})(window.TTG_IMAGE_MANAGER);
