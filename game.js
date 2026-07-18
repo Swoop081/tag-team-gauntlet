@@ -13,13 +13,13 @@ const SUPPORT_CAST={
  'johnny-cannon':{id:'johnny-cannon',name:'Johnny Cannon',role:'Colour Commentator',group:'Broadcast Team'},
  'kate-morgan':{id:'kate-morgan',name:'Kate Morgan',role:'Backstage Interviewer',group:'Broadcast Team'},
  'scarlett-storm':{id:'scarlett-storm',name:'Scarlett Storm',role:'The Blonde Bombshell',group:'Managers'},
- 'preston-cole':{id:'preston-cole',name:'Preston Cole',role:'The Coach',group:'Managers'},
+ 'preston-cole':{id:'preston-cole',name:'Preston Cole',role:'The Strategist',group:'Managers'},
  'graham-archer':{id:'graham-archer',name:'Graham Archer',role:'The Mastermind',group:'Managers'},
  'tommy-sparks':{id:'tommy-sparks',name:'Tommy Sparks',role:'The Megaphone',group:'Managers'}
 };
 const MANAGERS=[
  {id:'scarlett-storm',name:'Scarlett Storm',title:'The Blonde Bombshell',initials:'SS',passive:2,ability:'Championship Confidence',description:'Adds +2 to your team score and strengthens positive interview outcomes.',voice:'You have earned this moment. Now finish the job.'},
- {id:'preston-cole',name:'Preston Cole',title:'The Coach',initials:'PC',passive:3,ability:'Prepared Game Plan',description:'Adds +3 to your team score through disciplined preparation.',voice:'Stay focused. Stick to the plan.'},
+ {id:'preston-cole',name:'Preston Cole',title:'The Strategist',initials:'PC',passive:3,ability:'Ringside Game Plan',description:'Adds +3 through scouting, match psychology and precise ringside direction.',voice:'I know exactly how they can be beaten.'},
  {id:'graham-archer',name:'Graham Archer',title:'The Mastermind',initials:'GA',passive:3,ability:'Psychological Edge',description:'Adds +3 to your team score through scouting and perfectly timed distractions.',voice:'Leave the distractions to me.'},
  {id:'tommy-sparks',name:'Tommy Sparks',title:'The Megaphone',initials:'TS',passive:2,ability:'Crowd Ignition',description:'Adds +2 to your team score by building momentum and crowd energy.',voice:'COME ON! SHOW THEM WHAT YOU HAVE GOT!'}
 ];
@@ -288,7 +288,7 @@ function factionIdentity(team){const factions=[...new Set(team.map(w=>w.faction)
 function commentatorLine(speaker,text){return `<span class="commentator-name">${speaker.name}:</span> ${text}`}
 function commentaryDesk(){return `<section class="commentary-desk"><div class="desk-commentator">${npcImage('mike-sullivan','portrait')}<span><small>PLAY-BY-PLAY</small><b>MIKE SULLIVAN</b></span></div><div class="desk-centre"><i>LIVE</i><strong>COMMENTARY DESK</strong></div><div class="desk-commentator right">${npcImage('johnny-cannon','portrait')}<span><small>COLOUR COMMENTARY</small><b>JOHNNY CANNON</b></span></div></section>`}
 function preMatchStatLine(){const h=loadHistory(),opp=S.opp.map(w=>h.opponents[w.id]||0),best=Math.max(0,...opp);if(best>1){const w=S.opp[opp.indexOf(best)];return `${w.name} has crossed paths with you ${best} times before.`}if(S.streak>=5)return `Your team enters with a ${S.streak}-match Gauntlet streak.`;if(S.streak===0)return 'A new run begins tonight, and the first statement matters.';return `Your team has survived ${S.streak} match${S.streak===1?'':'es'} in this run.`}
-function updateAtmosphereHistory(win){if(S.exhibition||!M)return;const h=loadHistory();h.matches++;S.opp.forEach(w=>h.opponents[w.id]=(h.opponents[w.id]||0)+1);S.team.forEach(w=>h.partners[w.id]=(h.partners[w.id]||0)+1);const tk=teamKey(S.team);h.teams[tk]=(h.teams[tk]||0)+1;S.opp.forEach(w=>h.factions[w.faction]=(h.factions[w.faction]||0)+1);saveHistory(h)}
+function updateAtmosphereHistory(win){if(S.exhibition||!M)return;const h=loadHistory();h.matches++;S.opp.forEach(w=>h.opponents[w.id]=(h.opponents[w.id]||0)+1);S.team.forEach(w=>h.partners[w.id]=(h.partners[w.id]||0)+1);const tk=teamKey(S.team);h.teams[tk]=(h.teams[tk]||0)+1;saveHistory(h)}
 function milestoneData(){const stats=loadStats(),items=[];if(S.streak===1)items.push(['FIRST VICTORY','The Gauntlet journey is officially underway.']);if(S.streak===5)items.push(['FIVE MATCH STREAK','Momentum is becoming a legacy.']);if(S.streak===10)items.push(['DOMINATING THE GAUNTLET','Ten straight victories have changed the entire broadcast.']);if(S.streak>0&&S.streak===stats.bestGauntlet)items.push(['NEW PERSONAL BEST',`A new standard has been set at ${S.streak} victories.`]);return items.slice(0,2)}
 function commentatorExchange(){const p=S.team[M.activeP],o=S.opp[M.activeO];const play=one([`${p.name} is trying to dictate the pace.`,`${o.name} is cutting off every escape route.`,`This match is changing with every exchange.`]);const colour=one([`${profileFor(p).archetype} instincts are taking over now.`,`${o.faction} never arrives without a plan.`,`The crowd can feel that one mistake will decide this.`]);return [commentatorLine(COMMENTATORS.play,play),commentatorLine(COMMENTATORS.colour,colour)]}
 
@@ -364,14 +364,14 @@ const MOVES={
 
 
 function profileFor(w){return PERSONALITY_PROFILES[w.id]||{archetype:'Wrestler',events:['shows a flash of individual style']}}
-function wrestlerIntro(w){return `${w.title.toUpperCase()} — ${w.name.toUpperCase()} · ${w.faction.toUpperCase()}`}
+function wrestlerIntro(w){return `${w.title.toUpperCase()} — ${w.name.toUpperCase()}`}
 function personalityEvent(w){return one(profileFor(w).events)}
 function setSpotlight(w,tagline){M.spotlight={name:w.name,title:w.title,move:w.finisher,tagline:tagline||one(['THIS COULD BE IT!','THE CROWD IS ON ITS FEET!','A DEFINING MOMENT!'])};}
 function clearSpotlight(){if(M)M.spotlight=null}
 
 function chooseStory(){
- const keys=['classic','war','comeback','sprint','domination','tagClinic','upset'];
- const weights=[28,24,13,10,8,11,6];let r=Math.random()*weights.reduce((a,b)=>a+b,0);
+ const keys=isSinglesMatch()?['classic','war','comeback','sprint','domination','upset']:['classic','war','comeback','sprint','domination','tagClinic','upset'];
+ const weights=isSinglesMatch()?[32,25,14,12,10,7]:[28,24,13,10,8,11,6];let r=Math.random()*weights.reduce((a,b)=>a+b,0);
  for(let i=0;i<keys.length;i++){r-=weights[i];if(r<=0)return keys[i]}return 'classic';
 }
 function match(){
@@ -382,15 +382,16 @@ function match(){
  const story=STORY_TYPES[storyKey],eventTarget=Math.round(rnd(story.min,story.max));
  const teamPower=score(S.team),oppPower=score(S.opp)+S.streak*.7;
  let hiddenEdge=(teamPower-oppPower)/7+story.bias+rnd(-8,8);
- if(isOpeningGauntlet)hiddenEdge=Math.max(18,hiddenEdge+22);
+ if(isOpeningGauntlet)hiddenEdge=Math.max(10,hiddenEdge+15);
  if(story.upset)hiddenEdge=teamPower>=oppPower?rnd(-10,-3):rnd(3,10);
  const startPlayer=Math.round(teamPower),startOpp=Math.round(oppPower);
  const carriedBonus=S.nextMatchBonus||0;S.nextMatchBonus=0;
- M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:12+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{},startPlayer,startOpp,performancePlayer:0,performanceOpp:0,decisionPlayer:0,decisionOpp:0,crowd:8,crowdPlayer:0,crowdOpp:0,finalPlayer:0,finalOpp:0,finishType:'',decisionSeen:[],currentDecision:null,carriedBonus};
+ M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:10+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{},startPlayer,startOpp,performancePlayer:0,performanceOpp:0,decisionPlayer:0,decisionOpp:0,crowd:0,crowdPlayer:0,crowdOpp:0,finalPlayer:0,finalOpp:0,finishType:'',decisionSeen:[],currentDecision:null,carriedBonus};
  addBroadcast('broadcast',`${isSinglesMatch()?'YOUR WRESTLER':'YOUR TEAM'}: ${S.team.map(wrestlerIntro).join(' / ')}`); addBroadcast('broadcast',`${isSinglesMatch()?'OPPONENT':'OPPOSITION'}: ${S.opp.map(wrestlerIntro).join(' / ')}`);
  addBroadcast('phase','OPENING BELL');
  addBroadcast('commentary',commentatorLine(COMMENTATORS.play,one(isSinglesMatch()?BROADCAST_COMMENTARY.openingSingles:BROADCAST_COMMENTARY.openingTag)));
  addBroadcast('commentary',commentatorLine(COMMENTATORS.colour,one(BROADCAST_COMMENTARY.openingTag)));
+ const rivalry=rivalryStatus();if(rivalry.active){addBroadcast('phase',`RIVALRY MATCH · MEETING ${rivalry.meetings+1}`);addBroadcast('commentary',commentatorLine(COMMENTATORS.play,`${rivalry.name} has become a familiar and dangerous rival. This one is personal.`));}
  if(S.manager){addBroadcast('manager',`${S.manager.name}: “${S.manager.voice}”`);addBroadcast('commentary',commentatorLine(COMMENTATORS.play,`${S.manager.name} is at ringside and could be a major factor tonight.`));}
  renderMatch();scheduleNext(900);
 }
@@ -440,7 +441,7 @@ async function advanceStory(){
  scheduleNext(M.phaseIndex>=4?1150:900);
 }
 function eventWrestler(teamSide){return teamSide==='player'?S.team[M.activeP]:S.opp[M.activeO]}
-function shiftControl(amount,reason){const before=M.playerControl;M.playerControl=clamp(M.playerControl+amount,5,95);if(!S.exhibition&&S.streak===0)M.playerControl=Math.max(56,M.playerControl);if(Math.abs(M.playerControl-before)>=9&&!M.turningPoint)M.turningPoint=reason}
+function shiftControl(amount,reason){const before=M.playerControl;M.playerControl=clamp(M.playerControl+amount,5,95);if(!S.exhibition&&S.streak===0)M.playerControl=Math.max(51,M.playerControl);if(Math.abs(M.playerControl-before)>=9&&!M.turningPoint)M.turningPoint=reason}
 function addMatchScore(side,amount,category='performance'){
  if(!M)return;
  const key=category==='decision'?(side==='player'?'decisionPlayer':'decisionOpp'):(side==='player'?'performancePlayer':'performanceOpp');
@@ -478,7 +479,7 @@ function createNearFall(playerSide){const side=playerSide?'player':'opp',attacke
 function attemptAIFinisher(playerSide){const attacker=eventWrestler(playerSide?'player':'opp'),defender=eventWrestler(playerSide?'opp':'player');const success=Math.random()<.62;M.finishers++;
  if(success){setSpotlight(attacker);addMatchScore(playerSide?'player':'opp',15);heatCrowd(12,playerSide?'player':'opp');addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else{addMatchScore(playerSide?'player':'opp',-8);addMatchScore(playerSide?'opp':'player',5);heatCrowd(7,playerSide?'opp':'player');addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});}
 }
-function storyChoice(token){if(!M||!M.waiting)return;const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;M.waiting=false;M.decisionsMade++;const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action;let chance=decisionChance(p,o,id);if(!S.exhibition&&S.streak===0)chance=Math.max(.82,chance);const success=Math.random()<chance;
+function storyChoice(token){if(!M||!M.waiting)return;const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;M.waiting=false;M.decisionsMade++;const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action;let chance=decisionChance(p,o,id);if(!S.exhibition&&S.streak===0)chance=Math.max(.72,chance);const success=Math.random()<chance;
  if(id==='tag'){const old=p;M.activeP=1-M.activeP;const incoming=S.team[M.activeP];if(success){M.playerMom=clamp(M.playerMom+14,0,100);shiftControl(9,`${choice.name} changed the match.`);M.tags++;addMatchScore('player',7,'decision');heatCrowd(8,'player');addBroadcast('choice',`${old.name} executes ${choice.name}—${incoming.name} enters with perfect timing!`,{highlight:true,weight:2})}else{shiftControl(-6,`${choice.name} was cut off.`);addMatchScore('player',-4,'decision');addBroadcast('counter',`${old.name} reaches for ${choice.name}, but ${o.name} cuts off the tag!`)}}
  else if(id==='finisher'){M.finishers++;M.playerMom=clamp(M.playerMom-42,0,100);if(success){setSpotlight(p,'THE PERSONAL GAMBLE PAYS OFF!');addMatchScore('player',15);addMatchScore('player',9,'decision');heatCrowd(14,'player');shiftControl(15,`${choice.name} landed.`);addBroadcast('finisher',`${choiceCommentary(choice,p,o,true)} ${p.finisher} connects!`,{highlight:true,weight:3.2});if(M.phaseIndex>=4&&Math.random()<.48)M.eventIndex=Math.max(M.eventIndex,M.eventTarget-1);else createNearFall(true)}else{addMatchScore('player',-10);addMatchScore('player',-6,'decision');addMatchScore('opp',5);heatCrowd(7,'opp');shiftControl(-14,`${choice.name} was countered.`);addBroadcast('counter',choiceCommentary(choice,p,o,false),{highlight:true,weight:2.5})}}
  else if(success){const swing={risk:13,comeback:18,survive:5,pressure:8,control:8}[id]||7,score={risk:8,comeback:8,survive:4,pressure:6,control:6}[id]||5,crowd={risk:12,comeback:11,survive:4,pressure:7,control:6}[id]||6;addMatchScore('player',score,'decision');addMatchScore('player',Math.max(2,score-3));heatCrowd(crowd,'player');shiftControl(swing,`${choice.name} became the turning point.`);M.playerMom=clamp(M.playerMom+(id==='comeback'?22:11),0,100);addBroadcast('choice',choiceCommentary(choice,p,o,true),{highlight:true,weight:id==='risk'||id==='comeback'?2.5:1.8})}
@@ -493,14 +494,8 @@ function resolveFinish(){
  M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer);
  M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+crowdBonusOpp);
  const openingGauntletMatch=!S.exhibition&&S.streak===0;
- if(openingGauntletMatch&&M.finalPlayer<=M.finalOpp){
-   const winningMargin=Math.max(8,Math.round(rnd(8,14)));
-   M.performancePlayer+=(M.finalOpp+winningMargin)-M.finalPlayer;
-   M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer);
-   addBroadcast('commentary','The opening gauntlet match becomes the perfect introduction—and your team finds a way through!');
- }
- const gap=Math.abs(M.finalPlayer-M.finalOpp);M.finishType=gap>=22?'Decisive Finish':gap>=10?'Competitive Finish':'Photo Finish';
- const win=openingGauntletMatch||M.finalPlayer>=M.finalOpp;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
+ const gap=Math.abs(M.finalPlayer-M.finalOpp);M.finishType=gap>=30?'Dominant Victory':gap>=16?'Decisive Finish':gap>=7?'Competitive Finish':'Photo Finish';
+ const win=M.finalPlayer>=M.finalOpp;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
  let winner=winnerTeam[M.activeP],loser=loserTeam[M.activeO];if(!win){winner=winnerTeam[M.activeO];loser=loserTeam[M.activeP]}
  if(Math.random()<.48)winner=one(winnerTeam);if(Math.random()<.48)loser=one(loserTeam);
  M.finishers++;setSpotlight(winner,M.finishType==='Photo Finish'?'A LAST-SECOND OPENING!':'THE MATCH ENDS HERE!');
@@ -536,7 +531,7 @@ function victoryCelebration(w){return VICTORY_CELEBRATIONS[w.id]||`${w.name} cel
 function showSummary(win){
  clearStoryTimer();
  const length=formatTime(M.matchSeconds);
- const rating=clamp(2.15+M.highlights.length*.16+M.nearFalls*.28+M.finishers*.2+M.tags*.08+M.eventTarget*.055,1,5);
+ const rating=clamp(1.65+M.highlights.length*.11+M.nearFalls*.20+M.finishers*.12+M.tags*.05+M.eventTarget*.045+M.crowd*.006,1,5);
  const ratingData=matchRatingData(rating),highlights=[...M.highlights].slice(-5),story=buildSummaryStory();
  recordCompletedMatch(win,rating);
  M.lossMessage=`${M.winner.name} wins after a ${rating.toFixed(1)}-star match.`;
@@ -544,7 +539,7 @@ function showSummary(win){
  const winningSide=win?S.team:S.opp;
  const resultArt=winningSide.map(w=>heroPortrait(w,'winner',characterImageConfig(w)?'victory':'full')).join('');
  render(`<section class="panel match-result summary-panel presentation-summary">
- <div class="actions top-actions">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST'}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
+ <div class="actions top-actions">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.tournament?'ADVANCE TO NEXT ROUND':(S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST')}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
  <div class="result-banner"><small>OFFICIAL RESULT</small><strong>${win?'YOU WON':'YOU LOST'}</strong></div><div class="winner-celebration television-winners result-${win?'win':'loss'}"><div class="confetti-field"></div><div class="winning-team-art ${isSinglesMatch()?'singles-winner':''}">${resultArt}</div><div class="winner-copy"><small>${isSinglesMatch()?'MATCH WINNER':'WINNING TEAM'}</small><h2>${teamName(winningSide)}</h2><p>${isSinglesMatch()?victoryCelebration(M.winner):'The winning duo stands tall after a hard-fought victory.'}</p></div></div><div class="result-broadcast-header below-winners"><small>${S.exhibition?'EXHIBITION RESULT':'GAUNTLET RESULT'} · ${isSinglesMatch()?'SINGLES':'TAG TEAM'}</small><h1>${finishHeadline()}</h1><p>${currentVenue()} · ${length}</p></div>${win&&S.manager?`<div class="manager-celebration">${npcImage(S.manager.id,'portrait')}<p><b>${S.manager.name}</b> celebrates at ringside: “${S.manager.voice}”</p></div>`:''}
  <div class="result-accolades"><article><small>MATCH RATING</small><span class="result-stars">${ratingData.stars}</span><strong>${rating.toFixed(1)} · ${ratingData.label}</strong></article><article><small>CROWD REACTION</small><b>${crowdReaction()}</b><strong>EXCITEMENT ${Math.round(M.crowd)}%</strong></article><article><small>FINISH</small><b>${M.finishType.toUpperCase()}</b><strong>${M.winner.name} · ${M.winner.finisher}</strong></article></div>
  <div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Starting Score</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Bonus</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div>
@@ -553,6 +548,7 @@ function showSummary(win){
 }
 
 function postMatchFlow(){
+ if(S.tournament)return tournamentAdvance();
  if(S.specialSingles){restoreTagTeams();return rewards();}
  if(!S.exhibition&&S.streak===1)return rewards();
  if(Math.random()<.72)return triggerBetweenMatchEvent();
@@ -562,7 +558,6 @@ const BETWEEN_MATCH_EVENTS=[
  {id:'singles',weight:18,run:showSinglesChallenge},
  {id:'interview',weight:28,run:showBackstageInterview},
  {id:'manager',weight:18,available:()=>!S.manager||Math.random()<.45,run:showManagerRecruitment},
- {id:'training',weight:18,run:()=>showChoiceEvent({personId:'preston-cole',eyebrow:'TRAINING OPPORTUNITY',title:'One More Session',copy:'Your team has time for one focused session before the next match.',choices:[['TAG DRILLS','Build chemistry together.','chem',4],['POWER CIRCUIT','Gain a strong next-match edge.','bonus',4],['RECOVERY','Protect energy and composure.','momentum',2]]})},
  {id:'media',weight:12,run:()=>showChoiceEvent({personId:'tommy-sparks',eyebrow:'BACKSTAGE DEVELOPMENT',title:'The Cameras Are Waiting',copy:'A producer offers your team one final television segment.',choices:[['FIRE UP THE CROWD','Turn attention into momentum.','bonus',3],['KEEP IT PROFESSIONAL','Strengthen team chemistry.','chem',3],['WALK AWAY','Avoid risk and take a small edge.','bonus',1]]})},
  {id:'scout',weight:12,run:()=>showChoiceEvent({personId:'graham-archer',eyebrow:'SCOUTING REPORT',title:'Know Your Enemy',copy:'An agent has secured footage of your next opponents.',choices:[['STUDY THE TAPES','Take a measured score bonus.','bonus',3],['PLAN THE OPENING','Gain momentum for the next match.','momentum',2],['TRUST YOUR INSTINCTS','Smaller but safe advantage.','bonus',1]]})}
 ];
@@ -598,7 +593,7 @@ function restoreTagTeams(){if(S.tagBackup){S.team=S.tagBackup.team;S.opp=S.tagBa
 function mvpReason(w){const moments=M.personalityMoments[w.id]||0;const reasons=[];if(w.id===M.winner.id)reasons.push(`sealed the victory with ${w.finisher}`);if(moments)reasons.push(`delivered ${moments} signature personality moment${moments===1?'':'s'}`);if(M.nearFalls>1)reasons.push('survived a match filled with near falls');if(!isSinglesMatch()&&M.tags>2)reasons.push('made a major impact in the tag exchanges');return reasons.length?reasons.slice(0,2).join(' and ')+'.':`${w.title} controlled the defining stretch of the match.`}
 function buildSummaryStory(){const playerWon=M.winner&&S.team.some(x=>x.id===M.winner.id);if(isSinglesMatch()){const winnerSide=playerWon?'Your wrestler':'The opponent';const opener=M.storyKey==='comeback'?'The match became an underdog survival story':M.storyKey==='war'?'Both wrestlers traded control in a relentless battle':M.storyKey==='sprint'?'The contest exploded into a frantic sprint':M.storyKey==='domination'?'One wrestler seized control early and refused to release it':M.storyKey==='upset'?'The favourite was dragged into a dangerous upset attempt':'Both wrestlers built the contest carefully through every phase';return `${opener}. ${M.turningPoint||'The decisive momentum swing came late'}. ${winnerSide} closed the match when ${M.winner.name} landed ${M.winner.finisher}.`}const winnerSide=playerWon?'Your team':'The opposition';const opener=M.storyKey==='comeback'?'The match became an underdog survival story':M.storyKey==='war'?'Both teams traded control in a relentless war':M.storyKey==='sprint'?'The contest exploded into a frantic sprint':M.storyKey==='domination'?'One team seized control early and refused to release it':M.storyKey==='tagClinic'?'Quick tags and team combinations defined the match':M.storyKey==='upset'?'The favourites were dragged into a dangerous upset attempt':'Both teams built the contest carefully through every phase';return `${opener}. ${M.turningPoint||'The decisive momentum swing came late'}. ${winnerSide} closed the story when ${M.winner.name} landed ${M.winner.finisher}.`}
 function formatTime(total){const m=Math.floor(total/60),s=String(total%60).padStart(2,'0');return `${m}:${s}`}
-function handleLoss(){if(S.exhibition)return quickMatchMenu();if(S.specialSingles)restoreTagTeams();lose(M.lossMessage)}
+function handleLoss(){if(S.tournament)return tournamentEliminated();if(S.exhibition)return quickMatchMenu();if(S.specialSingles)restoreTagTeams();lose(M.lossMessage)}
 const REWARD_PRESENTATION={
  wrestler:{eyebrow:'ROSTER OPPORTUNITY',title:'Recruit Wrestler',icon:'★',flavour:'A new competitor is ready to join your team.',detail:'Reveal a wrestler, then decide whether to change your current partnership.',theme:'gold',cta:'REVEAL RECRUIT'},
  chem:{eyebrow:'TEAMWORK UPGRADE',title:'The Team Is Clicking',icon:'⚡',flavour:'Trust is building between your partners.',detail:'Gain +5 chemistry for the remainder of this Gauntlet run.',theme:'blue',cta:'BOOST CHEMISTRY'},
@@ -616,9 +611,49 @@ function lose(msg){clearStoryTimer();if(S.wind){const names=S.team.map(w=>w.name
 function useWind(){S.wind=false;rewards()}
 function rosterStatus(){
  const upgraded=new Set(Object.keys(CHARACTER_IMAGE_MANAGER));
- render(`<section class="panel roster-status"><div class="actions top-actions"><button class="btn" onclick="home()">BACK</button></div><div class="tv-kicker">DEVELOPER TOOLS</div><h1 class="title">ROSTER STATUS</h1><p>Artwork checks update automatically. Green means the configured file loaded successfully; fallback means the original roster art remains available.</p><div class="roster-status-grid">${WRESTLERS.map(w=>{const c=characterImageConfig(w);return `<article class="roster-status-row" data-status-id="${w.id}"><div><b>${w.name}</b><small>${w.faction} · ${w.signature}</small></div><span class="status-pill ${c?'configured':'legacy'}">${c?'CONFIGURED':'LEGACY'}</span><span data-check="full">${c?'Checking full…':'Fallback art'}</span><span data-check="portrait">${c?'Checking portrait…':'Fallback art'}</span><span data-check="victory">${c?'Checking victory…':'Fallback art'}</span></article>`}).join('')}</div></section>`);
+ render(`<section class="panel roster-status"><div class="actions top-actions"><button class="btn" onclick="home()">BACK</button></div><div class="tv-kicker">DEVELOPER TOOLS</div><h1 class="title">ROSTER STATUS</h1><p>Artwork checks update automatically. Green means the configured file loaded successfully; fallback means the original roster art remains available.</p><div class="roster-status-grid">${WRESTLERS.map(w=>{const c=characterImageConfig(w);return `<article class="roster-status-row" data-status-id="${w.id}"><div><b>${w.name}</b><small>${w.title} · ${w.signature}</small></div><span class="status-pill ${c?'configured':'legacy'}">${c?'CONFIGURED':'LEGACY'}</span><span data-check="full">${c?'Checking full…':'Fallback art'}</span><span data-check="portrait">${c?'Checking portrait…':'Fallback art'}</span><span data-check="victory">${c?'Checking victory…':'Fallback art'}</span></article>`}).join('')}</div></section>`);
  upgraded.forEach(id=>{const w=WRESTLERS.find(x=>x.id===id),c=characterImageConfig(w);['full','portrait','victory'].forEach(type=>{const el=document.querySelector(`[data-status-id="${id}"] [data-check="${type}"]`);if(!el)return;const probe=new Image();probe.onload=()=>{el.textContent=`✓ ${type}`;el.className='asset-ok'};probe.onerror=()=>{el.textContent=`✕ ${type}`;el.className='asset-bad'};probe.src=c.assets[type]})});
 }
+
+/* Version 5.2 — Tournament, Achievements, Help & Rivalries */
+const ACHIEVEMENT_KEY='ttg_achievements_v52';
+const TOURNAMENT_KEY='ttg_tournament_records_v52';
+const ACHIEVEMENTS=[
+ {id:'first-win',name:'First Bell',desc:'Win your first match.',test:(st)=>st.wins>=1},
+ {id:'ten-wins',name:'Ten Count',desc:'Win 10 matches.',test:(st)=>st.wins>=10},
+ {id:'fifty-wins',name:'Main Event Regular',desc:'Win 50 matches.',test:(st)=>st.wins>=50},
+ {id:'streak-3',name:'Heating Up',desc:'Reach a 3-match win streak.',test:(st)=>st.bestWinStreak>=3},
+ {id:'streak-5',name:'On a Roll',desc:'Reach a 5-match win streak.',test:(st)=>st.bestWinStreak>=5},
+ {id:'gauntlet-10',name:'Survivor',desc:'Reach 10 wins in Classic Gauntlet.',test:(st)=>st.bestGauntlet>=10},
+ {id:'five-star',name:'Instant Classic',desc:'Produce a 5-star match.',test:(st)=>st.highestRated&&st.highestRated.rating>=4.95},
+ {id:'all-founders',name:'Founding Twenty',desc:'Use every founding wrestler in a completed match.',test:(st)=>Object.keys(st.wrestlers||{}).filter(k=>st.wrestlers[k].matches>0).length>=20},
+ {id:'tournament-win',name:'Tournament Champion',desc:'Win an eight-team tournament.',custom:true},
+ {id:'perfect-tournament',name:'Perfect Bracket',desc:'Win a tournament without using Second Wind.',custom:true},
+ {id:'rivalry',name:'This Is Personal',desc:'Face the same opponent at least three times.',custom:true},
+ {id:'manager',name:'Guided to Victory',desc:'Win a match with a manager at ringside.',custom:true}
+];
+function loadAchievements(){try{return JSON.parse(localStorage.getItem(ACHIEVEMENT_KEY)||'{}')}catch(e){return {}}}
+function saveAchievements(a){try{localStorage.setItem(ACHIEVEMENT_KEY,JSON.stringify(a))}catch(e){}}
+function unlockAchievement(id){const a=loadAchievements();if(a[id])return false;a[id]={date:new Date().toISOString()};saveAchievements(a);return true}
+function checkAchievements(){const st=loadStats();ACHIEVEMENTS.forEach(x=>{if(!x.custom&&x.test(st))unlockAchievement(x.id)});if(S.manager&&M&&M.ended&&M.finalPlayer>=M.finalOpp)unlockAchievement('manager');const r=rivalryStatus();if(r.meetings>=3)unlockAchievement('rivalry')}
+const _recordCompletedMatch=recordCompletedMatch;
+recordCompletedMatch=function(win,rating){_recordCompletedMatch(win,rating);checkAchievements()};
+function achievementMenu(){const a=loadAchievements(),unlocked=ACHIEVEMENTS.filter(x=>a[x.id]).length;render(`<section class="achievement-screen">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">CAREER MILESTONES</div><h1>ACHIEVEMENTS</h1><p>${unlocked} of ${ACHIEVEMENTS.length} unlocked.</p></div><strong>${unlocked}/${ACHIEVEMENTS.length}</strong></header><div class="achievement-grid">${ACHIEVEMENTS.map(x=>`<article class="achievement ${a[x.id]?'unlocked':'locked'}"><i>${a[x.id]?'★':'◇'}</i><div><small>${a[x.id]?'UNLOCKED':'LOCKED'}</small><h3>${x.name}</h3><p>${x.desc}</p></div></article>`).join('')}</div></section>`)}
+function helpMenu(){render(`<section class="help-screen">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">HOW TO PLAY</div><h1>HELP & GUIDE</h1><p>Everything needed to survive the broadcast.</p></div></header><div class="help-grid"><article><h2>Classic Gauntlet</h2><p>Start with one wrestler, choose one of two partners, then survive match after match. One loss ends the run unless Second Wind is available.</p></article><article><h2>Tournament Mode</h2><p>Select two wrestlers and win three consecutive rounds: Quarterfinal, Semifinal and Final. Lose once and your tournament is over.</p></article><article><h2>Match Decisions</h2><p><b>Control</b> is reliable, <b>Risk</b> creates a bigger swing, <b>Comeback</b> is strongest while behind, and <b>Finisher</b> becomes safer late in the match.</p></article><article><h2>Managers</h2><p>Managers provide a permanent run bonus and may create special backstage opportunities. Preston Cole is a ringside strategist, not a trainer.</p></article><article><h2>Rewards</h2><p>Classic victories can recruit wrestlers, improve chemistry, add momentum or grant the one-use Second Wind.</p></article><article><h2>Rivalries</h2><p>Repeated encounters are remembered. After three meetings, commentary and presentation identify the opponent as a developing rival.</p></article><article><h2>Match Ratings</h2><p>Ratings now reward genuine drama. Five-star matches are rare and require major moments, crowd heat, near falls and a strong finish.</p></article><article><h2>Quick Match</h2><p>Play standalone Singles or Tag Team exhibitions without affecting a Gauntlet or tournament run.</p></article></div></section>`)}
+function rivalryStatus(){const h=loadHistory();if(!S.opp||!S.opp.length)return {active:false,meetings:0,name:''};const ranked=S.opp.map(w=>({w,n:h.opponents[w.id]||0})).sort((a,b)=>b.n-a.n),top=ranked[0];return {active:top.n>=2,meetings:top.n,name:top.w.name}}
+function tournamentHome(){resetClassicState();S.tournament=true;S.tournamentSelections=[];render(`<section class="panel mode-landing tournament-landing">${shellBack()}<div class="mode-landing-copy"><div class="tv-kicker">NEW MODE</div><h1>GAUNTLET CUP</h1><p>Eight teams enter a single-elimination tournament. Win the Quarterfinal, Semifinal and Final to become Tournament Champion.</p><button class="btn" onclick="tournamentSelect()">ENTER TOURNAMENT</button></div><div class="tournament-trophy">🏆<small>8 TEAMS · 3 ROUNDS · 1 CHAMPION</small></div></section>`)}
+function tournamentSelect(){S.tournament=true;S.tournamentSelections=S.tournamentSelections||[];const chosen=new Set(S.tournamentSelections.map(w=>w.id));render(`<section class="panel tournament-select"><div class="actions top-actions"><button class="btn secondary" onclick="tournamentHome()">BACK</button>${S.tournamentSelections.length===2?`<button class="btn" onclick="tournamentCreate()">CONFIRM TEAM</button>`:''}</div><div class="tv-kicker">GAUNTLET CUP ENTRY</div><h1 class="title">SELECT TWO WRESTLERS</h1><p class="sub">${S.tournamentSelections.length}/2 selected${S.tournamentSelections.length?` · ${S.tournamentSelections.map(w=>w.name).join(' & ')}`:''}</p><div class="collection-grid tournament-roster">${WRESTLERS.map(w=>`<button class="collection-tile ${chosen.has(w.id)?'selected':''}" onclick="toggleTournamentWrestler('${w.id}')">${imageWithFallback(w,'portrait','art-portrait','collection')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`)}
+function toggleTournamentWrestler(id){const w=WRESTLERS.find(x=>x.id===id),i=S.tournamentSelections.findIndex(x=>x.id===id);if(i>=0)S.tournamentSelections.splice(i,1);else if(S.tournamentSelections.length<2)S.tournamentSelections.push(w);tournamentSelect()}
+function tournamentCreate(){S.team=[...S.tournamentSelections];const available=WRESTLERS.filter(w=>!S.team.some(x=>x.id===w.id));const shuffled=pick(available,Math.min(available.length,18));const opponents=[];for(let i=0;i<6;i+=2)opponents.push([shuffled[i],shuffled[i+1]]);window.T={round:0,wins:0,secondWindUsed:false,opponents};tournamentRoundScreen()}
+function tournamentRoundName(){return ['QUARTERFINAL','SEMIFINAL','FINAL'][T.round]}
+function tournamentRoundScreen(){const opp=T.opponents[T.round];render(`<section class="panel tournament-bracket"><div class="tv-kicker">GAUNTLET CUP</div><h1>${tournamentRoundName()}</h1><div class="tournament-progress"><span class="done">ENTRY</span><span class="${T.round>=1?'done':'active'}">QF</span><span class="${T.round>=2?'done':T.round===1?'active':''}">SF</span><span class="${T.round===2?'active':''}">FINAL</span></div><div class="cinematic-versus compact-tournament-vs"><div class="hero-team">${S.team.map(w=>heroPortrait(w,'left')).join('')}</div><div class="giant-vs">VS</div><div class="hero-team">${opp.map(w=>heroPortrait(w,'right')).join('')}</div></div><button class="btn broadcast-button" onclick="tournamentPrepareMatch()">BEGIN ${tournamentRoundName()}</button></section>`)}
+function tournamentPrepareMatch(){S.opp=T.opponents[T.round];S.venue=one(VENUES);S.attendance=Math.floor(rnd(12500,20500));S.streak=T.wins;match()}
+function tournamentAdvance(){T.wins++;if(T.round>=2){unlockAchievement('tournament-win');if(!T.secondWindUsed)unlockAchievement('perfect-tournament');const rec=JSON.parse(localStorage.getItem(TOURNAMENT_KEY)||'{"wins":0}');rec.wins=(rec.wins||0)+1;localStorage.setItem(TOURNAMENT_KEY,JSON.stringify(rec));return tournamentChampion()}T.round++;render(`<section class="panel tournament-advance"><div class="tv-kicker">ROUND COMPLETE</div><h1>YOU ADVANCE</h1><p>${S.team.map(w=>w.name).join(' & ')} move on to the ${tournamentRoundName()}.</p><button class="btn" onclick="tournamentRoundScreen()">VIEW NEXT ROUND</button></section>`)}
+function tournamentChampion(){render(`<section class="panel tournament-champion"><div class="tournament-trophy">🏆</div><div class="tv-kicker">GAUNTLET CUP</div><h1>TOURNAMENT CHAMPIONS</h1><p>${S.team.map(w=>w.name).join(' & ')} survive all three rounds.</p><div class="cards two">${S.team.map(w=>card(w)).join('')}</div><button class="btn" onclick="home()">RETURN TO MAIN MENU</button></section>`)}
+function tournamentEliminated(){render(`<section class="panel tournament-advance"><div class="tv-kicker">GAUNTLET CUP</div><h1>ELIMINATED</h1><p>Your tournament ends in the ${tournamentRoundName()}.</p><button class="btn" onclick="tournamentHome()">TRY AGAIN</button><button class="btn secondary" onclick="home()">MAIN MENU</button></section>`)}
+const _homeV52=home;
+home=function(){clearStoryTimer();M=null;overlay.innerHTML='';const w=featuredSuperstar();render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and create your legacy.</p><nav class="hub-menu"><button class="hub-option primary" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option tournament-option" onclick="tournamentHome()"><b>GAUNTLET CUP</b><small>Eight-team single-elimination tournament.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibitions.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your complete match history.</small></button><button class="hub-option" onclick="helpMenu()"><b>HELP & GUIDE</b><small>Rules, decisions and mode explanations.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)};
+
 home();
 
 
