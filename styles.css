@@ -994,3 +994,42 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
  .lpw-calendar-807 .live-mini-stats{grid-template-columns:1fr 1fr!important}
  .lpw-calendar-807 .live-mini-stats button{grid-column:1/-1}
 }
+
+/* VERSION 8.0.8 — definitive feud-origin VS placement */
+.lpw-feud-origin .origin-matchup{
+  position:relative!important;
+  z-index:3!important;
+}
+.lpw-feud-origin .origin-matchup>strong{
+  position:absolute!important;
+  left:50%!important;
+  top:68%!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:20!important;
+  display:grid!important;
+  place-items:center!important;
+  width:64px!important;
+  height:52px!important;
+  padding:0!important;
+  margin:0!important;
+  color:#f2c84b!important;
+  background:#101116!important;
+  border:2px solid #6f5721!important;
+  font-size:2rem!important;
+  line-height:1!important;
+  text-shadow:0 2px 0 #000!important;
+  pointer-events:none!important;
+}
+.lpw-feud-origin .origin-report{
+  position:relative!important;
+  z-index:1!important;
+  margin-top:.55rem!important;
+}
+@media(max-width:700px){
+  .lpw-feud-origin .origin-matchup>strong{
+    top:70%!important;
+    width:58px!important;
+    height:46px!important;
+    font-size:1.75rem!important;
+  }
+}
