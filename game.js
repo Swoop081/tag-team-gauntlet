@@ -971,7 +971,7 @@ const _gauntletLiveCalendar5=gauntletLiveCalendar;
 gauntletLiveCalendar=function(){_gauntletLiveCalendar5();const c=liveLoad();if(!c)return;const f=liveFeud(c),r=liveFeudOpponent(c),dash=document.querySelector('.live-career-dashboard');if(dash&&f)dash.insertAdjacentHTML('afterend',`<div class="live-feud-banner calendar-feud"><small>CURRENT FEUD</small><b>${liveFounder(c.active).name} vs ${r.name}</b><span>Intensity ${f.intensity}% · Supercard payoff in Week 4</span></div>`)};
 
 
-home();
+/* Initial home render is intentionally deferred until every version override has loaded. */
 
 
 /* Character Image Developer Mode 2.0
@@ -1323,3 +1323,10 @@ const _lpw8Home=gauntletLiveHome;
 gauntletLiveHome=function(){_lpw8Home();const actions=document.querySelector('.live-home-actions');if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary" onclick="lpw8Championships()">CHAMPIONSHIPS</button><button class="btn secondary" onclick="lpw8RankingScreen()">POWER RANKINGS</button>');const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.0';};
 const _lpw8Finish=gauntletLiveFinishMatch65;
 gauntletLiveFinishMatch65=function(win,oppId){const c=lpw8Init(liveLoad()),me=c.rankings.find(x=>x.id===c.active),op=c.rankings.find(x=>x.id===oppId);if(me){me.points=Math.max(0,me.points+(win?18:-6));me[win?'wins':'losses']++}if(op){op.points=Math.max(0,op.points+(win?-4:14));op[win?'losses':'wins']++}liveSave(c);return _lpw8Finish(win,oppId)};
+
+
+/* LPW 8.0.1 boot completion: render only the final current-version home screen. */
+window.__LPW_BOOT_COMPLETE__ = true;
+home();
+document.documentElement.classList.add('lpw-ready');
+document.documentElement.classList.remove('lpw-booting');

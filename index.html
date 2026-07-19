@@ -1,1 +1,40 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LEGACY Pro Wrestling 8.0 — Championship Era</title><link rel="stylesheet" href="styles.css?v=8.0.0"><script>window.TTG_APP_VERSION='8.0.0';</script><script src="update-manager.js?v=8.0.0" defer></script><script src="data.js?v=8.0.0" defer></script><script src="assets/config/imageManager.js?v=8.0.0" defer></script><script src="game.js?v=8.0.0" defer></script></head><body><header><button onclick="home()" class="logo"><span>LEGACY</span><b>PRO WRESTLING</b></button><div class="header-meta"><span class="build-tag">VERSION 8.0</span><div class="streak">STREAK <strong id="streak">0</strong></div></div></header><main id="app"></main><div id="overlay"></div></body></html>
+<!doctype html>
+<html class="lpw-booting">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>LEGACY Pro Wrestling 8.0 — Championship Era</title>
+  <style>
+    html.lpw-booting body{background:#070708;overflow:hidden}
+    html.lpw-booting header,html.lpw-booting main,html.lpw-booting #overlay{visibility:hidden}
+    #lpw-boot-screen{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#3a0b10 0,#160609 42%,#070708 100%);color:#fff;font-family:Arial,sans-serif;text-align:center;padding:24px}
+    #lpw-boot-screen div{width:min(420px,88vw)}
+    #lpw-boot-screen b{display:block;font-size:2rem;letter-spacing:.18em}
+    #lpw-boot-screen span{display:block;margin-top:8px;color:#f3c34d;font-weight:800;letter-spacing:.22em;font-size:.75rem}
+    #lpw-boot-screen small{display:block;margin-top:24px;opacity:.72;letter-spacing:.08em}
+    html.lpw-ready #lpw-boot-screen{display:none}
+  </style>
+  <link rel="stylesheet" href="styles.css?v=8.0.1">
+  <script>window.TTG_APP_VERSION='8.0.1';</script>
+  <script src="update-manager.js?v=8.0.1" defer></script>
+  <script src="data.js?v=8.0.1" defer></script>
+  <script src="assets/config/imageManager.js?v=8.0.1" defer></script>
+  <script src="game.js?v=8.0.1" defer></script>
+</head>
+<body>
+  <div id="lpw-boot-screen"><div><b>LEGACY</b><span>PRO WRESTLING</span><small>Loading current game data…</small></div></div>
+  <header><button onclick="home()" class="logo"><span>LEGACY</span><b>PRO WRESTLING</b></button><div class="header-meta"><span class="build-tag">VERSION 8.0.1</span><div class="streak">STREAK <strong id="streak">0</strong></div></div></header>
+  <main id="app"></main><div id="overlay"></div>
+  <script>
+    window.setTimeout(function(){
+      if(!window.__LPW_BOOT_COMPLETE__){
+        var note=document.querySelector('#lpw-boot-screen small');
+        if(note) note.textContent='Still checking the current release…';
+      }
+    },5000);
+  </script>
+</body>
+</html>

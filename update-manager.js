@@ -1,4 +1,4 @@
-/* Tag Team Gauntlet Update Manager 1.1 — direct boot-safe edition */
+/* LEGACY Pro Wrestling Update Manager 1.2 — direct boot-safe edition */
 (() => {
   'use strict';
 
@@ -22,7 +22,7 @@
   async function clearAppCaches() {
     if (!('caches' in window)) return;
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key.startsWith('ttg-')).map(key => caches.delete(key)));
+    await Promise.all(keys.filter(key => key.startsWith('ttg-') || key.startsWith('lpw-')).map(key => caches.delete(key)));
   }
 
   async function checkForUpdate() {
@@ -43,7 +43,7 @@
       }
       if (sessionStorage.getItem(RELOAD_GUARD_KEY) === latestVersion) return;
       sessionStorage.setItem(RELOAD_GUARD_KEY, latestVersion);
-      showStatus('UPDATING TAG TEAM GAUNTLET', `Installing version ${latestVersion}…`);
+      showStatus('UPDATING LEGACY PRO WRESTLING', `Installing version ${latestVersion}…`);
       await clearAppCaches();
       const url = new URL(location.href);
       url.searchParams.set('ttg-version', latestVersion);
@@ -65,8 +65,8 @@
     }
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    registerServiceWorker();
-    checkForUpdate();
+  window.addEventListener('DOMContentLoaded', async () => {
+    await checkForUpdate();
+    await registerServiceWorker();
   }, { once: true });
 })();

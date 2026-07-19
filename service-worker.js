@@ -1,7 +1,8 @@
-/* Tag Team Gauntlet Service Worker 7.0.0 */
-const APP_VERSION = '8.0.0-test';
+/* LEGACY Pro Wrestling Service Worker 8.0.1 */
+const APP_VERSION = '8.0.1-test-2';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
-const NEVER_CACHE = ['index.html','game.js','data.js','styles.css','version.json','service-worker.js','assets/config/imageManager.js'];
+const CRITICAL_FILES = ['index.html','game.js','data.js','styles.css','version.json','service-worker.js','update-manager.js','assets/config/imageManager.js'];
+
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {
   event.waitUntil((async()=>{
@@ -10,7 +11,31 @@ self.addEventListener('activate', event => {
     await self.clients.claim();
   })());
 });
-function isNeverCache(url){return NEVER_CACHE.some(name=>url.pathname.endsWith('/'+name)||url.pathname.endsWith(name));}
-async function networkFirst(request){const cache=await caches.open(CACHE_NAME);try{const response=await fetch(request,{cache:'no-store'});if(response&&response.ok)await cache.put(request,response.clone());return response}catch(error){const cached=await cache.match(request);if(cached)return cached;throw error}}
-async function cacheFirst(request){const cache=await caches.open(CACHE_NAME),cached=await cache.match(request);if(cached)return cached;const response=await fetch(request);if(response&&response.ok)await cache.put(request,response.clone());return response}
-self.addEventListener('fetch',event=>{const request=event.request;if(request.method!=='GET')return;const url=new URL(request.url);if(url.origin!==self.location.origin)return;if(isNeverCache(url)){event.respondWith(fetch(request,{cache:'no-store'}));return}const isCode=request.mode==='navigate'||['document','script','style'].includes(request.destination);event.respondWith(isCode?networkFirst(request):cacheFirst(request));});
+function isCritical(url){return CRITICAL_FILES.some(name=>url.pathname.endsWith('/'+name)||url.pathname.endsWith(name));}
+async function networkFirst(request){
+  const cache=await caches.open(CACHE_NAME);
+  try{
+    const response=await fetch(request,{cache:'no-store'});
+    if(response&&response.ok)await cache.put(request,response.clone());
+    return response;
+  }catch(error){
+    const cached=await cache.match(request);
+    if(cached)return cached;
+    throw error;
+  }
+}
+async function cacheFirst(request){
+  const cache=await caches.open(CACHE_NAME),cached=await cache.match(request);
+  if(cached)return cached;
+  const response=await fetch(request);
+  if(response&&response.ok)await cache.put(request,response.clone());
+  return response;
+}
+self.addEventListener('fetch',event=>{
+  const request=event.request;
+  if(request.method!=='GET')return;
+  const url=new URL(request.url);
+  if(url.origin!==self.location.origin)return;
+  const currentCode=request.mode==='navigate'||isCritical(url)||['document','script','style'].includes(request.destination);
+  event.respondWith(currentCode?networkFirst(request):cacheFirst(request));
+});
