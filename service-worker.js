@@ -1,7 +1,6 @@
 /* Tag Team Gauntlet Service Worker 1.0 */
 const APP_VERSION = '6.3.3';
-const CACHE_NAME = `ttg-runtime-${APP_VERSION}`;
-const NEVER_CACHE = ['version.json', 'service-worker.js'];
+const CACHE_NAME = `ttg-6.4.0'version.json', 'service-worker.js'];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
