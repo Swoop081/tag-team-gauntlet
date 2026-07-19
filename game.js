@@ -143,56 +143,7 @@ function featuredSuperstar(){return one(WRESTLERS)}
 function home(){
  clearStoryTimer();M=null;overlay.innerHTML='';
  const w=featuredSuperstar();
- render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and unlock the Founding Twenty.</p><nav class="hub-menu"><button class="hub-option live-option" onclick="gauntletLiveHome()"><b>GAUNTLET LIVE</b><small>Build your stable across an endless seven-day wrestling calendar.</small></button><button class="hub-option primary" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibition framework.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your legacy framework.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>OPTIONS</b><small>Presentation settings coming soon.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
-}
-
-// GAUNTLET LIVE 6.0 BUILD 1 — navigation, founder selection, seven-day calendar and persistent progress
-const LIVE_SAVE_KEY='ttgGauntletLiveBuild1';
-const LIVE_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const LIVE_FOUNDERS=['jack-mercer','mason-marks','el-rey-del-cielo','max-justice'];
-const LIVE_DAY_COPY={
- Monday:['MATCH NIGHT','Open the week under the television lights. Match integration arrives in Build 2.'],
- Tuesday:['FALLOUT','Review the reaction to Monday and deal with the first consequences of the week.'],
- Wednesday:['DEVELOPMENT','Prepare your wrestler and shape the direction of the stable.'],
- Thursday:['STORY NIGHT','A rivalry, interview or backstage development moves the month forward.'],
- Friday:['MAIN EVENT','The week builds toward another major televised appearance.'],
- Saturday:['PREPARATION','Rest, scout and prepare for what Sunday may bring.'],
- Sunday:['WEEKLY REVIEW','Close the week, review progress and move into the next chapter.']
-};
-function loadLiveCareer(){try{return JSON.parse(localStorage.getItem(LIVE_SAVE_KEY)||'null')}catch(e){return null}}
-function saveLiveCareer(c){localStorage.setItem(LIVE_SAVE_KEY,JSON.stringify(c));return c}
-function liveFounderById(id){return WRESTLERS.find(w=>w.id===id)}
-function newLiveCareer(founderId){return saveLiveCareer({version:1,founderId,activeId:founderId,stable:[founderId],week:1,day:0,month:1,completedDays:0,createdAt:Date.now()})}
-function gauntletLiveHome(){
- const career=loadLiveCareer();
- if(!career)return gauntletLiveFounderSelect();
- const w=liveFounderById(career.activeId)||liveFounderById(career.founderId);
- render(`<section class="live-landing">${shellBack()}<div class="live-landing-art">${imageWithFallback(w,'full','art-full','homeFeature')}</div><div class="live-landing-copy"><div class="tv-kicker">PERSISTENT CAREER MODE</div><h1>GAUNTLET <span>LIVE</span></h1><p>Your career continues through an endless seven-day wrestling calendar. Every fourth Sunday is a Supercard.</p><div class="live-career-summary"><div><small>MONTH</small><b>${career.month}</b></div><div><small>WEEK</small><b>${career.week}</b></div><div><small>NEXT</small><b>${LIVE_DAYS[career.day]}</b></div><div><small>STABLE</small><b>${career.stable.length}</b></div></div><div class="live-actions"><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE CAREER</button><button class="btn" onclick="gauntletLiveFounderSelect(true)">NEW CAREER</button></div></div></section>`);
-}
-function gauntletLiveFounderSelect(confirmReset=false){
- const existing=loadLiveCareer();
- if(confirmReset&&existing&&!confirm('Start a new Gauntlet Live career? Your current Build 1 progress will be replaced.'))return gauntletLiveHome();
- const founders=LIVE_FOUNDERS.map(liveFounderById).filter(Boolean);
- render(`<section class="live-founder-screen">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">GAUNTLET LIVE · NEW CAREER</div><h1>CHOOSE YOUR FOUNDER</h1><p>You begin with one wrestler. This founder becomes the first member of your future stable.</p></div><strong>1 OF 4</strong></header><div class="live-founder-grid">${founders.map(w=>`<button class="live-founder-card" onclick="startGauntletLive('${w.id}')">${imageWithFallback(w,'full','art-full','card')}<span><small>${w.title}</small><b>${w.name}</b><em>${w.signature}</em></span></button>`).join('')}</div></section>`);
-}
-function startGauntletLive(id){newLiveCareer(id);gauntletLiveCalendar()}
-function liveIsSupercard(c){return c.week%4===0&&c.day===6}
-function gauntletLiveCalendar(){
- const c=loadLiveCareer();if(!c)return gauntletLiveFounderSelect();
- const w=liveFounderById(c.activeId)||liveFounderById(c.founderId);
- const supercardWeek=Math.ceil(c.week/4)*4;
- render(`<section class="live-calendar-screen"><div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER HOME</button></div><header class="live-calendar-header"><div><div class="tv-kicker">GAUNTLET LIVE</div><h1>MONTH ${c.month} · WEEK ${c.week}</h1><p>${liveIsSupercard(c)?'Supercard Sunday has arrived.':'Supercard Sunday in '+(supercardWeek-c.week)+' week'+(supercardWeek-c.week===1?'':'s')+'.'}</p></div><article>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>ACTIVE WRESTLER</small><b>${w.name}</b></span></article></header><div class="live-week-strip">${LIVE_DAYS.map((d,i)=>`<button class="${i<c.day?'complete':''} ${i===c.day?'current':''} ${i===6&&c.week%4===0?'supercard':''}" ${i===c.day?`onclick="gauntletLiveDay()"`:''}><small>${i<c.day?'COMPLETE':i===c.day?'TODAY':'UPCOMING'}</small><b>${d.slice(0,3).toUpperCase()}</b>${i===6&&c.week%4===0?'<em>SUPERCARD</em>':''}</button>`).join('')}</div><div class="live-calendar-cta"><div><small>CURRENT DAY</small><h2>${LIVE_DAYS[c.day]}${liveIsSupercard(c)?' · SUPERCARD':''}</h2><p>${liveIsSupercard(c)?'The fourth week concludes with the monthly Supercard.':LIVE_DAY_COPY[LIVE_DAYS[c.day]][1]}</p></div><button class="btn live-primary" onclick="gauntletLiveDay()">ENTER ${LIVE_DAYS[c.day].toUpperCase()}</button></div></section>`);
-}
-function gauntletLiveDay(){
- const c=loadLiveCareer();if(!c)return gauntletLiveFounderSelect();
- const day=LIVE_DAYS[c.day],isSC=liveIsSupercard(c),copy=isSC?['SUPERCARD SUNDAY','The month reaches its climax. Match booking and full Supercard gameplay arrive in Build 2.']:LIVE_DAY_COPY[day];
- render(`<section class="live-day-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="live-day-card ${isSC?'supercard-day':''}"><small>MONTH ${c.month} · WEEK ${c.week} · ${day.toUpperCase()}</small><h1>${copy[0]}</h1><p>${copy[1]}</p><div class="live-build-note"><b>BUILD 1 FOUNDATION</b><span>This screen proves the persistent calendar, navigation and seven-day progression. Matches, events, recruitment and stable management are added in Build 2.</span></div><button class="btn live-primary" onclick="completeLiveDay()">COMPLETE ${day.toUpperCase()}</button></div></section>`);
-}
-function completeLiveDay(){
- const c=loadLiveCareer();if(!c)return;
- c.completedDays=(c.completedDays||0)+1;
- if(c.day<6)c.day+=1;else{c.day=0;c.week+=1;if((c.week-1)%4===0)c.month+=1}
- saveLiveCareer(c);gauntletLiveCalendar();
+ render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and unlock the Founding Twenty.</p><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>GAUNTLET LIVE</b><small>Begin or continue your weekly career.</small></button><button class="hub-option" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibition framework.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your legacy framework.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>OPTIONS</b><small>Presentation settings coming soon.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
 }
 function classicHome(){
  resetClassicState();S.previewCaptain=one(WRESTLERS);const captain=S.previewCaptain;
@@ -700,8 +651,53 @@ function tournamentPrepareMatch(){S.opp=T.opponents[T.round];S.venue=one(VENUES)
 function tournamentAdvance(){T.wins++;if(T.round>=2){unlockAchievement('tournament-win');if(!T.secondWindUsed)unlockAchievement('perfect-tournament');const rec=JSON.parse(localStorage.getItem(TOURNAMENT_KEY)||'{"wins":0}');rec.wins=(rec.wins||0)+1;localStorage.setItem(TOURNAMENT_KEY,JSON.stringify(rec));return tournamentChampion()}T.round++;render(`<section class="panel tournament-advance"><div class="tv-kicker">ROUND COMPLETE</div><h1>YOU ADVANCE</h1><p>${S.team.map(w=>w.name).join(' & ')} move on to the ${tournamentRoundName()}.</p><button class="btn" onclick="tournamentRoundScreen()">VIEW NEXT ROUND</button></section>`)}
 function tournamentChampion(){const championArt=S.team.map(w=>heroPortrait(w,'winner','victory','resultVictory')).join('');render(`<section class="panel tournament-champion"><div class="tournament-trophy">🏆<small>GAUNTLET CUP</small></div><h1>TOURNAMENT CHAMPIONS</h1><p>${S.team.map(w=>w.name).join(' & ')} survive all three rounds.</p><div class="television-winners tournament-winners"><div class="confetti-field"></div><div class="winning-team-art">${championArt}</div></div><button class="btn" onclick="home()">RETURN TO MAIN MENU</button></section>`) }
 function tournamentEliminated(){render(`<section class="panel tournament-advance"><div class="tv-kicker">GAUNTLET CUP</div><h1>ELIMINATED</h1><p>Your tournament ends in the ${tournamentRoundName()}.</p><button class="btn" onclick="tournamentHome()">TRY AGAIN</button><button class="btn secondary" onclick="home()">MAIN MENU</button></section>`)}
+
+// GAUNTLET LIVE 6.0 BUILD 1 — real navigable foundation
+const LIVE_SAVE_KEY='ttg_gauntlet_live_v1';
+const LIVE_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const LIVE_FOUNDERS=['jack-mercer','mason-marks','el-rey-del-cielo','max-justice'];
+function liveLoad(){try{return JSON.parse(localStorage.getItem(LIVE_SAVE_KEY)||'null')}catch(e){return null}}
+function liveSave(career){try{localStorage.setItem(LIVE_SAVE_KEY,JSON.stringify(career))}catch(e){}}
+function liveFounder(id){return WRESTLERS.find(w=>w.id===id)}
+function gauntletLiveHome(){
+ const career=liveLoad();
+ render(`<section class="panel live-mode-home">${shellBack()}<div class="tv-kicker">PERSISTENT CAREER MODE</div><h1>GAUNTLET LIVE</h1><p>Choose a founder, live through a seven-day wrestling week and build a career that continues forever.</p><div class="live-home-actions">${career?`<button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE · WEEK ${career.week}, ${LIVE_DAYS[career.day]}</button>`:''}<button class="btn ${career?'secondary':'live-primary'}" onclick="gauntletLiveNewCareer()">${career?'START NEW CAREER':'BEGIN GAUNTLET LIVE'}</button></div><div class="live-cycle"><b>7-DAY WEEK</b><span>Sunday becomes the Supercard every fourth week.</span></div></section>`)
+}
+function gauntletLiveNewCareer(){
+ const career=liveLoad();
+ if(career&&!confirm('Start a new Gauntlet Live career and replace the current save?'))return;
+ gauntletLiveFounderSelect();
+}
+function gauntletLiveFounderSelect(){
+ const founders=LIVE_FOUNDERS.map(liveFounder).filter(Boolean);
+ render(`<section class="panel live-founder-screen"><button class="shell-back" onclick="gauntletLiveHome()">← GAUNTLET LIVE</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR FOUNDER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button class="live-founder-card" onclick="gauntletLiveChooseFounder('${w.id}')">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b><em>${w.signature}</em></span></button>`).join('')}</div></section>`)
+}
+function gauntletLiveChooseFounder(id){
+ const w=liveFounder(id);if(!w||!LIVE_FOUNDERS.includes(id))return gauntletLiveFounderSelect();
+ const career={version:1,founder:id,active:id,stable:[id],week:1,month:1,day:0,created:new Date().toISOString()};
+ liveSave(career);gauntletLiveCalendar();
+}
+function liveDayLabel(career,index){
+ if(index===6&&career.week%4===0)return 'SUPERCARD';
+ return ['MATCH NIGHT','FALLOUT','DEVELOPMENT','STORY','MAIN EVENT','PREPARATION','WEEKLY REVIEW'][index];
+}
+function gauntletLiveCalendar(){
+ const c=liveLoad();if(!c)return gauntletLiveHome();
+ const w=liveFounder(c.active)||liveFounder(c.founder);
+ const supercard=c.week%4===0;
+ render(`<section class="panel live-calendar-screen"><div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div><div class="tv-kicker">MONTH ${c.month} · WEEK ${c.week}</div><h1>GAUNTLET LIVE</h1><div class="live-career-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>ACTIVE WRESTLER</small><b>${w.name}</b><span>Stable members: ${c.stable.length}</span></div></div><div class="live-week-strip">${LIVE_DAYS.map((d,i)=>`<div class="live-day ${i<c.day?'complete':''} ${i===c.day?'current':''} ${i===6&&supercard?'supercard':''}"><small>${d.slice(0,3).toUpperCase()}</small><b>${i===6&&supercard?'SUPERCARD':i+1}</b><span>${liveDayLabel(c,i)}</span></div>`).join('')}</div><div class="live-today"><small>TODAY · ${LIVE_DAYS[c.day].toUpperCase()}</small><h2>${liveDayLabel(c,c.day)}</h2><p>${c.day===6&&supercard?'The four-week cycle reaches its monthly Supercard.':'Build 1 validates navigation, saving and the seven-day career calendar.'}</p><button class="btn live-primary" onclick="gauntletLiveCompleteDay()">COMPLETE ${LIVE_DAYS[c.day].toUpperCase()}</button></div></section>`)
+}
+function gauntletLiveCompleteDay(){
+ const c=liveLoad();if(!c)return gauntletLiveHome();
+ const completedDay=c.day,wasSupercard=completedDay===6&&c.week%4===0;
+ if(completedDay<6)c.day++;
+ else{c.day=0;c.week++;if((c.week-1)%4===0)c.month++}
+ liveSave(c);
+ render(`<section class="panel live-day-complete"><div class="tv-kicker">${wasSupercard?'SUPERCARD COMPLETE':'DAY COMPLETE'}</div><h1>${LIVE_DAYS[completedDay].toUpperCase()} COMPLETE</h1><p>${wasSupercard?'A new month begins and the Gauntlet Live career continues.':`Your career advances to ${LIVE_DAYS[c.day]}.`}</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)
+}
+
 const _homeV52=home;
-home=function(){clearStoryTimer();M=null;overlay.innerHTML='';const w=featuredSuperstar();render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and create your legacy.</p><nav class="hub-menu"><button class="hub-option primary" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option tournament-option" onclick="tournamentHome()"><b>GAUNTLET CUP</b><small>Eight-team single-elimination tournament.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibitions.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your complete match history.</small></button><button class="hub-option" onclick="helpMenu()"><b>HELP & GUIDE</b><small>Rules, decisions and mode explanations.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)};
+home=function(){clearStoryTimer();M=null;overlay.innerHTML='';const w=featuredSuperstar();render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and create your legacy.</p><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>GAUNTLET LIVE</b><small>Begin or continue your weekly career.</small></button><button class="hub-option" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option tournament-option" onclick="tournamentHome()"><b>GAUNTLET CUP</b><small>Eight-team single-elimination tournament.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibitions.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your complete match history.</small></button><button class="hub-option" onclick="helpMenu()"><b>HELP & GUIDE</b><small>Rules, decisions and mode explanations.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)};
 
 home();
 
