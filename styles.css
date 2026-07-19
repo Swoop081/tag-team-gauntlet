@@ -918,3 +918,39 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
   .lpw-feud-origin .origin-report-copy>small{font-size:.68rem;margin-bottom:.65rem;letter-spacing:.04em}
   .lpw-feud-origin .origin-report-copy>p{font-size:1rem;line-height:1.4}
 }
+
+/* VERSION 8.0.5 — onboarding page 3/4 image alignment + wrestler terminology */
+@media(max-width:760px){
+  .live-onboarding-page-2 .live-onboarding-art{
+    height:31vh!important;
+    min-height:250px;
+    align-items:center!important;
+    padding-top:18px;
+  }
+  .live-onboarding-page-2 .live-onboarding-art .npc-art{
+    width:auto!important;
+    height:100%!important;
+    max-height:100%!important;
+    max-width:82%!important;
+    object-fit:contain!important;
+    object-position:center center!important;
+    transform:scale(.88);
+    transform-origin:center center;
+  }
+  .live-onboarding-page-3 .live-onboarding-art{
+    height:31vh!important;
+    min-height:245px;
+    align-items:center!important;
+    padding-top:18px;
+  }
+  .live-onboarding-page-3 .live-onboarding-art .npc-art{
+    width:auto!important;
+    height:100%!important;
+    max-height:100%!important;
+    max-width:82%!important;
+    object-fit:contain!important;
+    object-position:center center!important;
+    transform:scale(.86);
+    transform-origin:center center;
+  }
+}
