@@ -1,11 +1,12 @@
-TAG TEAM GAUNTLET 6.2 — GAUNTLET LIVE BUILD 3 PATCH
+TAG TEAM GAUNTLET 6.1 — GAUNTLET LIVE BUILD 2 PATCH
 
 Upload these files to the repository root and replace the existing copies:
 - game.js
 - styles.css
 - index.html
-- service-worker.js
 - version.json
+- service-worker.js
 
-No assets or unchanged project files are included.
-Existing Gauntlet Live Build 2 saves migrate automatically to the new progression system.
+No asset folders or unchanged project files are included.
+The first Gauntlet Live match is guaranteed to be a victory so recruitment can be tested immediately.
+Existing Build 1 Gauntlet Live saves migrate automatically.
