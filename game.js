@@ -756,9 +756,158 @@ function gauntletLiveStable(){
 }
 function gauntletLiveSetActive(id){const c=liveLoad();if(!c||!c.stable.includes(id))return gauntletLiveStable();c.active=id;liveSave(c);gauntletLiveStable()}
 
+// GAUNTLET LIVE 6.2 BUILD 3 — Career XP, levels and wrestler stat cards
+const LIVE_PROGRESSION_STATS=['power','speed','technique','charisma','resilience','versatility','finisher'];
+function liveBaseStat(w,key){
+ if(key==='finisher')return Math.max(60,Math.min(90,Math.round(((w.technique||75)+(w.charisma||75)+(w.overall||80))/3)-4));
+ return Number(w[key])||75;
+}
+function liveStartingStat(w,key){return liveClamp(Math.round(liveBaseStat(w,key)*0.78),55,82)}
+function livePotentialCap(w,key){return liveClamp(Math.max(liveStartingStat(w,key)+8,Math.round(liveBaseStat(w,key))),72,99)}
+function liveNewProfile(id){
+ const w=liveFounder(id);const stats={},caps={};
+ LIVE_PROGRESSION_STATS.forEach(k=>{stats[k]=liveStartingStat(w,k);caps[k]=livePotentialCap(w,k)});
+ return {level:1,xp:0,points:0,stats,caps,totalXp:0};
+}
+function liveEnsureProgression(c){
+ c.progression=c.progression&&typeof c.progression==='object'?c.progression:{};
+ (c.stable||[]).forEach(id=>{if(!c.progression[id])c.progression[id]=liveNewProfile(id)});
+ c.version=3;return c;
+}
+const _liveLoadBuild2=liveLoad;
+liveLoad=function(){const c=_liveLoadBuild2();if(!c)return null;liveEnsureProgression(c);liveSave(c);return c};
+function liveXpForNext(level){return 180+(level-1)*70}
+function liveProgress(id,c){liveEnsureProgression(c);return c.progression[id]||(c.progression[id]=liveNewProfile(id))}
+function liveAwardXp(c,id,amount,reason){
+ const p=liveProgress(id,c);const before=p.level;p.xp+=amount;p.totalXp+=amount;
+ while(p.xp>=liveXpForNext(p.level)){p.xp-=liveXpForNext(p.level);p.level++;p.points++}
+ return {amount,reason,levels:p.level-before,level:p.level,points:p.points};
+}
+function liveEffectiveStat(c,id,key){const p=liveProgress(id,c);return p.stats[key]||liveStartingStat(liveFounder(id),key)}
+function liveProgressBar(p){const need=liveXpForNext(p.level),pct=Math.max(0,Math.min(100,Math.round((p.xp/need)*100)));return `<div class="live-xp-track"><i style="width:${pct}%"></i></div><small>${p.xp} / ${need} XP TO LEVEL ${p.level+1}</small>`}
+function gauntletLiveCareerCard(id){
+ const c=liveLoad();if(!c)return gauntletLiveHome();id=id||c.active;if(!c.stable.includes(id))id=c.active;
+ const w=liveFounder(id),p=liveProgress(id,c);
+ render(`<section class="panel live-career-card-screen"><div class="live-calendar-top"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><button class="shell-back" onclick="gauntletLiveStable()">STABLE</button></div><div class="tv-kicker">CAREER DEVELOPMENT</div><h1>WRESTLER STAT CARD</h1><div class="live-stat-card"><div class="live-stat-identity">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>${w.title}</small><h2>${w.name}</h2><b>LEVEL ${p.level}</b>${liveProgressBar(p)}<span>AVAILABLE STAT POINTS <strong>${p.points}</strong></span></div></div><div class="live-attribute-list">${LIVE_PROGRESSION_STATS.map(k=>{const value=p.stats[k],cap=p.caps[k],maxed=value>=cap;return `<div class="live-attribute-row"><span><small>${k.toUpperCase()}</small><b>${value}<em>/ ${cap}</em></b></span><div class="live-attribute-meter"><i style="width:${Math.round(value/cap*100)}%"></i></div><button ${p.points<1||maxed?'disabled':''} onclick="gauntletLiveSpendPoint('${id}','${k}')">${maxed?'MAX':'+'}</button></div>`}).join('')}</div></div><p class="live-stat-note">XP is earned steadily from matches and weekly activities. Each level awards one permanent stat point for this career.</p></section>`)
+}
+function gauntletLiveSpendPoint(id,key){const c=liveLoad(),p=liveProgress(id,c);if(!LIVE_PROGRESSION_STATS.includes(key)||p.points<1||p.stats[key]>=p.caps[key])return gauntletLiveCareerCard(id);p.stats[key]++;p.points--;liveSave(c);gauntletLiveCareerCard(id)}
+const _gauntletLiveChooseFounderB2=gauntletLiveChooseFounder;
+gauntletLiveChooseFounder=function(id){const w=liveFounder(id);if(!w||!LIVE_FOUNDERS.includes(id))return gauntletLiveFounderSelect();const c={version:3,founder:id,active:id,stable:[id],week:1,month:1,day:0,wins:0,losses:0,momentum:50,popularity:20,training:{power:0,speed:0,technique:0,charisma:0,recovery:0},progression:{},history:[],created:new Date().toISOString()};liveEnsureProgression(c);liveSave(c);gauntletLiveCalendar()};
+const _gauntletLiveAcceptRecruitB2=gauntletLiveAcceptRecruit;
+gauntletLiveAcceptRecruit=function(id){const c=liveLoad();if(!c.stable.includes(id))c.stable.push(id);liveEnsureProgression(c);liveSave(c);gauntletLiveFinishMatch(true,id,true)};
+const _gauntletLiveCalendarB2=gauntletLiveCalendar;
+gauntletLiveCalendar=function(){
+ const c=liveLoad();if(!c)return gauntletLiveHome();const w=liveFounder(c.active)||liveFounder(c.founder),p=liveProgress(c.active,c),supercard=c.week%4===0;
+ render(`<section class="panel live-calendar-screen"><div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div><div class="tv-kicker">MONTH ${c.month} · WEEK ${c.week}</div><h1>GAUNTLET LIVE</h1><div class="live-career-dashboard"><div class="live-career-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>ACTIVE WRESTLER</small><b>${w.name}</b><span>Level ${p.level} · ${c.wins}-${c.losses} record · ${c.stable.length} stable members</span>${liveProgressBar(p)}</div></div><div class="live-mini-stats"><span><small>MOMENTUM</small><b>${c.momentum}</b></span><span><small>POPULARITY</small><b>${c.popularity}</b></span><button onclick="gauntletLiveCareerCard()">STAT CARD${p.points?` · ${p.points} POINT${p.points===1?'':'S'}`:''}</button><button onclick="gauntletLiveStable()">MANAGE STABLE</button></div></div><div class="live-week-strip">${LIVE_DAYS.map((d,i)=>`<div class="live-day ${i<c.day?'complete':''} ${i===c.day?'current':''} ${i===6&&supercard?'supercard':''}"><small>${d.slice(0,3).toUpperCase()}</small><b>${i===6&&supercard?'SUPERCARD':i+1}</b><span>${liveDayLabel(c,i)}</span></div>`).join('')}</div><div class="live-today"><small>TODAY · ${LIVE_DAYS[c.day].toUpperCase()}</small><h2>${liveDayLabel(c,c.day)}</h2><p>${liveDayDescription(c)}</p><button class="btn live-primary" onclick="gauntletLiveBeginDay()">${c.day===0||c.day===4||liveIsSupercard(c)?'VIEW MATCH':'BEGIN ACTIVITY'}</button></div></section>`)
+};
+const _gauntletLiveChoiceB2=gauntletLiveChoice;
+gauntletLiveChoice=function(title,prompt,choices){const c=liveLoad();render(`<section class="panel live-choice-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">${LIVE_DAYS[c.day].toUpperCase()} ACTIVITY</div><h1>${title}</h1><p>${prompt}</p><div class="live-choice-grid">${choices.map((ch,i)=>`<button onclick="gauntletLiveCompleteChoice(${i},${JSON.stringify(choices).replace(/"/g,'&quot;')})"><b>${ch[0]}</b><span>${ch[1]}</span></button>`).join('')}</div></section>`)};
+const _gauntletLiveCompleteChoiceB2=gauntletLiveCompleteChoice;
+gauntletLiveCompleteChoice=function(index,choices){const c=liveLoad(),choice=choices[index];if(!choice)return gauntletLiveCalendar();const key=choice[2],amount=Number(choice[3])||0;if(key==='momentum'||key==='popularity')c[key]=liveClamp(c[key]+amount,0,100);else c.training[key]=(c.training[key]||0)+amount;if(choice[4])c[choice[4]]=liveClamp((c[choice[4]]||0)+(Number(choice[5])||0),0,100);const xp=liveAwardXp(c,c.active,c.day===2?45:30,choice[0]);const completed=liveAdvanceDay(c);liveSave(c);render(`<section class="panel live-day-complete"><div class="tv-kicker">${LIVE_DAYS[completed].toUpperCase()} COMPLETE</div><h1>${choice[0].toUpperCase()}</h1><p>${choice[1]}</p><div class="live-xp-award"><b>+${xp.amount} XP</b><span>${xp.levels?`LEVEL UP! +${xp.levels} STAT POINT${xp.levels===1?'':'S'}`:`Progressing toward Level ${xp.level+1}`}</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE TO ${LIVE_DAYS[c.day].toUpperCase()}</button></section>`)};
+const _gauntletLiveResolveMatchB2=gauntletLiveResolveMatch;
+gauntletLiveResolveMatch=function(strategy){
+ const c=liveLoad();if(!c||!c.pending)return gauntletLiveCalendar();const opp=liveFounder(c.pending.opponent),t=c.training||{};
+ const power=liveEffectiveStat(c,c.active,'power'),speed=liveEffectiveStat(c,c.active,'speed'),tech=liveEffectiveStat(c,c.active,'technique'),charisma=liveEffectiveStat(c,c.active,'charisma'),res=liveEffectiveStat(c,c.active,'resilience'),vers=liveEffectiveStat(c,c.active,'versatility'),fin=liveEffectiveStat(c,c.active,'finisher');
+ let chance=.36+(c.momentum-50)/250+((power+speed+tech+res+vers+fin)/6-65)/170+((t.power||0)+(t.speed||0)+(t.technique||0))/140;
+ if(strategy==='control')chance+=.05+(tech-65)/300;if(strategy==='risk')chance+=(speed+fin-140)/420;if(strategy==='showboat')chance+=(charisma-70)/280-.03;if(c.pending.isSupercard)chance-=.08;chance=liveClamp(chance,.2,.84);const win=c.history.length===0?true:Math.random()<chance;
+ if(win){c.wins++;c.momentum=liveClamp(c.momentum+(c.pending.isSupercard?16:10),0,100);if(strategy==='showboat')c.popularity=liveClamp(c.popularity+12,0,100)}else{c.losses++;c.momentum=liveClamp(c.momentum-12,0,100)}
+ const xpAmount=win?(c.pending.isSupercard?240:110):(c.pending.isSupercard?70:40);const xp=liveAwardXp(c,c.active,xpAmount,win?'Match victory':'Match experience');c.lastXpAward=xp;
+ c.history.unshift({week:c.week,day:c.day,opponent:opp.id,win,strategy,supercard:c.pending.isSupercard,xp:xpAmount,date:new Date().toISOString()});c.history=c.history.slice(0,30);liveSave(c);if(win&&!c.stable.includes(opp.id))return gauntletLiveRecruitment(opp.id);gauntletLiveFinishMatch(win,opp.id,false)
+};
+const _gauntletLiveFinishMatchB2=gauntletLiveFinishMatch;
+gauntletLiveFinishMatch=function(win,oppId,recruited){const c=liveLoad(),opp=liveFounder(oppId),wasSC=c.pending&&c.pending.isSupercard,xp=c.lastXpAward||{amount:0,levels:0,level:liveProgress(c.active,c).level};c.lastXpAward=null;const completed=liveAdvanceDay(c);liveSave(c);render(`<section class="panel live-day-complete ${win?'live-win':'live-loss'}"><div class="tv-kicker">${wasSC?'SUPERCARD RESULT':'MATCH RESULT'}</div><h1>${win?'VICTORY':'DEFEAT'}</h1><p>${win?`${liveFounder(c.active).name} defeated ${opp.name}.${recruited?` ${opp.name} has joined your stable.`:''}`:`${opp.name} wins, but your Gauntlet Live career continues.`}</p><div class="live-xp-award"><b>+${xp.amount} XP</b><span>${xp.levels?`LEVEL UP! +${xp.levels} STAT POINT${xp.levels===1?'':'S'} EARNED`:`Level ${xp.level} progression`}</span></div><div class="live-result-record"><b>${c.wins}-${c.losses}</b><span>CAREER RECORD</span></div><div class="live-result-actions"><button class="btn ${xp.levels?'live-primary':'secondary'}" onclick="gauntletLiveCareerCard()">VIEW STAT CARD</button><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE TO ${LIVE_DAYS[c.day].toUpperCase()}</button></div></section>`)};
+const _gauntletLiveStableB2=gauntletLiveStable;
+gauntletLiveStable=function(){const c=liveLoad();if(!c)return gauntletLiveHome();render(`<section class="panel live-stable-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">PERMANENT ROSTER</div><h1>YOUR STABLE</h1><p>Select your active wrestler or open an individual career stat card.</p><div class="live-stable-grid">${c.stable.map(id=>{const w=liveFounder(id),p=liveProgress(id,c);return `<article class="live-stable-card ${id===c.active?'active':''}">${imageWithFallback(w,'portrait','art-portrait','collection')}<span><small>${id===c.founder?'FOUNDER':'RECRUITED'} · LEVEL ${p.level}</small><b>${w.name}</b><em>${p.points?`${p.points} STAT POINT${p.points===1?'':'S'} READY`:id===c.active?'ACTIVE WRESTLER':'STABLE MEMBER'}</em><div><button onclick="gauntletLiveSetActive('${id}')">${id===c.active?'ACTIVE':'SELECT'}</button><button onclick="gauntletLiveCareerCard('${id}')">STAT CARD</button></div></span></article>`}).join('')}</div></section>`)};
+
 
 const _homeV52=home;
 home=function(){clearStoryTimer();M=null;overlay.innerHTML='';const w=featuredSuperstar();render(`<section class="game-hub"><div class="hub-copy"><div class="tv-kicker">WELCOME TO THE GAUNTLET</div><h1>TAG TEAM <span>GAUNTLET</span></h1><p>Build a team, survive the broadcast and create your legacy.</p><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>GAUNTLET LIVE</b><small>Begin or continue your weekly career.</small></button><button class="hub-option" onclick="classicHome()"><b>CLASSIC GAUNTLET</b><small>One loss ends the run.</small></button><button class="hub-option tournament-option" onclick="tournamentHome()"><b>GAUNTLET CUP</b><small>Eight-team single-elimination tournament.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Singles and Tag Team exhibitions.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the Founding Twenty.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Your complete match history.</small></button><button class="hub-option" onclick="helpMenu()"><b>HELP & GUIDE</b><small>Rules, decisions and mode explanations.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED SUPERSTAR</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)};
+
+
+// GAUNTLET LIVE 6.3 BUILD 4 — premium career cards, OVR, milestones and level celebrations
+const LIVE_TRAITS=[
+ {id:'iron-chin',name:'Iron Chin',description:'Resilience has extra influence when calculating match odds.',stat:'resilience'},
+ {id:'ring-general',name:'Ring General',description:'Technique has extra influence when using Control the Match.',stat:'technique'},
+ {id:'crowd-favourite',name:'Crowd Favourite',description:'Earn larger popularity gains from promos and showboating.',stat:'charisma'},
+ {id:'comeback-king',name:'Comeback King',description:'Gain a match-odds boost whenever momentum is below 45.',stat:'resilience'},
+ {id:'show-stealer',name:'Show Stealer',description:'Speed and Finisher have extra influence on high-risk strategies.',stat:'speed'}
+];
+function liveOverall(p){
+ const weights={power:1,speed:1,technique:1.15,charisma:.75,resilience:1.1,versatility:.9,finisher:1.1};
+ let total=0,weight=0;LIVE_PROGRESSION_STATS.forEach(k=>{total+=(Number(p.stats[k])||0)*weights[k];weight+=weights[k]});
+ return Math.round(total/weight);
+}
+function livePotentialOverall(p){
+ const temp={stats:p.caps};return liveOverall(temp);
+}
+function liveProfileUpgrade(p){
+ p.traits=Array.isArray(p.traits)?p.traits:[];
+ p.milestones=Number(p.milestones)||0;
+ p.wins=Number(p.wins)||0;p.losses=Number(p.losses)||0;p.supercardWins=Number(p.supercardWins)||0;
+ p.titles=Number(p.titles)||0;p.lastLevel=Number(p.lastLevel)||p.level;
+ return p;
+}
+const _liveEnsureProgressionB3=liveEnsureProgression;
+liveEnsureProgression=function(c){_liveEnsureProgressionB3(c);Object.values(c.progression||{}).forEach(liveProfileUpgrade);c.version=4;return c};
+const _liveAwardXpB3=liveAwardXp;
+liveAwardXp=function(c,id,amount,reason){
+ const p=liveProfileUpgrade(liveProgress(id,c)),before=p.level,beforePoints=p.points,beforeMilestones=p.milestones;
+ p.xp+=amount;p.totalXp+=amount;
+ while(p.xp>=liveXpForNext(p.level)){
+  p.xp-=liveXpForNext(p.level);p.level++;
+  if(p.level%10===0)p.milestones++;else p.points++;
+ }
+ p.lastLevel=before;
+ return {amount,reason,levels:p.level-before,level:p.level,points:p.points,pointsEarned:p.points-beforePoints,milestonesEarned:p.milestones-beforeMilestones};
+};
+function liveTraitById(id){return LIVE_TRAITS.find(t=>t.id===id)}
+function liveTraitBonus(c,id,stat){const p=liveProgress(id,c);return (p.traits||[]).some(t=>liveTraitById(t)?.stat===stat)?2:0}
+function liveCareerRecord(p){return `${p.wins||0}-${p.losses||0}`}
+function liveAttributeRows(p,interactive,id){return LIVE_PROGRESSION_STATS.map(k=>{const value=p.stats[k],cap=p.caps[k],maxed=value>=cap;return `<div class="live-attribute-row"><span><small>${k.toUpperCase()}</small><b>${value}<em>/ ${cap}</em></b></span><div class="live-attribute-meter"><i style="width:${Math.round(value/cap*100)}%"></i></div>${interactive?`<button ${p.points<1||maxed?'disabled':''} onclick="gauntletLiveSpendPoint('${id}','${k}',true)">${maxed?'MAX':'+'}</button>`:''}</div>`}).join('')}
+function gauntletLiveCareerCard(id){
+ const c=liveLoad();if(!c)return gauntletLiveHome();id=id||c.active;if(!c.stable.includes(id))id=c.active;
+ const w=liveFounder(id),p=liveProfileUpgrade(liveProgress(id,c)),ovr=liveOverall(p),potential=livePotentialOverall(p);
+ render(`<section class="panel live-career-card-screen premium"><div class="live-calendar-top"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><button class="shell-back" onclick="gauntletLiveStable()">STABLE</button></div><div class="tv-kicker">CAREER DEVELOPMENT</div><h1>MY CAREER</h1><div class="live-premium-card"><div class="live-card-art">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div class="live-level-badge"><small>LEVEL</small><b>${p.level}</b></div><div class="live-ovr-badge"><small>OVR</small><b>${ovr}</b><em>MAX ${potential}</em></div></div><div class="live-card-main"><small>${w.title}</small><h2>${w.name}</h2>${liveProgressBar(p)}<div class="live-career-record-grid"><span><small>RECORD</small><b>${liveCareerRecord(p)}</b></span><span><small>SUPERCARD WINS</small><b>${p.supercardWins||0}</b></span><span><small>WEEKS</small><b>${c.week}</b></span><span><small>TITLES</small><b>${p.titles||0}</b></span></div><div class="live-point-callout ${p.points?'ready':''}"><small>AVAILABLE ATTRIBUTE POINTS</small><b>${p.points}</b><button ${p.points<1?'disabled':''} onclick="gauntletLiveSpendPoints('${id}')">${p.points?'SPEND POINTS':'KEEP PROGRESSING'}</button></div></div><div class="live-card-attributes">${liveAttributeRows(p,false,id)}</div><div class="live-trait-panel"><div><small>CAREER TRAITS</small><b>${p.traits.length?`${p.traits.length} UNLOCKED`:'NONE YET'}</b></div>${p.traits.length?p.traits.map(t=>{const trait=liveTraitById(t);return trait?`<span><b>${trait.name}</b><small>${trait.description}</small></span>`:''}).join(''):'<p>Reach Level 10 to choose your first defining trait.</p>'}${p.milestones?`<button onclick="gauntletLiveMilestoneChoice('${id}')">CHOOSE MILESTONE TRAIT · ${p.milestones}</button>`:''}</div></div></section>`)
+}
+function gauntletLiveSpendPoints(id){
+ const c=liveLoad();if(!c)return gauntletLiveHome();id=id||c.active;const w=liveFounder(id),p=liveProgress(id,c);
+ render(`<section class="panel live-spend-screen"><div class="live-calendar-top"><button class="shell-back" onclick="gauntletLiveCareerCard('${id}')">← STAT CARD</button><span class="live-spend-counter">${p.points} POINT${p.points===1?'':'S'} AVAILABLE</span></div><div class="tv-kicker">SHAPE YOUR WRESTLER</div><h1>SPEND ATTRIBUTE POINTS</h1><div class="live-spend-identity">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>${w.title}</small><h2>${w.name}</h2><span>OVR <b>${liveOverall(p)}</b></span></div></div><div class="live-spend-list">${liveAttributeRows(p,true,id)}</div><p>Each increase is permanent for this Gauntlet Live career. Potential caps preserve each wrestler's identity.</p><button class="btn live-primary" onclick="gauntletLiveCareerCard('${id}')">DONE</button></section>`)
+}
+function gauntletLiveSpendPoint(id,key,stay){const c=liveLoad(),p=liveProgress(id,c);if(!LIVE_PROGRESSION_STATS.includes(key)||p.points<1||p.stats[key]>=p.caps[key])return stay?gauntletLiveSpendPoints(id):gauntletLiveCareerCard(id);p.stats[key]++;p.points--;liveSave(c);stay?gauntletLiveSpendPoints(id):gauntletLiveCareerCard(id)}
+function gauntletLiveMilestoneChoice(id){
+ const c=liveLoad();if(!c)return gauntletLiveHome();id=id||c.active;const w=liveFounder(id),p=liveProgress(id,c);if(!p.milestones)return gauntletLiveCareerCard(id);
+ const available=LIVE_TRAITS.filter(t=>!p.traits.includes(t.id));
+ render(`<section class="panel live-milestone-screen"><button class="shell-back" onclick="gauntletLiveCareerCard('${id}')">← STAT CARD</button><div class="tv-kicker">LEVEL ${p.level} MILESTONE</div><h1>CHOOSE A CAREER TRAIT</h1><p>Define how ${w.name} develops. This choice is permanent for the current career.</p><div class="live-trait-choice-grid">${available.map(t=>`<button onclick="gauntletLiveSelectTrait('${id}','${t.id}')"><small>${t.stat.toUpperCase()} SPECIALITY</small><b>${t.name}</b><span>${t.description}</span></button>`).join('')}</div></section>`)
+}
+function gauntletLiveSelectTrait(id,traitId){const c=liveLoad(),p=liveProgress(id,c),trait=liveTraitById(traitId);if(!trait||p.milestones<1||p.traits.includes(traitId))return gauntletLiveMilestoneChoice(id);p.traits.push(traitId);p.milestones--;liveSave(c);gauntletLiveCareerCard(id)}
+function gauntletLiveLevelCelebration(id,xp,nextDay,returnMode){
+ const c=liveLoad(),w=liveFounder(id),p=liveProgress(id,c),ovr=liveOverall(p);
+ render(`<section class="panel live-level-celebration"><div class="live-level-rays"></div><div class="tv-kicker">CAREER PROGRESSION</div><h1>LEVEL UP!</h1>${imageWithFallback(w,'victory','art-victory','postMatch')}<div class="live-celebration-level"><small>${w.name}</small><b>LEVEL ${p.level}</b><span>OVR ${ovr}</span></div><div class="live-celebration-rewards">${xp.pointsEarned?`<span><b>+${xp.pointsEarned}</b><small>ATTRIBUTE POINT${xp.pointsEarned===1?'':'S'}</small></span>`:''}${xp.milestonesEarned?`<span><b>TRAIT</b><small>MILESTONE CHOICE READY</small></span>`:''}</div><div class="live-result-actions">${p.milestones?`<button class="btn live-primary" onclick="gauntletLiveMilestoneChoice('${id}')">CHOOSE TRAIT</button>`:''}${p.points?`<button class="btn live-primary" onclick="gauntletLiveSpendPoints('${id}')">SPEND POINTS</button>`:''}<button class="btn secondary" onclick="${returnMode==='card'?`gauntletLiveCareerCard('${id}')`:'gauntletLiveCalendar()'}">${returnMode==='card'?'VIEW STAT CARD':`CONTINUE${nextDay?` TO ${nextDay}`:''}`}</button></div></section>`)
+}
+const _gauntletLiveResolveMatchB3=gauntletLiveResolveMatch;
+gauntletLiveResolveMatch=function(strategy){
+ const c=liveLoad();if(!c||!c.pending)return gauntletLiveCalendar();const activeId=c.active,wasSC=c.pending.isSupercard,beforeWins=c.wins,beforeLosses=c.losses;
+ _gauntletLiveResolveMatchB3(strategy);
+ // The original flow may continue into recruitment before the result screen, so compare the saved career totals.
+ const updated=liveLoad();if(!updated)return;const p=liveProgress(activeId,updated);
+ if(updated.wins>beforeWins){p.wins++;if(wasSC)p.supercardWins++}else if(updated.losses>beforeLosses)p.losses++;liveSave(updated)
+};
+const _gauntletLiveFinishMatchB3=gauntletLiveFinishMatch;
+gauntletLiveFinishMatch=function(win,oppId,recruited){
+ const c=liveLoad(),xp=c.lastXpAward||{amount:0,levels:0,level:liveProgress(c.active,c).level,pointsEarned:0,milestonesEarned:0},activeId=c.active;
+ _gauntletLiveFinishMatchB3(win,oppId,recruited);
+ if(xp.levels)setTimeout(()=>gauntletLiveLevelCelebration(activeId,xp,LIVE_DAYS[liveLoad()?.day||0].toUpperCase(),'calendar'),40);
+};
+const _gauntletLiveCompleteChoiceB3=gauntletLiveCompleteChoice;
+gauntletLiveCompleteChoice=function(index,choices){
+ const before=liveLoad(),activeId=before&&before.active;_gauntletLiveCompleteChoiceB3(index,choices);
+ const after=liveLoad();if(before&&after){const p=liveProgress(activeId,after);if(p.level>(p.lastLevel||p.level)){const gained=p.level-p.lastLevel,pointsEarned=Array.from({length:gained},(_,i)=>p.lastLevel+i+1).filter(l=>l%10!==0).length,milestonesEarned=gained-pointsEarned;p.lastLevel=p.level;liveSave(after);setTimeout(()=>gauntletLiveLevelCelebration(activeId,{levels:gained,pointsEarned,milestonesEarned},LIVE_DAYS[after.day].toUpperCase(),'calendar'),40)}}
+};
+const _gauntletLiveCalendarB3=gauntletLiveCalendar;
+gauntletLiveCalendar=function(){
+ _gauntletLiveCalendarB3();const c=liveLoad();if(!c)return;const p=liveProgress(c.active,c),buttons=document.querySelector('.live-mini-stats');if(buttons){const first=buttons.querySelector('button');if(first)first.textContent=`MY CAREER · OVR ${liveOverall(p)}${p.points?` · ${p.points} POINT${p.points===1?'':'S'}`:''}`}
+};
+gauntletLiveStable=function(){const c=liveLoad();if(!c)return gauntletLiveHome();render(`<section class="panel live-stable-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">PERMANENT ROSTER</div><h1>YOUR STABLE</h1><p>Compare Overall Ratings, select your active wrestler or develop each career.</p><div class="live-stable-grid">${c.stable.map(id=>{const w=liveFounder(id),p=liveProgress(id,c);return `<article class="live-stable-card ${id===c.active?'active':''}">${imageWithFallback(w,'portrait','art-portrait','collection')}<span><small>${id===c.founder?'FOUNDER':'RECRUITED'} · LEVEL ${p.level}</small><b>${w.name}</b><em>OVR ${liveOverall(p)} · ${p.points?`${p.points} POINT${p.points===1?'':'S'} READY`:id===c.active?'ACTIVE WRESTLER':'STABLE MEMBER'}</em><div><button onclick="gauntletLiveSetActive('${id}')">${id===c.active?'ACTIVE':'SELECT'}</button><button onclick="gauntletLiveCareerCard('${id}')">MY CAREER</button></div></span></article>`}).join('')}</div></section>`)};
 
 home();
 
@@ -802,74 +951,4 @@ home();
  document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='i'){e.preventDefault();open()}});
  const dev=new URLSearchParams(location.search).get('dev');
  if(dev==='roster')setTimeout(rosterStatus,100);else if(enabled())setTimeout(open,250);
-})();
-
-/* GAUNTLET LIVE 6.2 BUILD 3 — career XP and wrestler progression */
-(function(){
- const ATTRS=['power','speed','technique','charisma','resilience','versatility','finisher'];
- function capFor(w,key){
-  if(key==='finisher') return Math.min(99,Math.max(82,Number(w.overall||88)+1));
-  return Math.min(99,Math.max(70,Number(w[key]||80)));
- }
- function newProgress(id){
-  const w=liveFounder(id)||WRESTLERS[0],caps={},stats={};
-  ATTRS.forEach(key=>{caps[key]=capFor(w,key);stats[key]=Math.max(50,caps[key]-15)});
-  return {level:1,xp:0,points:0,stats,caps};
- }
- function ensureProgress(c){
-  c.progress=c.progress&&typeof c.progress==='object'?c.progress:{};
-  (c.stable||[]).forEach(id=>{if(!c.progress[id])c.progress[id]=newProgress(id)});
-  return c;
- }
- function xpNeeded(level){return 175+(Math.max(1,level)-1)*75}
- function addXP(c,id,amount){
-  ensureProgress(c);const p=c.progress[id]||(c.progress[id]=newProgress(id));
-  const before=p.level;p.xp+=Math.max(0,Math.round(amount));
-  while(p.xp>=xpNeeded(p.level)){p.xp-=xpNeeded(p.level);p.level++;p.points++}
-  return {amount,levels:p.level-before,level:p.level,points:p.points};
- }
- const oldLoad=liveLoad;
- liveLoad=function(){const c=oldLoad();if(!c)return null;c.version=3;ensureProgress(c);liveSave(c);return c};
- const oldChoose=gauntletLiveChooseFounder;
- gauntletLiveChooseFounder=function(id){oldChoose(id);const c=liveLoad();if(c){ensureProgress(c);liveSave(c)}};
- function activeProgress(c){ensureProgress(c);return c.progress[c.active]}
- function xpBar(p){const need=xpNeeded(p.level),pct=Math.max(0,Math.min(100,Math.round(p.xp/need*100)));return `<div class="live-xp"><div><span style="width:${pct}%"></span></div><small>${p.xp} / ${need} XP</small></div>`}
- function statAverage(p){return Math.round(ATTRS.reduce((n,k)=>n+(p.stats[k]||0),0)/ATTRS.length)}
- gauntletLiveCalendar=function(){
-  const c=liveLoad();if(!c)return gauntletLiveHome();const w=liveFounder(c.active)||liveFounder(c.founder),p=activeProgress(c),supercard=c.week%4===0;
-  render(`<section class="panel live-calendar-screen"><div class="live-calendar-top"><button class="shell-back" onclick="home()">← MAIN MENU</button><button class="shell-back" onclick="gauntletLiveHome()">CAREER MENU</button></div><div class="tv-kicker">MONTH ${c.month} · WEEK ${c.week}</div><h1>GAUNTLET LIVE</h1><div class="live-career-dashboard"><div class="live-career-hero">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<div><small>ACTIVE WRESTLER · LEVEL ${p.level}</small><b>${w.name}</b><span>${c.wins}-${c.losses} record · ${c.stable.length} stable members</span>${xpBar(p)}</div></div><div class="live-mini-stats"><span><small>MOMENTUM</small><b>${c.momentum}</b></span><span><small>OVERALL</small><b>${statAverage(p)}</b></span><button onclick="gauntletLiveStatCard('${c.active}')">VIEW STAT CARD${p.points?` · ${p.points} POINT${p.points===1?'':'S'}`:''}</button><button onclick="gauntletLiveStable()">MANAGE STABLE</button></div></div><div class="live-week-strip">${LIVE_DAYS.map((d,i)=>`<div class="live-day ${i<c.day?'complete':''} ${i===c.day?'current':''} ${i===6&&supercard?'supercard':''}"><small>${d.slice(0,3).toUpperCase()}</small><b>${i===6&&supercard?'SUPERCARD':i+1}</b><span>${liveDayLabel(c,i)}</span></div>`).join('')}</div><div class="live-today"><small>TODAY · ${LIVE_DAYS[c.day].toUpperCase()}</small><h2>${liveDayLabel(c,c.day)}</h2><p>${liveDayDescription(c)}</p><button class="btn live-primary" onclick="gauntletLiveBeginDay()">${c.day===0||c.day===4||liveIsSupercard(c)?'VIEW MATCH':'BEGIN ACTIVITY'}</button></div></section>`)
- };
- gauntletLiveStatCard=function(id){
-  const c=liveLoad();if(!c||!c.stable.includes(id))return gauntletLiveCalendar();const w=liveFounder(id),p=c.progress[id];
-  render(`<section class="panel live-stat-screen"><button class="shell-back" onclick="gauntletLiveStable()">← STABLE</button><div class="tv-kicker">CAREER DEVELOPMENT</div><h1>WRESTLER STAT CARD</h1><div class="live-stat-card"><div class="live-stat-identity">${imageWithFallback(w,'portrait','art-portrait','collection')}<div><small>${w.title}</small><h2>${w.name}</h2><b>LEVEL ${p.level}</b>${xpBar(p)}<strong>${p.points} ATTRIBUTE POINT${p.points===1?'':'S'} AVAILABLE</strong></div></div><div class="live-attributes">${ATTRS.map(key=>{const value=p.stats[key],cap=p.caps[key],can=p.points>0&&value<cap;return `<div class="live-attribute"><span><small>${key.toUpperCase()}</small><b>${value} <em>/ ${cap}</em></b></span><div><i style="width:${value}%"></i></div><button ${can?'':'disabled'} onclick="gauntletLiveSpendPoint('${id}','${key}')">+</button></div>`}).join('')}</div></div></section>`)
- };
- gauntletLiveSpendPoint=function(id,key){const c=liveLoad();if(!c||!ATTRS.includes(key)||!c.progress[id])return;const p=c.progress[id];if(p.points<1||p.stats[key]>=p.caps[key])return;p.points--;p.stats[key]++;liveSave(c);gauntletLiveStatCard(id)};
- gauntletLiveStable=function(){
-  const c=liveLoad();if(!c)return gauntletLiveHome();ensureProgress(c);
-  render(`<section class="panel live-stable-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">PERMANENT ROSTER</div><h1>YOUR STABLE</h1><p>Select your active wrestler or open a stat card to spend earned attribute points.</p><div class="live-stable-grid">${c.stable.map(id=>{const w=liveFounder(id),p=c.progress[id];return `<article class="live-stable-card ${id===c.active?'active':''}">${imageWithFallback(w,'portrait','art-portrait','collection')}<span><small>${id===c.founder?'FOUNDER':'RECRUITED'} · LEVEL ${p.level}</small><b>${w.name}</b>${xpBar(p)}<em>${p.points?`${p.points} POINT${p.points===1?'':'S'} READY`:`OVERALL ${statAverage(p)}`}</em><div class="live-stable-actions"><button onclick="gauntletLiveSetActive('${id}')">${id===c.active?'ACTIVE':'SELECT'}</button><button onclick="gauntletLiveStatCard('${id}')">STAT CARD</button></div></span></article>`}).join('')}</div></section>`)
- };
- const oldResolveChoice=gauntletLiveResolveChoice;
- gauntletLiveResolveChoice=function(choice){
-  const c=liveLoad();if(!c)return gauntletLiveHome();const key=choice[2],amount=choice[3],key2=choice[4],amount2=choice[5];
-  if(['momentum','popularity'].includes(key))c[key]=liveClamp((c[key]||0)+amount,0,100);else c.training[key]=(c.training[key]||0)+amount;
-  if(key2){if(['momentum','popularity'].includes(key2))c[key2]=liveClamp((c[key2]||0)+amount2,0,100);else c.training[key2]=(c.training[key2]||0)+amount2}
-  const gain=addXP(c,c.active,c.day===2?45:30);liveAdvanceDay(c);liveSave(c);
-  render(`<section class="panel live-day-complete"><div class="tv-kicker">ACTIVITY COMPLETE</div><h1>${choice[0].toUpperCase()}</h1><p>${choice[1]}.</p><div class="live-xp-award"><b>+${gain.amount} XP</b>${gain.levels?`<strong>LEVEL UP · +${gain.levels} ATTRIBUTE POINT${gain.levels===1?'':'S'}</strong>`:''}</div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE TO ${LIVE_DAYS[c.day].toUpperCase()}</button></section>`)
- };
- gauntletLiveResolveMatch=function(strategy){
-  const c=liveLoad();if(!c||!c.pending)return gauntletLiveCalendar();const opp=liveFounder(c.pending.opponent),p=activeProgress(c),s=p.stats;
-  let chance=.43+(c.momentum-50)/260+((s.power+s.speed+s.technique+s.resilience)/4-65)/180;
-  if(strategy==='control')chance+=.07+(s.technique-65)/260;if(strategy==='risk')chance-=.03+(s.power-65)/350;if(strategy==='showboat')chance-=.05+(s.charisma-65)/320;
-  if(c.pending.isSupercard)chance-=.08;chance=liveClamp(chance,.2,.84);const win=c.history.length===0?true:Math.random()<chance;
-  if(win){c.wins++;c.momentum=liveClamp(c.momentum+(c.pending.isSupercard?16:10),0,100);if(strategy==='showboat')c.popularity=liveClamp(c.popularity+12,0,100)}else{c.losses++;c.momentum=liveClamp(c.momentum-12,0,100)}
-  const xp=win?(c.pending.isSupercard?220:110):(c.pending.isSupercard?65:40);c.pending.xpGain=addXP(c,c.active,xp);c.pending.win=win;
-  c.history.unshift({week:c.week,day:c.day,opponent:opp.id,win,strategy,supercard:c.pending.isSupercard,xp,date:new Date().toISOString()});c.history=c.history.slice(0,30);liveSave(c);
-  if(win&&!c.stable.includes(opp.id))return gauntletLiveRecruitment(opp.id);gauntletLiveFinishMatch(win,opp.id,false)
- };
- const oldAccept=gauntletLiveAcceptRecruit;
- gauntletLiveAcceptRecruit=function(id){const c=liveLoad();if(!c.stable.includes(id))c.stable.push(id);ensureProgress(c);addXP(c,c.active,50);liveSave(c);gauntletLiveFinishMatch(true,id,true)};
- gauntletLiveFinishMatch=function(win,oppId,recruited){
-  const c=liveLoad(),opp=liveFounder(oppId),wasSC=c.pending&&c.pending.isSupercard,gain=c.pending&&c.pending.xpGain?c.pending.xpGain:{amount:0,levels:0};liveAdvanceDay(c);
-  render(`<section class="panel live-day-complete ${win?'live-win':'live-loss'}"><div class="tv-kicker">${wasSC?'SUPERCARD RESULT':'MATCH RESULT'}</div><h1>${win?'VICTORY':'DEFEAT'}</h1><p>${win?`${liveFounder(c.active).name} defeated ${opp.name}.${recruited?` ${opp.name} has joined your stable.`:''}`:`${opp.name} wins, but your Gauntlet Live career continues.`}</p><div class="live-xp-award"><b>+${gain.amount}${recruited?' + 50':''} XP</b>${gain.levels?`<strong>LEVEL UP · ATTRIBUTE POINT EARNED</strong>`:''}</div><div class="live-result-record"><b>${c.wins}-${c.losses}</b><span>CAREER RECORD</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE TO ${LIVE_DAYS[c.day].toUpperCase()}</button></section>`)
- };
 })();

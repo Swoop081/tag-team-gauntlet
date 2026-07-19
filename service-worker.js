@@ -1,5 +1,5 @@
 /* Tag Team Gauntlet Service Worker 1.0 */
-const APP_VERSION = '6.2.0';
+const APP_VERSION = '6.3.0';
 const CACHE_NAME = `ttg-runtime-${APP_VERSION}`;
 const NEVER_CACHE = ['version.json', 'service-worker.js'];
 
