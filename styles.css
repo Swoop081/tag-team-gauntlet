@@ -1033,3 +1033,38 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
     font-size:1.75rem!important;
   }
 }
+
+/* VERSION 8.0.10 — restore equal feud-origin wrestler portrait columns */
+.lpw-feud-origin .origin-matchup{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr)!important;
+  align-items:end!important;
+  column-gap:10px!important;
+  overflow:hidden!important;
+}
+.lpw-feud-origin .origin-matchup>img{
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:185px!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  transform:none!important;
+  align-self:end!important;
+}
+.lpw-feud-origin .origin-matchup>img:first-child{grid-column:1!important}
+.lpw-feud-origin .origin-matchup>img:last-child{grid-column:3!important}
+.lpw-feud-origin .origin-matchup>strong{
+  grid-column:2!important;
+  left:50%!important;
+  top:72%!important;
+}
+@media(max-width:700px){
+  .lpw-feud-origin .origin-matchup{
+    grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr)!important;
+    height:180px!important;
+    column-gap:6px!important;
+  }
+  .lpw-feud-origin .origin-matchup>img{max-height:176px!important}
+  .lpw-feud-origin .origin-matchup>strong{top:73%!important}
+}
