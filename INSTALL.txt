@@ -1,11 +1,12 @@
-TAG TEAM GAUNTLET — IMAGE FRAMEWORK 1.0
+TAG TEAM GAUNTLET 6.1 — GAUNTLET LIVE BUILD 2 PATCH
 
-Replace game.js, styles.css and index.html in the project root.
-Keep data.js, .nojekyll and all existing assets.
-Required PNG paths:
-assets/wrestlers/jack-mercer/full.png
-assets/wrestlers/jack-mercer/portrait.png
-assets/wrestlers/jack-mercer/victory.png
-assets/wrestlers/jett-valentine/full.png
-assets/wrestlers/jett-valentine/portrait.png
-assets/wrestlers/jett-valentine/victory.png
+Upload these files to the repository root and replace the existing copies:
+- game.js
+- styles.css
+- index.html
+- version.json
+- service-worker.js
+
+No asset folders or unchanged project files are included.
+The first Gauntlet Live match is guaranteed to be a victory so recruitment can be tested immediately.
+Existing Build 1 Gauntlet Live saves migrate automatically.
