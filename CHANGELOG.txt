@@ -1,3 +1,7 @@
+LEGACY PRO WRESTLING 7.0
+- Full game rebrand and Career presentation update.
+- See VERSION-7.0-TEST-NOTES.md.
+
 IMAGE FRAMEWORK 1.0
 - Adds full, portrait and victory image types.
 - Jack Mercer and Jett Valentine use the new artwork paths.

@@ -1,12 +1,12 @@
-/* Tag Team Gauntlet Service Worker 6.5.1 */
-const APP_VERSION = '6.5.1';
-const CACHE_NAME = `ttg-${APP_VERSION}`;
+/* Tag Team Gauntlet Service Worker 7.0.0 */
+const APP_VERSION = '7.0.0';
+const CACHE_NAME = `lpw-${APP_VERSION}`;
 const NEVER_CACHE = ['index.html','game.js','data.js','styles.css','version.json','service-worker.js','assets/config/imageManager.js'];
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {
   event.waitUntil((async()=>{
     const keys=await caches.keys();
-    await Promise.all(keys.filter(key=>key.startsWith('ttg-')&&key!==CACHE_NAME).map(key=>caches.delete(key)));
+    await Promise.all(keys.filter(key=>(key.startsWith('ttg-')||key.startsWith('lpw-'))&&key!==CACHE_NAME).map(key=>caches.delete(key)));
     await self.clients.claim();
   })());
 });
