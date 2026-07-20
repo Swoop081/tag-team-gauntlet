@@ -1,1 +1,2 @@
-Replace the matching files in the project root with these files. Keep all asset folders and the root-level .nojekyll file unchanged. Clear the browser/PWA cache before testing.
+Replace the matching files in the project root with the files in this patch.
+Clear the browser/PWA cache before testing.
