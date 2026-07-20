@@ -1257,3 +1257,77 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
   left:50%!important; right:auto!important; top:auto!important; bottom:0!important;
   transform:translateX(-50%)!important; margin:0!important; z-index:50!important;
 }
+
+/* Version 8.0.18 — Career active wrestler feature */
+.lpw-calendar-807 .lpw-active-wrestler-feature{
+  width:100%;
+  margin:0 0 12px;
+  padding:16px 18px 18px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:16px;
+  background:linear-gradient(145deg,#17181e,#0c0d11);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+.lpw-calendar-807 .lpw-feature-label{
+  display:block;
+  margin-bottom:8px;
+  color:#bdbdbd;
+  font-size:.72rem;
+  letter-spacing:.12em;
+}
+.lpw-calendar-807 .lpw-feature-portrait{
+  width:100%;
+  min-height:210px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  overflow:hidden;
+}
+.lpw-calendar-807 .lpw-feature-portrait img{
+  width:auto!important;
+  height:210px!important;
+  max-width:88%;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+}
+.lpw-calendar-807 .lpw-active-wrestler-feature .lpw-active-copy{
+  display:flex!important;
+  flex-direction:column;
+  align-items:center;
+  width:100%;
+  margin-top:8px;
+}
+.lpw-calendar-807 .lpw-active-wrestler-feature .lpw-active-nickname{
+  font-size:1rem;
+  line-height:1.1;
+}
+.lpw-calendar-807 .lpw-active-wrestler-feature .lpw-active-name{
+  font-size:2rem!important;
+  line-height:1.02;
+  margin:2px 0 6px;
+  text-align:center;
+}
+.lpw-calendar-807 .lpw-active-wrestler-feature .lpw-active-record{
+  font-size:.86rem;
+  opacity:.72;
+  text-align:center;
+}
+.lpw-calendar-807 .lpw-stats-below-feature{
+  width:100%;
+  margin:0 0 12px;
+  grid-template-columns:1fr 1fr;
+  padding:10px;
+}
+.lpw-calendar-807 .lpw-stats-below-feature button{
+  min-height:46px;
+}
+@media(max-width:700px){
+  .lpw-calendar-807 .lpw-active-wrestler-feature{padding:13px 14px 15px;margin-bottom:9px}
+  .lpw-calendar-807 .lpw-feature-portrait{min-height:190px}
+  .lpw-calendar-807 .lpw-feature-portrait img{height:190px!important;max-width:94%}
+  .lpw-calendar-807 .lpw-active-wrestler-feature .lpw-active-name{font-size:1.8rem!important}
+  .lpw-calendar-807 .lpw-stats-below-feature{margin-bottom:9px}
+}
