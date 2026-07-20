@@ -1,1 +1,1 @@
-Replace the matching files in the repository root. Keep all existing assets and the root-level .nojekyll file.
+Replace the matching files in the project root with the files from this patch. Keep all existing assets and folders.

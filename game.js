@@ -352,13 +352,13 @@ function decisionChance(w,o,action){const edge=(attributeValue(w,action)-((o.res
 function choiceCommentary(choice,w,o,success){const label=choice.name;if(success){const pools=[`${w.name} chooses ${label}—and it works perfectly!`,`${label} becomes the moment that changes the match for ${w.name}!`,`${w.name} makes this match unmistakably his own with ${label}!`];return one(pools)}const pools=[`${w.name} commits to ${label}, but ${o.name} has it scouted!`,`${label} nearly changes everything—until ${o.name} shuts the door.`,`${w.name} tries to impose his identity with ${label}, but the timing is wrong.`];return one(pools)}
 
 const STORY_TYPES={
- classic:{name:'Classic Wrestling Match',min:12,max:16,decisions:2,bias:0},
- war:{name:'Back-and-Forth War',min:16,max:21,decisions:3,bias:0,nearFall:.18},
- comeback:{name:'Underdog Comeback',min:14,max:19,decisions:3,bias:-7,comeback:true},
- sprint:{name:'Fast Sprint',min:8,max:11,decisions:1,bias:2},
- domination:{name:'One-Sided Domination',min:8,max:13,decisions:1,bias:12},
- tagClinic:{name:'Tag Team Showcase',min:14,max:19,decisions:3,bias:0,tags:true},
- upset:{name:'Upset Special',min:12,max:17,decisions:2,bias:-4,upset:true}
+ classic:{name:'Classic Wrestling Match',min:14,max:18,decisions:4,bias:0},
+ war:{name:'Back-and-Forth War',min:18,max:23,decisions:5,bias:0,nearFall:.18},
+ comeback:{name:'Underdog Comeback',min:16,max:21,decisions:5,bias:-7,comeback:true},
+ sprint:{name:'Fast Sprint',min:10,max:13,decisions:3,bias:2},
+ domination:{name:'One-Sided Domination',min:10,max:14,decisions:3,bias:12},
+ tagClinic:{name:'Tag Team Showcase',min:16,max:21,decisions:5,bias:0,tags:true},
+ upset:{name:'Upset Special',min:14,max:19,decisions:4,bias:-4,upset:true}
 };
 const PHASES=[
  {id:'opening',label:'Opening Bell'},
@@ -400,7 +400,7 @@ function match(){
  if(story.upset)hiddenEdge=teamPower>=oppPower?rnd(-10,-3):rnd(3,10);
  const startPlayer=Math.round(teamPower),startOpp=Math.round(oppPower);
  const carriedBonus=S.nextMatchBonus||0;S.nextMatchBonus=0;
- M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:10+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{},startPlayer,startOpp,performancePlayer:0,performanceOpp:0,decisionPlayer:0,decisionOpp:0,crowd:0,crowdPlayer:0,crowdOpp:0,finalPlayer:0,finalOpp:0,finishType:'',decisionSeen:[],currentDecision:null,decisionOutcome:null,decisionHistory:[],carriedBonus};
+ M={storyKey,story,eventTarget,eventIndex:0,phaseIndex:0,activeP:0,activeO:0,playerControl:50+hiddenEdge,playerMom:10+S.momentum*2,oppMom:12+S.streak,log:[],highlights:[],nearFalls:0,finishers:0,tags:0,decisionsMade:0,nextDecisionAt:decisionPoints(eventTarget,story.decisions),waiting:false,ended:false,latest:'',winner:null,loser:null,turningPoint:'',bestMoment:'',mvp:null,matchSeconds:Math.round(rnd(330,900)),phaseLabel:'Opening Bell',spotlight:null,personalityMoments:{},startPlayer,startOpp,performancePlayer:0,performanceOpp:0,decisionPlayer:0,decisionOpp:0,crowd:0,crowdPlayer:0,crowdOpp:0,finalPlayer:0,finalOpp:0,finishType:'',decisionSeen:[],currentDecision:null,decisionOutcome:null,decisionHistory:[],psychologyMomentum:0,totalDecisions:Math.max(3,story.decisions),carriedBonus};
  addBroadcast('broadcast',`${isSinglesMatch()?'YOUR WRESTLER':'YOUR TEAM'}: ${S.team.map(wrestlerIntro).join(' / ')}`); addBroadcast('broadcast',`${isSinglesMatch()?'OPPONENT':'OPPOSITION'}: ${S.opp.map(wrestlerIntro).join(' / ')}`);
  addBroadcast('phase','OPENING BELL');
  addBroadcast('commentary',commentatorLine(COMMENTATORS.play,one(isSinglesMatch()?BROADCAST_COMMENTARY.openingSingles:BROADCAST_COMMENTARY.openingTag)));
@@ -409,7 +409,17 @@ function match(){
  if(S.manager){addBroadcast('manager',`${S.manager.name}: “${S.manager.voice}”`);addBroadcast('commentary',commentatorLine(COMMENTATORS.play,`${S.manager.name} is at ringside and could be a major factor tonight.`));}
  renderMatch();scheduleNext(900);
 }
-function decisionPoints(total,count){const pts=[];for(let i=1;i<=count;i++)pts.push(Math.round(total*(i/(count+1)))+Math.round(rnd(-1,1)));return [...new Set(pts)].filter(x=>x>1&&x<total-1).sort((a,b)=>a-b)}
+function decisionPoints(total,count){
+ count=Math.max(3,Math.min(count,total-4));
+ const pts=[];let last=1;
+ for(let i=1;i<=count;i++){
+  const ideal=Math.round(total*(i/(count+1)));
+  const min=last+2,max=total-((count-i+1)*2);
+  const point=Math.max(min,Math.min(max,ideal));
+  pts.push(point);last=point;
+ }
+ return pts;
+}
 function phaseForEvent(i,total){const p=i/total;if(p<.14)return 0;if(p<.34)return 1;if(p<.55)return 2;if(p<.72)return 3;if(p<.9)return 4;return 5}
 function addBroadcast(type,text,meta={}){M.log.push({type,text,...meta});M.latest=text;if(meta.highlight){M.highlights.push(text);if(!M.bestMoment||meta.weight>=(M.bestWeight||0)){M.bestMoment=text;M.bestWeight=meta.weight||1}}}
 function scheduleNext(ms=1050){clearStoryTimer();storyTimer=setTimeout(()=>advanceStory(),ms)}
@@ -423,7 +433,7 @@ function renderMatch(){
    ${partner?`<div class="match-stage-partner"><b>PARTNER</b><span>${partner.name}</span></div>`:''}
  </article>`;
  render(`<section class="panel story-panel match-ui-v2 ${M.decisionOutcome?'psychology-updating':''}">
- <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div><div class="broadcast-status prominent-status"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>${managerStrip()}
+ <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div><div class="broadcast-status prominent-status"><span>${M.waiting?`Decision ${Math.min(M.decisionsMade+1,M.totalDecisions)} of ${M.totalDecisions} · `:''}Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>${managerStrip()}
  <div class="match-stage">${portraitPanel(p,'player',pPartner)}<div class="match-stage-vs">VS</div>${portraitPanel(o,'opponent',oPartner)}</div>
  <div class="control-strip match-control"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL ${Math.round(control)}–${Math.round(100-control)}</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
  <div class="scoreboard-strip"><div><small>MATCH SCORE</small><strong>${projectedScore('player')}</strong></div><div class="crowd-meter"><span>🔥 CROWD ${Math.round(M.crowd)}%</span><i style="width:${M.crowd}%"></i></div><div class="right"><small>MATCH SCORE</small><strong>${projectedScore('opp')}</strong></div></div>
@@ -473,7 +483,10 @@ function projectedScore(side){
  return Math.round(start+perf+decision+crowdShare*.12);
 }
 function generateAutomaticBeat(){
- const phase=PHASES[M.phaseIndex].id;const openingGauntlet=!S.exhibition&&S.streak===0;let playerActs=Math.random()<(openingGauntlet?Math.max(.72,M.playerControl/100):(M.playerControl/100)),actor=eventWrestler(playerActs?'player':'opp'),victim=eventWrestler(playerActs?'opp':'player');
+ const phase=PHASES[M.phaseIndex].id;const openingGauntlet=!S.exhibition&&S.streak===0;let playerActs=false,actor=null,victim=null;
+ const psychEdge=clamp((M.psychologyMomentum||0)/100,-.24,.24);
+ playerActs=Math.random()<clamp((openingGauntlet?Math.max(.72,M.playerControl/100):(M.playerControl/100))+psychEdge,.12,.88);
+ actor=eventWrestler(playerActs?'player':'opp');victim=eventWrestler(playerActs?'opp':'player');
  let amount=rnd(3,8)*(playerActs?1:-1);
  if(M.story.comeback&&M.phaseIndex<2)amount=-Math.abs(amount);if(M.story.comeback&&M.phaseIndex>=3)amount=Math.abs(amount)*1.35;
  if(M.storyKey==='domination')amount=Math.abs(amount)*(M.story.bias>0?1:-1);
@@ -530,12 +543,17 @@ function storyChoice(token){
  shiftControl(control,`${choice.name} produced a ${tier.label.toLowerCase()}.`);
  heatCrowd(crowd,crowd>=0?'player':'opp');
  if(crowd<0)M.crowd=clamp(M.crowd+crowd,0,100);
- M.playerMom=clamp(M.playerMom+Math.round(control*.7),0,100);
+ const momentumDelta={
+  'major-success':18,'success':11,'mixed':3,'failure':-10,'major-failure':-18
+ }[tier.key]||0;
+ M.psychologyMomentum=clamp((M.psychologyMomentum||0)+momentumDelta,-45,45);
+ M.playerMom=clamp(M.playerMom+Math.round(control*.7)+Math.max(0,Math.round(momentumDelta*.35)),0,100);
+ if(momentumDelta<0)M.oppMom=clamp(M.oppMom+Math.abs(momentumDelta),0,100);
  const calls=psychologyCommentary(tier,choice,p,o);
  addBroadcast(tier.mult>=0?'choice':'counter',calls[0],{highlight:true,weight:Math.abs(tier.mult)+1});
  addBroadcast('commentary',commentatorLine(COMMENTATORS.colour,calls[1]));
  M.decisionOutcome={...tier,score,control,crowd,summary:calls[0],choice:choice.name};
- M.decisionHistory.push({choice:choice.name,outcome:tier.label,score,control,crowd});
+ M.decisionHistory.push({choice:choice.name,outcome:tier.label,score,control,crowd,momentum:momentumDelta});
  M.decisionsMade++;renderMatch();
  clearStoryTimer();storyTimer=setTimeout(()=>{if(!M)return;M.decisionOutcome=null;M.currentDecision=null;M.waiting=false;renderMatch();scheduleNext(650)},1900);
 }
@@ -543,10 +561,19 @@ function storyChoice(token){
 function resolveFinish(){
  if(M.ended)return;M.phaseIndex=5;M.phaseLabel='Finish';addBroadcast('phase','FINISH');
  const crowdBonusPlayer=Math.round(M.crowdPlayer*.12),crowdBonusOpp=Math.round(M.crowdOpp*.12);
+ const psychologyCarry=Math.round((M.psychologyMomentum||0)*.55);
+ if(psychologyCarry>0)M.decisionPlayer+=psychologyCarry;else if(psychologyCarry<0)M.decisionOpp+=Math.abs(psychologyCarry);
  const finishVariancePlayer=Math.round(rnd(-3,3)),finishVarianceOpp=Math.round(rnd(-3,3));
  M.performancePlayer+=finishVariancePlayer;M.performanceOpp+=finishVarianceOpp;
  M.finalPlayer=Math.round(M.startPlayer+M.performancePlayer+M.decisionPlayer+crowdBonusPlayer);
  M.finalOpp=Math.round(M.startOpp+M.performanceOpp+M.decisionOpp+crowdBonusOpp);
+ const positiveDecisions=(M.decisionHistory||[]).filter(x=>x.outcome==='SUCCESS'||x.outcome==='MAJOR SUCCESS').length;
+ const allPositive=M.decisionHistory?.length>=3&&positiveDecisions===M.decisionHistory.length;
+ if(allPositive&&M.finalPlayer<M.finalOpp&&(M.finalOpp-M.finalPlayer)<=24&&Math.random()<.82){
+  const rescue=(M.finalOpp-M.finalPlayer)+Math.round(rnd(1,6));
+  M.decisionPlayer+=rescue;M.finalPlayer+=rescue;
+  addBroadcast('commentary',commentatorLine(COMMENTATORS.colour,'Those consistently strong decisions changed the closing stretch and gave the player a real path to victory.'));
+ }
  const openingGauntletMatch=!S.exhibition&&S.streak===0;
  const gap=Math.abs(M.finalPlayer-M.finalOpp);M.finishType=gap>=30?'Dominant Victory':gap>=16?'Decisive Finish':gap>=7?'Competitive Finish':'Photo Finish';
  const win=M.finalPlayer>=M.finalOpp;const side=win?'player':'opp';const winnerTeam=win?S.team:S.opp,loserTeam=win?S.opp:S.team;
@@ -595,7 +622,7 @@ function showSummary(win){
  render(`<section class="panel match-result summary-panel presentation-summary">
  <div class="actions top-actions">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.tournament?'ADVANCE TO NEXT ROUND':(S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST')}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
  <div class="result-banner"><small>OFFICIAL RESULT</small><strong>${win?'YOU WON':'YOU LOST'}</strong></div><div class="winner-celebration television-winners result-${win?'win':'loss'}"><div class="confetti-field"></div><div class="winning-team-art ${isSinglesMatch()?'singles-winner':''}">${resultArt}</div><div class="winner-copy"><small>${isSinglesMatch()?'MATCH WINNER':'WINNING TEAM'}</small><h2>${teamName(winningSide)}</h2><p>${isSinglesMatch()?victoryCelebration(M.winner):'The winning duo stands tall after a hard-fought victory.'}</p></div></div><div class="result-broadcast-header below-winners"><small>${S.exhibition?'EXHIBITION RESULT':'GAUNTLET RESULT'} · ${isSinglesMatch()?'SINGLES':'TAG TEAM'}</small><h1>${finishHeadline()}</h1><p>${currentVenue()} · ${length}</p></div>${win&&S.manager?`<div class="manager-celebration">${npcImage(S.manager.id,'portrait')}<p><b>${S.manager.name}</b> celebrates at ringside: “${S.manager.voice}”</p></div>`:''}
- ${M.decisionHistory?.length?`<div class="psychology-breakdown"><div class="tv-kicker">MATCH PSYCHOLOGY 2.0</div><h2>YOUR DECISIONS</h2>${M.decisionHistory.map(x=>`<article><b>${x.choice}</b><span>${x.outcome}</span><small>Score ${x.score>0?'+':''}${x.score} · Control ${x.control>0?'+':''}${x.control} · Crowd ${x.crowd>0?'+':''}${x.crowd}</small></article>`).join('')}</div>`:''}<div class="result-accolades"><article><small>MATCH RATING</small><span class="result-stars">${ratingData.stars}</span><strong>${rating.toFixed(1)} · ${ratingData.label}</strong></article><article><small>CROWD REACTION</small><b>${crowdReaction()}</b><strong>EXCITEMENT ${Math.round(M.crowd)}%</strong></article><article><small>FINISH</small><b>${M.finishType.toUpperCase()}</b><strong>${M.winner.name} · ${M.winner.finisher}</strong></article></div>
+ ${M.decisionHistory?.length?`<div class="psychology-breakdown"><div class="tv-kicker">MATCH PSYCHOLOGY 2.0</div><h2>YOUR DECISIONS</h2>${M.decisionHistory.map(x=>`<article><b>${x.choice}</b><span>${x.outcome}</span><small>Score ${x.score>0?'+':''}${x.score} · Control ${x.control>0?'+':''}${x.control} · Crowd ${x.crowd>0?'+':''}${x.crowd} · Momentum ${x.momentum>0?'+':''}${x.momentum||0}</small></article>`).join('')}</div>`:''}<div class="result-accolades"><article><small>MATCH RATING</small><span class="result-stars">${ratingData.stars}</span><strong>${rating.toFixed(1)} · ${ratingData.label}</strong></article><article><small>CROWD REACTION</small><b>${crowdReaction()}</b><strong>EXCITEMENT ${Math.round(M.crowd)}%</strong></article><article><small>FINISH</small><b>${M.finishType.toUpperCase()}</b><strong>${M.winner.name} · ${M.winner.finisher}</strong></article></div>
  <div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Starting Score</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Bonus</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div>
  <div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH MVP</small><h2>${M.mvp.name}</h2><p>${mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div>
  <div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div>${milestoneData().length?`<div class="milestone-grid">${milestoneData().map(m=>`<article><small>ACHIEVEMENT ANNOUNCER</small><h2>${m[0]}</h2><p>${m[1]}</p></article>`).join('')}</div>`:''}</section>`)
