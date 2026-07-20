@@ -1627,3 +1627,46 @@ body.career-mode main{padding-top:0!important}
     transform-origin:center bottom!important;
   }
 }
+
+/* VERSION 8.1.2.5 BUILD 1.4 — deterministic Career onboarding art sizing
+   Locks the approved first-pass dimensions so re-entering Career cannot inherit
+   larger NPC art rules from another screen or browser history state. */
+@media (max-width:760px){
+  .panel.live-onboarding.live-onboarding-template-full .live-onboarding-art,
+  .panel.live-onboarding.live-onboarding-template-portrait .live-onboarding-art{
+    height:34vh!important;
+    min-height:34vh!important;
+    max-height:34vh!important;
+    padding:0!important;
+    overflow:visible!important;
+    display:flex!important;
+    align-items:flex-end!important;
+    justify-content:center!important;
+  }
+
+  .panel.live-onboarding.live-onboarding-template-full .live-onboarding-art > img.npc-art{
+    width:auto!important;
+    height:min(30vh,460px)!important;
+    min-height:0!important;
+    max-height:min(30vh,460px)!important;
+    max-width:88%!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    transform:none!important;
+    scale:1!important;
+    translate:none!important;
+  }
+
+  .panel.live-onboarding.live-onboarding-template-portrait .live-onboarding-art > img.npc-art{
+    width:auto!important;
+    height:min(25vh,385px)!important;
+    min-height:0!important;
+    max-height:min(25vh,385px)!important;
+    max-width:88%!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+    transform:none!important;
+    scale:1!important;
+    translate:none!important;
+  }
+}

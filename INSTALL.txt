@@ -1,2 +1,10 @@
-Replace the matching files in the project root with the files in this patch.
-Clear the browser/PWA cache before testing.
+LEGACY Pro Wrestling v8.1.2.5 Build 1.4 — Onboarding State Lock
+
+Replace these files in the project root:
+- styles.css
+- index.html
+- service-worker.js
+- version.json
+
+Keep all other project files and assets unchanged.
+After uploading, fully close and reopen the installed web app/browser tab once so the new service-worker cache is active.
