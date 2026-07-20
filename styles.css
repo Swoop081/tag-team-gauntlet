@@ -1555,3 +1555,43 @@ body.match-broadcast-view .match-ui-v2{min-height:100vh;border-top:0!important}
  .choice-grid.psychology-neutral .psychology-choice b{font-size:.9rem}
  .choice-grid.psychology-neutral .psychology-choice small{font-size:.7rem}
 }
+
+
+/* VERSION 8.1.2 BUILD 1.1 — Career-only header removal and onboarding parity */
+body.career-mode > header{display:none!important}
+body.career-mode main{padding-top:0}
+
+@media(max-width:760px){
+  /* Page 3 uses the exact full-body layout established by page 1. */
+  .live-onboarding-page-2 .live-onboarding-art{
+    height:34vh!important;
+    min-height:0!important;
+    align-items:flex-end!important;
+    padding-top:0!important;
+  }
+  .live-onboarding-page-2 .live-onboarding-art .npc-art{
+    width:auto!important;
+    height:auto!important;
+    max-height:100%!important;
+    max-width:100%!important;
+    object-fit:contain!important;
+    object-position:bottom!important;
+    transform:none!important;
+  }
+  /* Page 4 uses the exact portrait layout established by page 2. */
+  .live-onboarding-page-3 .live-onboarding-art{
+    height:34vh!important;
+    min-height:0!important;
+    align-items:flex-end!important;
+    padding-top:0!important;
+  }
+  .live-onboarding-page-3 .live-onboarding-art .npc-art{
+    width:auto!important;
+    height:auto!important;
+    max-height:100%!important;
+    max-width:100%!important;
+    object-fit:contain!important;
+    object-position:bottom!important;
+    transform:none!important;
+  }
+}

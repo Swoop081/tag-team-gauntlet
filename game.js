@@ -131,7 +131,15 @@ function chemistry(a,b){let r=rel(a,b);return r?r.chemistry:Math.round((a.versat
 function score(t){let[a,b]=t,bonus=S.momentum+(S.nextMatchBonus||0)+managerBonus();if(!b)return a.overall*.34+a.technique*.2+a.power*.14+a.speed*.12+a.charisma*.1+a.resilience*.1+bonus;let av=k=>(a[k]+b[k])/2;return av('overall')*.3+av('tag')*.25+(chemistry(a,b)+S.chem)*.2+av('technique')*.1+av('power')*.05+av('speed')*.05+av('charisma')*.05+bonus}
 function imageFallback(img,name){const wrap=img.closest('.card');if(!wrap)return;img.style.display='none';wrap.classList.add('missing-art');let ph=wrap.querySelector('.art-placeholder');if(!ph){ph=document.createElement('div');ph.className='art-placeholder';ph.innerHTML=`<b>${name.split(/\s+/).map(x=>x.replace(/[^A-Za-z]/g,'')[0]||'').join('').slice(0,3)}</b><small>ADD WRESTLER ART</small>`;wrap.insertBefore(ph,wrap.firstChild)}}
 function card(w,onclick='',compact=false,screen='card'){const upgraded=!!characterImageConfig(w),artType=compact&&upgraded?'portrait':'full',resolvedScreen=compact?'matchPortrait':screen;return `<article class="card character-tile${compact?' compact':''}${upgraded?' image-framework-card':' legacy-card'}" ${onclick?`onclick="${onclick}"`:''}>${imageWithFallback(w,artType,`art-${artType}`,resolvedScreen)}<div class="name">${w.name}<small>${w.title}</small></div></article>`}
-function render(x){app.classList.remove('screen-enter');app.innerHTML=x;document.getElementById('streak').textContent=S.streak;requestAnimationFrame(()=>app.classList.add('screen-enter'))}
+function render(x){
+ const isCareerScreen=!!(S&&S.liveMode)||/class=\"[^\"]*live-/.test(x);
+ document.body.classList.toggle('career-mode',isCareerScreen);
+ app.classList.remove('screen-enter');
+ app.innerHTML=x;
+ const streakValue=document.getElementById('streak');
+ if(streakValue)streakValue.textContent=S.streak;
+ requestAnimationFrame(()=>app.classList.add('screen-enter'));
+}
 function clearStoryTimer(){if(storyTimer){clearTimeout(storyTimer);storyTimer=null}}
 const FEATURE_LINES={
 'jack-mercer':'Cold as ice. Tough as steel.','victor-royale':'Every kingdom needs a Kingmaker.','jett-valentine':'The spotlight always finds the Heartbreaker.','revenant':'You cannot defeat what refuses to die.','nightwatch':'When darkness falls, the Sentinel is watching.','titan':'Every match is another Hollywood blockbuster.','mason-marks':'Precision is the difference between good and excellent.','hollowman':'Some legends are better left undiscovered.','damian-black':'One opening. One strike. One Kill Shot.','elias-crowe':'Chaos is not a strategy. It is a lifestyle.','el-rey-del-cielo':'The sky has only one king.','max-justice':'When the fight is hardest, the Hero stands tallest.','primal':'There is no plan for surviving raw instinct.','lucas-bennett':'Gold is earned through flawless preparation.','marcus-king':'The streets taught him how to survive.','mateo-vega':'By the time you see the trick, the match is over.','ryder-phoenix':'Every arena becomes his stage.','sterling-sinclair':'Class, confidence and the Golden Touch.','dave-maddox':'Nobody outworks the Workhorse.','logan-steele':'Legends do not fade. They set the standard.'};
