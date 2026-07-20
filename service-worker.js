@@ -1,5 +1,5 @@
-/* LEGACY Pro Wrestling Service Worker 8.0.20 */
-const APP_VERSION = '8.0.20-test-8';
+/* LEGACY Pro Wrestling Service Worker 8.0.21 */
+const APP_VERSION = '8.0.21-test-1';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
 const CRITICAL_FILES = ['index.html','game.js','onboarding-wording-fix.js','data.js','styles.css','version.json','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 

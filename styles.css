@@ -1487,3 +1487,30 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
  .lpw-feud-origin .origin-matchup-820>.origin-vs-820{flex-basis:50px!important;width:50px!important;height:44px!important;font-size:1.55rem!important}
  .lpw-date-forecast .live-day{flex-basis:72px!important;min-width:72px!important}
 }
+
+/* VERSION 8.0.21 — clean active wrestler identity stack. */
+.lpw-calendar-821 .lpw-active-copy{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:2px!important;
+  width:100%!important;
+  margin-top:10px!important;
+  text-align:center!important;
+}
+.lpw-calendar-821 .lpw-active-name{
+  display:block!important;
+  width:100%!important;
+  margin:3px 0 8px!important;
+  line-height:1.05!important;
+}
+.lpw-calendar-821 .lpw-active-record,
+.lpw-calendar-821 .lpw-active-stable{
+  display:block!important;
+  width:100%!important;
+  font-size:.9rem!important;
+  line-height:1.25!important;
+  opacity:.76!important;
+  text-align:center!important;
+}
+.lpw-calendar-821 .lpw-active-stable{margin-top:1px!important}

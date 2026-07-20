@@ -1,5 +1,5 @@
 {
-  "version": "8.0.20",
-  "name": "Feud Origin Matchup Rebuild",
-  "build": "focused-feud-origin-matchup-rebuild"
+  "version": "8.0.21",
+  "name": "Calendar Weekday and Active Wrestler Cleanup",
+  "build": "focused-calendar-active-copy-fix"
 }
