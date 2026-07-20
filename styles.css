@@ -1733,3 +1733,13 @@ body.career-view .lpw-show-logo span{
  body.career-view main > section.panel{border-left:0!important;border-right:0!important}
  .outcome-deltas b{font-size:1.15rem}
 }
+
+/* v8.2.1 Match Psychology live feedback + Career frame cleanup */
+body.career-view main > section.panel{border:0!important;}
+body.career-view main > section.panel::before,body.career-view main > section.panel::after{border:0!important;}
+.match-ui-v2 .scoreboard-strip strong,.match-ui-v2 .control-meter i,.match-ui-v2 .crowd-meter i{transition:width .65s ease,transform .3s ease,color .3s ease,text-shadow .3s ease;}
+.match-ui-v2.psychology-updating .scoreboard-strip strong{animation:scorePulse .75s ease both;color:#ffd43b;text-shadow:0 0 14px rgba(255,212,59,.7);}
+.match-ui-v2.psychology-updating .control-meter,.match-ui-v2.psychology-updating .crowd-meter{animation:meterPulse .75s ease both;}
+.outcome-progress{margin-top:12px;color:#aeb2ba;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;}
+@keyframes scorePulse{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes meterPulse{0%{filter:brightness(1)}45%{filter:brightness(1.65)}100%{filter:brightness(1)}}

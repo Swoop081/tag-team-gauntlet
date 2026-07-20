@@ -1,5 +1,5 @@
-/* LEGACY Pro Wrestling Service Worker 8.2.0 */
-const APP_VERSION = '8.2.0-build-1.7-onboarding-polish';
+/* LEGACY Pro Wrestling Service Worker 8.2.1 */
+const APP_VERSION = '8.2.1-build-1.7-onboarding-polish';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
 const CRITICAL_FILES = ['index.html','game.js','onboarding-wording-fix.js','data.js','styles.css','version.json','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 

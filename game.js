@@ -422,7 +422,7 @@ function renderMatch(){
    <div class="match-stage-name"><small>${isSinglesMatch()?(side==='player'?'YOUR WRESTLER':'OPPONENT'):'LEGAL WRESTLER'}</small><h2>${w.name}</h2><span>${w.title}</span></div>
    ${partner?`<div class="match-stage-partner"><b>PARTNER</b><span>${partner.name}</span></div>`:''}
  </article>`;
- render(`<section class="panel story-panel match-ui-v2">
+ render(`<section class="panel story-panel match-ui-v2 ${M.decisionOutcome?'psychology-updating':''}">
  <div class="broadcast-top"><div><small>MATCH BROADCAST</small><h1>${M.phaseLabel}</h1></div><div class="story-chip">${M.story.name}</div></div><div class="broadcast-status prominent-status"><span>Moment ${Math.min(M.eventIndex+1,M.eventTarget)} of ${M.eventTarget}</span><span>${formatTime(Math.round(M.matchSeconds*(M.eventIndex/Math.max(1,M.eventTarget))))}</span></div>${managerStrip()}
  <div class="match-stage">${portraitPanel(p,'player',pPartner)}<div class="match-stage-vs">VS</div>${portraitPanel(o,'opponent',oPartner)}</div>
  <div class="control-strip match-control"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL ${Math.round(control)}–${Math.round(100-control)}</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
@@ -1296,7 +1296,10 @@ const LPW_DECISION_GUIDANCE=true;
 function lpwRiskLabel(chance){return chance>=.68?{key:'favourable',label:'FAVOURABLE'}:chance>=.52?{key:'balanced',label:'BALANCED'}:{key:'risky',label:'RISKY'}}
 function lpwAttrNames(action){return (ACTION_META[action]?.attrs||[]).map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(' + ')}
 function lpwGuidance(action){return ({risk:'Huge swing if it lands; failure can hand control away.',control:'Reliable way to steady the match and protect your position.',pressure:'Builds control without committing everything to one moment.',comeback:'Can reverse a crisis quickly; failure may deepen the danger.',survive:'Safer counter that stabilises the match for a smaller reward.',finisher:'Match-ending potential with the highest consequences if countered.',tag:'Uses teamwork and fresh energy to change the match.'})[action]||'Changes the next exchange.'}
-decisionHTML=function(){const d=getDecision();M.currentDecision=d;return `<div class="story-decision psychology-v2-foundation"><div class="your-call-label">YOUR CALL</div><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid psychology-neutral">${d.options.map((x,i)=>`<button class="choice psychology-choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`};
+decisionHTML=function(){
+ if(M.decisionOutcome){const x=M.decisionOutcome,sign=n=>n>0?`+${n}`:`${n}`;return `<div class="story-decision psychology-v2-foundation decision-outcome outcome-${x.key}"><div class="your-call-label">YOUR CALL</div><h2>${x.label}</h2><p>${x.summary}</p><div class="outcome-deltas"><span><b>${sign(x.score)}</b><small>MATCH SCORE</small></span><span><b>${sign(x.control)}</b><small>CONTROL</small></span><span><b>${sign(x.crowd)}</b><small>CROWD</small></span></div><div class="outcome-progress">Updating the live match…</div></div>`}
+ const d=getDecision();M.currentDecision=d;return `<div class="story-decision psychology-v2-foundation"><div class="your-call-label">YOUR CALL</div><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid psychology-neutral">${d.options.map((x,i)=>`<button class="choice psychology-choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`
+};
 
 function lpwEnsureDirector(c){liveEnsureWorld(c);c.world.director=c.world.director||{lastNpc:null,lastType:null,seen:{},managerOfferMonth:0};return c.world.director}
 function lpwMarkEvent(c,type,npcId){const d=lpwEnsureDirector(c);d.lastType=type;d.lastNpc=npcId;d.seen[type]=(d.seen[type]||0)+1}
