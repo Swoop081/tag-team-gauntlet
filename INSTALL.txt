@@ -1,12 +1,1 @@
-TAG TEAM GAUNTLET 6.1 — GAUNTLET LIVE BUILD 2 PATCH
-
-Upload these files to the repository root and replace the existing copies:
-- game.js
-- styles.css
-- index.html
-- version.json
-- service-worker.js
-
-No asset folders or unchanged project files are included.
-The first Gauntlet Live match is guaranteed to be a victory so recruitment can be tested immediately.
-Existing Build 1 Gauntlet Live saves migrate automatically.
+Replace the matching files in the project root with these files. Keep all asset folders and the root-level .nojekyll file unchanged. Clear the browser/PWA cache before testing.

@@ -1597,39 +1597,26 @@ body.career-mode main{padding-top:0}
 }
 
 
-/* VERSION 8.1.2.2 BUILD 1.1 REPLACEMENT — persistent Career mode + exact onboarding parity */
+/* VERSION 8.1.2.3 BUILD 1.2 — Career header retained; onboarding masters restored */
 body[data-game-mode="career"] > header,
 body.career-mode > header{display:none!important}
 body[data-game-mode="career"] main,
 body.career-mode main{padding-top:0!important}
 
-/* The matching onboarding pairs now share the same classes and rules. */
+/* Screen 1 and Screen 2 remain untouched as the approved master layouts.
+   Screen 3 copies Screen 1's default full-body settings.
+   Screen 4 copies Screen 2's default portrait settings. */
 @media(max-width:760px){
-  .live-onboarding.live-onboarding-full .live-onboarding-art{
+  .live-onboarding-page-2 .live-onboarding-art,
+  .live-onboarding-page-3 .live-onboarding-art{
     height:34vh!important;
     min-height:0!important;
     align-items:flex-end!important;
     justify-content:center!important;
     padding-top:0!important;
   }
-  .live-onboarding.live-onboarding-full .live-onboarding-art .npc-art{
-    width:auto!important;
-    height:auto!important;
-    max-height:100%!important;
-    max-width:100%!important;
-    object-fit:contain!important;
-    object-position:center bottom!important;
-    transform:none!important;
-    transform-origin:center bottom!important;
-  }
-  .live-onboarding.live-onboarding-portrait .live-onboarding-art{
-    height:34vh!important;
-    min-height:0!important;
-    align-items:flex-end!important;
-    justify-content:center!important;
-    padding-top:0!important;
-  }
-  .live-onboarding.live-onboarding-portrait .live-onboarding-art .npc-art{
+  .live-onboarding-page-2 .live-onboarding-art .npc-art,
+  .live-onboarding-page-3 .live-onboarding-art .npc-art{
     width:auto!important;
     height:auto!important;
     max-height:100%!important;

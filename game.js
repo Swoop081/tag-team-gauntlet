@@ -1105,8 +1105,8 @@ function gauntletLiveIntro(page=0){
   {k:'FOUR WEEKS · ONE RIVALRY',h:'WIN THE SUPERCARD',p:'Each month builds toward a named Supercard. The Supercard result decides the feud. Win and your rival joins your permanent stable; lose and you must try again in a new story.',img:'full'},
   {k:'BUILD YOUR ROSTER',h:'CHOOSE YOUR WRESTLER',p:'After every Supercard you may continue with your current wrestler or switch to anyone you have unlocked. Choose the first wrestler who will represent your stable.',img:'portrait'}
  ];
- const s=slides[Math.max(0,Math.min(page,slides.length-1))],last=page===slides.length-1,layoutClass=s.img==='full'?'live-onboarding-full':'live-onboarding-portrait';
- render(`<section class="panel live-onboarding ${layoutClass} live-onboarding-page-${page}"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`)
+ const s=slides[Math.max(0,Math.min(page,slides.length-1))],last=page===slides.length-1;
+ render(`<section class="panel live-onboarding live-onboarding-page-${page}"><div class="live-onboarding-art">${npcImage('veronica-vale',s.img)}</div><div class="live-onboarding-copy"><div class="tv-kicker">${s.k}</div><h1>${s.h}</h1><p>${s.p}</p><div class="live-onboarding-progress">${slides.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div><button class="btn live-primary" onclick="${last?'gauntletLiveFounderSelect()':`gauntletLiveIntro(${page+1})`}">${last?'SELECT STARTING WRESTLER':'CONTINUE'}</button></div></section>`)
 }
 const _gauntletLiveChooseFounder65=gauntletLiveChooseFounder;
 gauntletLiveChooseFounder=function(id){
