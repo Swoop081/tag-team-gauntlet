@@ -1,1 +1,2 @@
-Replace the matching files in the game root with the files from this patch. Preserve all assets and the root-level .nojekyll file.
+Replace the matching files in the project root with the files in this patch.
+Keep all other project files and folders unchanged.

@@ -1674,3 +1674,18 @@ body.career-mode main{padding-top:0!important}
 /* VERSION 8.1.2.7 BUILD 1.6 — exact onboarding template parity
    No page-specific offsets. Pages 1 and 3 share the full-body template;
    pages 2 and 4 share the portrait template. */
+
+/* VERSION 8.1.2.8 BUILD 1.7 — Career onboarding presentation polish */
+.panel.live-onboarding{
+  border:none!important;
+  box-shadow:none!important;
+}
+.panel.live-onboarding .live-onboarding-progress{
+  justify-content:center!important;
+  width:100%!important;
+}
+.panel.live-onboarding .live-onboarding-copy > .btn{
+  display:block!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
