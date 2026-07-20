@@ -1,10 +1,13 @@
-TAG TEAM GAUNTLET — CHARACTER IMAGE MANAGER 2.1 MATCH FIX
+LEGACY Pro Wrestling v8.1 — Start the Show Hotfix
 
-Replace only these two files in the repository root:
-- styles.css
-- index.html
+Changed file:
+- game.js
 
-Fix:
-- Custom full-art scale no longer affects compact wrestler portraits during a match.
-- Match portraits remain contained inside the left/right broadcast cards.
-- Collection, selection, profile and entrance sizing is unchanged.
+Install:
+Replace the existing game.js in the repository root with this patched file.
+
+Fixes:
+- Repairs missing or invalid Career show plan data before Start the Show advances.
+- Validates singles, tag-team and multi-person participants.
+- Rebuilds an invalid card instead of silently freezing.
+- Adds a visible recovery screen if an unexpected Career data error remains.

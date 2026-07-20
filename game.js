@@ -413,7 +413,7 @@ function renderMatch(){
  <div class="match-stage">${portraitPanel(p,'player',pPartner)}<div class="match-stage-vs">VS</div>${portraitPanel(o,'opponent',oPartner)}</div>
  <div class="control-strip match-control"><div class="team-label">${S.team.map(x=>x.name).join(' & ')}</div><div class="control-meter"><i style="width:${control}%"></i><span>CONTROL ${Math.round(control)}–${Math.round(100-control)}</span></div><div class="team-label right">${S.opp.map(x=>x.name).join(' & ')}</div></div>
  <div class="scoreboard-strip"><div><small>MATCH SCORE</small><strong>${projectedScore('player')}</strong></div><div class="crowd-meter"><span>🔥 CROWD ${Math.round(M.crowd)}%</span><i style="width:${M.crowd}%"></i></div><div class="right"><small>MATCH SCORE</small><strong>${projectedScore('opp')}</strong></div></div>
- <div class="decision-layer">${M.lastDecisionResult?decisionResultHTML():M.waiting?decisionHTML():''}</div>
+ <div class="decision-layer">${M.waiting?decisionHTML():''}</div>
  ${commentaryDesk()}<div id="broadcastFeed" class="broadcast-feed match-commentary-feed">${M.log.slice(-12).map((e,i)=>`<div class="broadcast-line ${e.type} ${i===M.log.slice(-12).length-1?'latest':''}">${e.type==='phase'?'<b>'+e.text+'</b>':e.text}</div>`).join('')}</div>
  ${M.spotlight?`<div class="signature-spotlight"><small>★ SIGNATURE MOVE ★</small><h2>${M.spotlight.move}</h2><h3>${M.spotlight.name}</h3><p>${M.spotlight.tagline}</p></div>`:''}
  ${M.waiting?'':`<div class="auto-play"><span class="live-dot"></span> MATCH IN PROGRESS</div>`}
@@ -479,36 +479,12 @@ function createNearFall(playerSide){const side=playerSide?'player':'opp',attacke
 function attemptAIFinisher(playerSide){const attacker=eventWrestler(playerSide?'player':'opp'),defender=eventWrestler(playerSide?'opp':'player');const success=Math.random()<.62;M.finishers++;
  if(success){setSpotlight(attacker);addMatchScore(playerSide?'player':'opp',15);heatCrowd(12,playerSide?'player':'opp');addBroadcast('finisher',`${attacker.name} lands ${attacker.finisher} on ${defender.name}!`,{highlight:true,weight:2.8});shiftControl(playerSide?12:-12,`${attacker.name} landed ${attacker.finisher}.`);if(Math.random()<.66)createNearFall(playerSide)}else{addMatchScore(playerSide?'player':'opp',-8);addMatchScore(playerSide?'opp':'player',5);heatCrowd(7,playerSide?'opp':'player');addBroadcast('counter',`${defender.name} escapes ${attacker.finisher} at the last possible second!`,{highlight:true,weight:2.2});}
 }
-function psychologyOutcome(roll,chance){
- const margin=chance-roll;
- if(margin>=.28)return {key:'major-success',label:'MAJOR SUCCESS',mult:1.55};
- if(margin>=.08)return {key:'success',label:'SUCCESS',mult:1};
- if(margin>-.08)return {key:'mixed',label:'MIXED RESULT',mult:.45};
- if(margin>-.28)return {key:'failure',label:'FAILURE',mult:-.75};
- return {key:'major-failure',label:'MAJOR FAILURE',mult:-1.35};
-}
-function decisionResultHTML(){const r=M.lastDecisionResult;if(!r)return '';return `<div class="psychology-result ${r.key}"><small>YOUR CALL</small><h2>${r.label}</h2><p>${r.message}</p><div class="psychology-deltas"><span>MATCH SCORE <b>${r.score>0?'+':''}${r.score}</b></span><span>CONTROL <b>${r.control>0?'+':''}${r.control}</b></span><span>CROWD <b>${r.crowd>0?'+':''}${r.crowd}</b></span></div></div>`}
-function storyChoice(token){
- if(!M||!M.waiting)return;
- const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;
- M.waiting=false;M.decisionsMade++;
- const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action;
- let chance=decisionChance(p,o,id);if(!S.exhibition&&S.streak===0)chance=Math.max(.72,chance);
- const outcome=psychologyOutcome(Math.random(),chance),m=outcome.mult;
- const base={risk:[9,13,12],comeback:[9,18,11],survive:[5,7,5],pressure:[7,10,8],control:[6,9,6],finisher:[14,16,14],tag:[8,11,9]}[id]||[6,8,6];
- let score=Math.round(base[0]*m),control=Math.round(base[1]*m),crowd=Math.round(base[2]*(m<0?Math.abs(m)*-.65:m));
- if(outcome.key==='mixed'){score=Math.max(1,score);control=Math.max(1,control);crowd=Math.max(2,crowd)}
- if(id==='tag'&&S.team.length>1&&m>0){M.activeP=1-M.activeP;M.tags++}
- if(id==='finisher')M.finishers++;
- addMatchScore(score>=0?'player':'opp',Math.abs(score),'decision');
- shiftControl(control,`${choice.name} produced a ${outcome.label.toLowerCase()}.`);
- heatCrowd(Math.abs(crowd),crowd>=0?'player':'opp');
- if(m>0)M.playerMom=clamp(M.playerMom+Math.round(12*m),0,100);else M.oppMom=clamp(M.oppMom+Math.round(10*Math.abs(m)),0,100);
- const explanation=m>0?`${p.name}'s ${choice.name} pays off and visibly shifts the match.`:m===.45?`${choice.name} creates an opening, but ${o.name} limits the damage.`:`${o.name} reads ${choice.name} and turns the decision against ${p.name}.`;
- const meterCall=control>=10?'That changes control of the match!':crowd>=8?'Listen to this crowd!':score>=8?`${p.name} is pulling ahead on the scorecards!`:`Every decision matters now.`;
- addBroadcast(m>0?'choice':'counter',`${explanation} ${meterCall}`,{highlight:true,weight:Math.abs(m)>=1.3?3:2});
- M.lastDecisionResult={...outcome,message:explanation,score,control,crowd};M.currentDecision=null;
- renderMatch();clearStoryTimer();storyTimer=setTimeout(()=>{if(!M)return;M.lastDecisionResult=null;renderMatch();scheduleNext(250)},1500);
+function storyChoice(token){if(!M||!M.waiting)return;const choice=M.currentDecision?.options?.find(x=>x.token===token);if(!choice)return;M.waiting=false;M.decisionsMade++;const p=S.team[M.activeP],o=S.opp[M.activeO],id=choice.action;let chance=decisionChance(p,o,id);if(!S.exhibition&&S.streak===0)chance=Math.max(.72,chance);const success=Math.random()<chance;
+ if(id==='tag'){const old=p;M.activeP=1-M.activeP;const incoming=S.team[M.activeP];if(success){M.playerMom=clamp(M.playerMom+14,0,100);shiftControl(9,`${choice.name} changed the match.`);M.tags++;addMatchScore('player',7,'decision');heatCrowd(8,'player');addBroadcast('choice',`${old.name} executes ${choice.name}—${incoming.name} enters with perfect timing!`,{highlight:true,weight:2})}else{shiftControl(-6,`${choice.name} was cut off.`);addMatchScore('player',-4,'decision');addBroadcast('counter',`${old.name} reaches for ${choice.name}, but ${o.name} cuts off the tag!`)}}
+ else if(id==='finisher'){M.finishers++;M.playerMom=clamp(M.playerMom-42,0,100);if(success){setSpotlight(p,'THE PERSONAL GAMBLE PAYS OFF!');addMatchScore('player',15);addMatchScore('player',9,'decision');heatCrowd(14,'player');shiftControl(15,`${choice.name} landed.`);addBroadcast('finisher',`${choiceCommentary(choice,p,o,true)} ${p.finisher} connects!`,{highlight:true,weight:3.2});if(M.phaseIndex>=4&&Math.random()<.48)M.eventIndex=Math.max(M.eventIndex,M.eventTarget-1);else createNearFall(true)}else{addMatchScore('player',-10);addMatchScore('player',-6,'decision');addMatchScore('opp',5);heatCrowd(7,'opp');shiftControl(-14,`${choice.name} was countered.`);addBroadcast('counter',choiceCommentary(choice,p,o,false),{highlight:true,weight:2.5})}}
+ else if(success){const swing={risk:13,comeback:18,survive:5,pressure:8,control:8}[id]||7,score={risk:8,comeback:8,survive:4,pressure:6,control:6}[id]||5,crowd={risk:12,comeback:11,survive:4,pressure:7,control:6}[id]||6;addMatchScore('player',score,'decision');addMatchScore('player',Math.max(2,score-3));heatCrowd(crowd,'player');shiftControl(swing,`${choice.name} became the turning point.`);M.playerMom=clamp(M.playerMom+(id==='comeback'?22:11),0,100);addBroadcast('choice',choiceCommentary(choice,p,o,true),{highlight:true,weight:id==='risk'||id==='comeback'?2.5:1.8})}
+ else{addMatchScore('player',-5,'decision');addMatchScore('opp',3);heatCrowd(5,'opp');shiftControl(id==='survive'?-4:-10,`${choice.name} failed.`);addBroadcast('counter',choiceCommentary(choice,p,o,false),{highlight:true,weight:1.8})}
+ M.currentDecision=null;renderMatch();scheduleNext(1250);
 }
 function resolveFinish(){
  if(M.ended)return;M.phaseIndex=5;M.phaseLabel='Finish';addBroadcast('phase','FINISH');
@@ -679,7 +655,7 @@ function tournamentEliminated(){render(`<section class="panel tournament-advance
 // CAREER 6.1 BUILD 2 — playable weekly career and stable recruitment
 const LIVE_SAVE_KEY='ttg_gauntlet_live_v1';
 const LIVE_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const LIVE_FOUNDERS=['ace-riot','everest','savannah-sinclair','chloe-carter'];
+const LIVE_FOUNDERS=['jack-mercer','victor-royale','jett-valentine','revenant'];
 function liveLoad(){
  try{
   const c=JSON.parse(localStorage.getItem(LIVE_SAVE_KEY)||'null');
@@ -1263,7 +1239,120 @@ const LPW_DECISION_GUIDANCE=true;
 function lpwRiskLabel(chance){return chance>=.68?{key:'favourable',label:'FAVOURABLE'}:chance>=.52?{key:'balanced',label:'BALANCED'}:{key:'risky',label:'RISKY'}}
 function lpwAttrNames(action){return (ACTION_META[action]?.attrs||[]).map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(' + ')}
 function lpwGuidance(action){return ({risk:'Huge swing if it lands; failure can hand control away.',control:'Reliable way to steady the match and protect your position.',pressure:'Builds control without committing everything to one moment.',comeback:'Can reverse a crisis quickly; failure may deepen the danger.',survive:'Safer counter that stabilises the match for a smaller reward.',finisher:'Match-ending potential with the highest consequences if countered.',tag:'Uses teamwork and fresh energy to change the match.'})[action]||'Changes the next exchange.'}
-decisionHTML=function(){const d=getDecision();M.currentDecision=d;const p=S.team[M.activeP];return `<div class="story-decision psychology-decision"><small>YOUR CALL · ${d.phase.toUpperCase()}</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid neutral">${d.options.map((x,i)=>`<button class="choice neutral-choice" onclick="storyChoice('choice-${i}')"><b>${x.name}</b><small>${x.desc}</small></button>`).join('')}</div></div>`};
+decisionHTML=function(){const d=getDecision();M.currentDecision=d;const p=S.team[M.activeP],o=S.opp[M.activeO];return `<div class="story-decision"><small>${d.phase.toUpperCase()} DECISION</small><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid guided">${d.options.map((x,i)=>{const chance=decisionChance(p,o,x.action),risk=lpwRiskLabel(chance);return `<button class="choice guidance-${risk.key}" onclick="storyChoice('choice-${i}')"><span class="guidance-badge">${risk.label}</span><b>${x.name}</b>${LPW_DECISION_GUIDANCE?`<small class="move-type">${x.action.toUpperCase()} · ${lpwAttrNames(x.action)}</small><small>${lpwGuidance(x.action)}</small>`:`<small>${x.desc}</small>`}</button>`}).join('')}</div></div>`};
+
+function lpwEnsureDirector(c){liveEnsureWorld(c);c.world.director=c.world.director||{lastNpc:null,lastType:null,seen:{},managerOfferMonth:0};return c.world.director}
+function lpwMarkEvent(c,type,npcId){const d=lpwEnsureDirector(c);d.lastType=type;d.lastNpc=npcId;d.seen[type]=(d.seen[type]||0)+1}
+function lpwEventScene({kicker,title,npcId,copy,choices}){const p=npc(npcId);render(`<section class="panel live-world-screen lpw-expanded-event"><div class="tv-kicker">${kicker}</div><h1>${title}</h1><div class="live-npc-scene large expanded">${npcImage(npcId,'full')}<div><small>${p?.role||''}</small><h2>${p?.name||''}</h2><p>${copy}</p></div></div><div class="live-choice-grid contextual">${choices.map((x,i)=>`<button onclick="gauntletLiveResolveExpanded(${i})"><b>${x.title}</b><span>${x.copy}</span><em>${x.effect}</em></button>`).join('')}</div></section>`)}
+function gauntletLiveResolveExpanded(i){const c=liveLoad(),e=c.world.pendingExpanded,ch=e?.choices?.[i];if(!ch)return gauntletLiveCalendar();if(ch.type==='manager')c.world.manager=ch.value;else if(ch.type==='feud'){const f=liveFeud(c);if(f)f.intensity=liveClamp(f.intensity+ch.value,0,100)}else if(ch.type==='bonus')c.world.nextMatchBonus=(c.world.nextMatchBonus||0)+ch.value;else c[ch.type]=liveClamp((c[ch.type]||0)+ch.value,0,100);liveAwardXp(c,c.active,35,e.title);c.world.pendingExpanded=null;liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar()}
+function lpwShowExpanded(c,event){c.world.pendingExpanded=event;lpwMarkEvent(c,event.type,event.npcId);liveSave(c);lpwEventScene(event)}
+
+function gauntletLiveAvaEvent(){const c=liveLoad(),r=liveFeudOpponent(c),player=liveFounder(c.active);const pool=[
+ {title:'YOU ARE TRENDING',copy:`A clip of ${player.name}'s latest appearance is climbing the LPW feeds. Ava asks how you want to use the attention.`,choices:[{title:'JOIN THE CONVERSATION',copy:'Post a confident message and engage with supporters.',effect:'Likely effect: popularity rises.',type:'popularity',value:7},{title:'TURN IT TOWARD THE RIVALRY',copy:`Tag ${r?.name||'your rival'} and make the trend personal.`,effect:'Likely effect: feud intensity rises.',type:'feud',value:10}]},
+ {title:'RIVAL POST GOES VIRAL',copy:`${r?.name||'Your rival'} has mocked you online and thousands of fans are reacting. Ava needs your response before the story grows without you.`,choices:[{title:'ANSWER WITH CONFIDENCE',copy:'Respond without losing control of the message.',effect:'Likely effect: momentum rises.',type:'momentum',value:7},{title:'MAKE IT A SCANDAL',copy:'Release a cutting reply designed to dominate the feed.',effect:'Likely effect: popularity and controversy rise.',type:'popularity',value:6}]},
+ {title:'BACKSTAGE CLIP LEAKED',copy:'Unreleased footage from backstage has appeared online. Ava can either contain it or turn it into part of your story.',choices:[{title:'CONTROL THE STORY',copy:'Give Ava an official statement before rumours take over.',effect:'Likely effect: momentum rises.',type:'momentum',value:6},{title:'LET IT SPREAD',copy:'Use the mystery to keep everyone talking.',effect:'Likely effect: popularity rises.',type:'popularity',value:8}]}
+ ];const e=one(pool);lpwShowExpanded(c,{type:'social',npcId:'ava-cross',kicker:'LPW SOCIAL · TRENDING NOW',title:e.title,copy:e.copy,choices:e.choices})}
+function gauntletLiveSecurityEvent(){const c=liveLoad(),r=liveFeudOpponent(c);lpwShowExpanded(c,{type:'security',npcId:'leon-ward',kicker:'BACKSTAGE · SECURITY ALERT',title:'TENSION IN THE ARENA',copy:`Leon Ward has learned that ${r?.name||'your rival'} may be planning a confrontation. Security can keep you separated—or you can use the warning to confront the situation yourself.`,choices:[{title:'LET SECURITY HANDLE IT',copy:'Stay protected and keep the show under control.',effect:'Likely effect: momentum improves safely.',type:'momentum',value:5},{title:'GO LOOKING FOR THEM',copy:'Ignore the warning and force the rivalry forward.',effect:'Likely effect: feud intensity rises.',type:'feud',value:12}]})}
+function gauntletLiveManagerEvent(){const c=liveLoad(),d=lpwEnsureDirector(c),managers=['preston-cole','graham-archer','scarlett-storm','tommy-sparks'];if(!c.world.manager&&d.managerOfferMonth!==c.month){d.managerOfferMonth=c.month;const id=one(managers),p=npc(id);return lpwShowExpanded(c,{type:'manager-recruitment',npcId:id,kicker:'RARE OPPORTUNITY · MANAGER INTEREST',title:p.role.toUpperCase(),copy:`${p.name} explains exactly what is being offered: a long-term partnership, occasional strategic support and a place at ringside for important moments. You are not required to accept a manager.`,choices:[{title:'BEGIN A PRIVATE PARTNERSHIP',copy:`Accept ${p.name}'s representation without making an immediate public spectacle.`,effect:'Likely effect: manager joins your career; momentum rises.',type:'manager',value:id},{title:'DECLINE THE OFFER',copy:'Continue your career independently.',effect:'No manager is assigned.',type:'momentum',value:2}]})}
+ const id=c.world.manager,p=npc(id);return lpwShowExpanded(c,{type:'manager-advice',npcId:id,kicker:'MANAGER ADVICE',title:'A TIMELY GAME PLAN',copy:`${p.name} has appeared because the next match matters—not simply because another week has passed. The advice focuses on a weakness in your rival's approach.`,choices:[{title:'FOLLOW THE PLAN',copy:'Commit to the scouting report in your next match.',effect:'Likely effect: next-match advantage.',type:'bonus',value:5},{title:'TRUST YOUR INSTINCTS',copy:'Keep control of your own preparation.',effect:'Likely effect: momentum rises.',type:'momentum',value:5}]})}
+function gauntletLiveDynamicDay(){const c=liveLoad(),d=lpwEnsureDirector(c);let type;if(c.day===1&&c.world.lastResult)type='recap';else{const roll=Math.random();type=roll<.30?'social':roll<.48?'training':roll<.63?'interview':roll<.75?'security':roll<.84?'world':roll<.92?'manager':'training'}if(type===d.lastType)type=type==='social'?'training':'social';if(type==='social')return gauntletLiveAvaEvent();if(type==='security')return gauntletLiveSecurityEvent();if(type==='manager')return gauntletLiveManagerEvent();if(type==='interview')return gauntletLiveKatieInterview();if(type==='recap'||type==='world')return gauntletLiveWorldRecap();return gauntletLiveTraining65()}
+
+function gauntletLiveFeudOrigin(){const c=liveLoad(),r=liveFeudOpponent(c),p=liveFounder(c.active),origins=[
+ {title:'A PUBLIC CALL-OUT',npc:'katie-morgan',copy:`${r.name} interrupts a live interview and claims ${p.name} has been avoiding real competition.`},
+ {title:'A BACKSTAGE ATTACK',npc:'leon-ward',copy:`${r.name} blindsides ${p.name} in the corridor. My security team and I separate them before the situation escalates.`},
+ {title:'A SOCIAL MEDIA FIRESTORM',npc:'ava-cross',copy:`Ava Cross reports that ${r.name} has insulted ${p.name} in a post now trending across LPW.`},
+ {title:'A CHALLENGE FROM MANAGEMENT',npc:'veronica-vale',copy:`Veronica Vale announces that tension between ${p.name} and ${r.name} will be settled over the coming month.`}
+ ];const o=one(origins),pSources=wrestlerImageCandidates(p,'portrait'),rSources=wrestlerImageCandidates(r,'portrait');c.world.feud.reason=o.copy;c.world.feudOriginSeen=c.month;liveSave(c);render(`<section class="panel lpw-feud-origin"><div class="tv-kicker">NEW MONTH · FEUD ORIGIN</div><h1>${o.title}</h1><div class="origin-matchup origin-matchup-820"><div class="origin-wrestler-frame origin-wrestler-left"><img class="origin-wrestler-image" src="${pSources[0]}" data-sources="${pSources.join('|')}" data-source-index="0" alt="${p.name}" onerror="advanceImageFallback(this)"></div><strong class="origin-vs-820">VS</strong><div class="origin-wrestler-frame origin-wrestler-right"><img class="origin-wrestler-image" src="${rSources[0]}" data-sources="${rSources.join('|')}" data-source-index="0" alt="${r.name}" onerror="advanceImageFallback(this)"></div></div><div class="live-npc-scene expanded origin-report origin-report-${o.npc}">${npcImage(o.npc,'full')}<div class="origin-report-copy"><b>${npc(o.npc)?.name||''}</b><small>${npc(o.npc)?.role||''}</small><p>${o.copy}</p></div></div><p class="origin-close">The rivalry will culminate at <b>${liveCurrentSupercard(c)}</b>.</p><button class="btn live-primary" onclick="gauntletLiveCalendar()">BEGIN THE MONTH</button></section>`)}
+const _lpwStartNextMonth=gauntletLiveStartNextMonth;
+gauntletLiveStartNextMonth=function(id){const c=liveLoad();c.active=id;c.world.katieThisWeek=0;const opp=livePickDifferent(c,c.stable);liveStartFeud(c,opp.id,'A new rivalry is about to begin.');liveGenerateMonthlyPlan(c);liveSave(c);gauntletLiveFeudOrigin()};
+const _lpwChooseFounder=gauntletLiveChooseFounder;
+gauntletLiveChooseFounder=function(id){_lpwChooseFounder(id);setTimeout(()=>{const c=liveLoad();if(c&&c.world.feudOriginSeen!==c.month)gauntletLiveFeudOrigin()},20)};
+
+gauntletLiveWorldRecap=function(){const c=liveLoad(),last=c.world.lastResult,player=liveFounder(c.active);if(!c.world.worldStories.length)liveSimulateWorld(c);const other=c.world.worldStories;let lead='The LPW world continues to move around your career.',analysis='Every result creates a new opportunity—and a new enemy.';if(last){const opp=liveFounder(last.opponent);lead=last.win?`${player.name} defeated ${opp.name}. It is the headline result from the latest broadcast.`:`${player.name} was defeated by ${opp.name}. The loss now demands a response.`;analysis=last.win?`That victory changes how the locker room views ${player.name}.`:`The next appearance will show whether ${player.name} can recover.`}render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button><div class="tv-kicker">AROUND LPW</div><h1>WORLD RECAP</h1><div class="live-commentary-duo"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${lead}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${analysis}</p></div></div><div class="live-world-results">${other.slice(0,3).map(s=>`<article><span>${s.a?imageWithFallback(liveFounder(s.a),'portrait','art-portrait','matchPortrait'):''}</span><p>${s.text}</p>${s.b?`<span>${imageWithFallback(liveFounder(s.b),'portrait','art-portrait','matchPortrait')}</span>`:''}</article>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveResolveDynamic('popularity',3,'World recap complete.')">CONTINUE</button></section>`)};
+
+gauntletLiveFinishMatch65=function(win,oppId){const c=liveLoad(),opp=liveFounder(oppId),player=liveFounder(c.active),xp=c.lastXpAward||{amount:0};c.lastXpAward=null;if(!win)xp.amount=0;liveSave(c);render(`<section class="panel live-day-complete ${win?'live-win':'live-loss'}"><div class="tv-kicker">MATCH RESULT</div><h1>${win?'VICTORY':'DEFEAT'}</h1><div class="live-result-images enlarged">${imageWithFallback(player,win?'victory':'full','art-full','resultVictory')}${imageWithFallback(opp,win?'full':'victory','art-full','resultVictory')}</div><p>${win?`${player.name} defeated ${opp.name}.`:`${player.name} was defeated by ${opp.name}.`}</p><div class="live-xp-award"><b>${win?`+${xp.amount} XP`:'NO XP EARNED'}</b><span>${c.world.injury?'An injury will require medical attention tomorrow.':'The world will react tomorrow.'}</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)};
+
+gauntletLiveSupercardResult=function(win,oppId){const c=liveLoad(),opp=liveFounder(oppId),player=liveFounder(c.active),name=liveCurrentSupercard(c),f=liveFeud(c);if(win&&!c.stable.includes(oppId))c.stable.push(oppId);c.world.lastFeud={opponent:oppId,won:win,supercard:name};c.world.feud=null;c.world.monthPlan=null;c.world.katieThisWeek=0;liveAdvanceDay(c);liveSave(c);render(`<section class="panel live-supercard-result ${win?'live-win':'live-loss'}"><div class="supercard-logo logo-${name.toLowerCase().replace(/\s+/g,'-')}"><small>LEGACY PRO WRESTLING PRESENTS</small><b>${name}</b></div><div class="supercard-result-art enlarged">${imageWithFallback(player,win?'victory':'full','art-full','resultVictory')}${imageWithFallback(opp,win?'full':'victory','art-full','resultVictory')}</div><div><div class="tv-kicker">FEUD COMPLETE</div><h1>${win?'FEUD WON':'FEUD LOST'}</h1><p>${win?`${player.name} won the decisive Super Card match and ${opp.name} has been unlocked.`:`${opp.name} won the decisive Super Card match. Television results do not override the finale.`}</p><div class="feud-record"><b>TELEVISION RECORD</b><span>${player.name} ${f?.playerWins||0} · ${f?.rivalWins||0} ${opp.name}</span><em>Super Card winner: ${win?player.name:opp.name}</em></div><button class="btn live-primary" onclick="gauntletLiveMonthRosterChoice()">CHOOSE NEXT MONTH'S WRESTLER</button></div></section>`)};
+
+gauntletLiveMonthRosterChoice=function(){const c=liveLoad();render(`<section class="panel live-founder-screen portrait-roster"><div class="tv-kicker">NEW MONTH · NEW OPPORTUNITY</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">Continue with your current wrestler or select any unlocked member of your roster.</p><div class="live-founder-grid portrait-grid">${c.stable.map(id=>{const w=liveFounder(id),p=liveProgress(id,c);return `<button class="live-founder-card portrait" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'portrait','art-portrait','collection')}<span><small>${id===c.active?'ACTIVE WRESTLER':'UNLOCKED'}</small><b>${w.name}</b><em>Level ${p.level} · Momentum ${c.momentum}</em></span></button>`}).join('')}</div></section>`)};
+
+const _lpwMatchCard=gauntletLiveMatchCard65;
+gauntletLiveMatchCard65=function(){const c=liveLoad();if(liveIsSupercard(c)){const p=liveFounder(c.active),r=liveFeudOpponent(c);c.pending={opponent:r.id,opponents:[r.id],type:'singles',partner:null,isSupercard:true};liveSave(c);return render(`<section class="panel live-match-card supercard-card"><div class="supercard-logo"><small>LEGACY PRO WRESTLING PRESENTS</small><b>${liveCurrentSupercard(c)}</b></div><div class="live-npc-scene ring-intro expanded">${npcImage('ethan-brooks','full')}<div><small>RING ANNOUNCER</small><b>Ethan Brooks</b><p>“The following contest is the decisive match of the monthly rivalry!”</p></div></div><div class="live-match-lineup singles portrait-lineup">${lpwPortraitCard(p,'YOUR WRESTLER')}${lpwPortraitCard(r,'RIVAL')}</div><button class="btn live-primary" onclick="gauntletLiveLaunchBroadcast65()">BEGIN SUPER CARD MATCH</button></section>`)}return _lpwMatchCard()};
+
+/* ==========================================================================\n   LEGACY PRO WRESTLING 8.0 — CHAMPIONSHIP ERA\n   ========================================================================== */
+Object.assign(FEATURE_LINES,{
+ 'ace-riot':'He says what everyone else is afraid to say.',
+ 'everest':'The mountain does not move for anyone.',
+ 'axel-voss':'Every match ends at Impact Zero.',
+ 'slater-nova':'The biggest risk is becoming forgettable.'
+});
+Object.assign(BIOS,{
+ 'ace-riot':'An outspoken technical rebel whose words create headlines and whose precision forces opponents to listen.',
+ 'everest':'A respectful, once-in-a-generation giant whose calm presence makes every contest feel historic.',
+ 'axel-voss':'An explosive combat athlete who combines heavyweight force with terrifying speed and ruthless efficiency.',
+ 'slater-nova':'A fearless aerial artist who treats every match as a canvas and every impossible risk as self-expression.'
+});
+Object.assign(PERSONALITY_PROFILES,{
+ 'ace-riot':{archetype:'The Rebel',events:['argues with the referee while never losing position','invites the crowd to speak louder','turns a technical counter into a public statement','points at the hard camera before attacking','refuses to follow the expected script','wins the exchange and immediately demands the microphone']},
+ 'everest':{archetype:'The Attraction',events:['absorbs the strike without taking a step backward','raises one enormous hand and silences the arena','calmly returns to his feet','blocks the escape with a single step','shows mercy before resuming the contest','stands immovable in the centre of the ring']},
+ 'axel-voss':{archetype:'The Destroyer',events:['explodes forward with frightening speed','drives through the opponent like a tackle dummy','cuts off the ring with combat precision','shows no emotion after a brutal takedown','forces the pace into another violent gear','stalks forward with both fists ready']},
+ 'slater-nova':{archetype:'The Artist',events:['changes direction in mid-air','paints a streak of colour through the ropes','balances on the turnbuckle as the crowd rises','takes the dangerous route without hesitation','turns a fall into an aerial counter','stares at the lights before launching himself again']}
+});
+Object.assign(WRESTLER_DECISIONS,{
+ 'ace-riot':[['Take the Microphone','Challenge the System','Win the Argument','Expose the Opening','Refuse the Script'],['Turn Technique into Protest','Make It Personal','Control the Narrative','Outthink the Favourite','Force Them to Listen'],['Fight from Conviction','Reject the Easy Exit','Speak Through the Pain','Create a Rebellion','Refuse to Stay Silent'],['Call for Riot Trigger','End the Debate','Deliver the Final Statement','Make the Champion Listen','Finish on His Terms']],
+ 'everest':[['Claim the Centre','Stand Immovable','Offer One Warning','Test Their Courage','Raise the Mountain'],['Close Every Escape','Apply Mountain Pressure','Show Controlled Strength','Slow the Entire Match','Make the Ring Feel Smaller'],['Rise Without Emotion','Absorb the Avalanche','Refuse to Fall','Find the Giant\'s Balance','Stand One More Time'],['Call for Summit Slam','End the Climb','Bring Down the Mountain','Finish with One Motion','Reach the Summit']],
+ 'axel-voss':[['Explode from the Bell','Shoot for Ground Control','Crash Through the Guard','Set a Combat Pace','Take Away the Breath'],['Keep the Pressure Violent','Launch Another Takedown','Cut Off Every Exit','Punish the Weakness','Turn Speed into Force'],['Fight Out with Power','Return to His Feet','Answer with a Suplex','Break the Hold Apart','Become More Dangerous'],['Call for Impact Zero','End It Immediately','Deliver Total Destruction','Finish the Fight','Leave Nothing Standing']],
+ 'slater-nova':[['Paint the Opening','Test the Highest Rope','Trust the Instinct','Create the First Moment','Take the Unusual Path'],['Turn the Ring into a Canvas','Attempt the Impossible','Change Direction Mid-Flight','Make the Crowd Believe','Risk Everything for the Moment'],['Create from the Fall','Reach for the Ropes','Turn Pain into Motion','Find One More Flight','Refuse the Safe Choice'],['Call for Nova Fall','Take the Final Flight','Create the Lasting Image','Finish from the Sky','Risk It All One More Time']]
+});
+
+const LPW8_TITLES=[
+ {id:'world',name:'LEGACY World Championship',short:'WORLD',prestige:100},
+ {id:'television',name:'LEGACY Television Championship',short:'TELEVISION',prestige:82},
+ {id:'heritage',name:'LEGACY Heritage Championship',short:'HERITAGE',prestige:88},
+ {id:'tag',name:'LEGACY Tag Team Championship',short:'TAG TEAM',prestige:90}
+];
+function lpw8Init(c){
+ c.championships=c.championships||{world:'jack-mercer',television:'jett-valentine',heritage:'mason-marks',tag:['victor-royale','sterling-sinclair']};
+ c.rankings=c.rankings||WRESTLERS.map((w,i)=>({id:w.id,points:Math.max(10,100-i*3)+(w.overall-95)*4,wins:0,losses:0}));
+ return c;
+}
+function lpw8Rankings(c){lpw8Init(c);return [...c.rankings].sort((a,b)=>b.points-a.points)}
+function lpw8RankingScreen(){const c=lpw8Init(liveLoad());liveSave(c);const rows=lpw8Rankings(c);render(`<section class="panel lpw8-rankings">${shellBack()}<div class="tv-kicker">CHAMPIONSHIP ERA</div><h1>POWER RANKINGS</h1><p class="sub">Wins, losses and major performances shape every title opportunity.</p><div class="lpw8-title-strip">${LPW8_TITLES.map(t=>{const h=c.championships[t.id],names=Array.isArray(h)?h.map(id=>liveFounder(id)?.name).join(' & '):liveFounder(h)?.name;return `<article><small>${t.short} CHAMPION</small><b>${names||'VACANT'}</b></article>`}).join('')}</div><div class="lpw8-ranking-list">${rows.map((r,i)=>{const w=liveFounder(r.id);return `<article><strong>${i+1}</strong>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><b>${w.name}</b><small>${w.title}</small></span><em>${r.points} PTS<br>${r.wins}-${r.losses}</em></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveHome()">RETURN TO CAREER</button></section>`)}
+function lpw8Championships(){const c=lpw8Init(liveLoad());liveSave(c);render(`<section class="panel lpw8-championships">${shellBack()}<div class="tv-kicker">LEGACY GOLD</div><h1>CHAMPIONSHIPS</h1><div class="lpw8-belt-grid">${LPW8_TITLES.map(t=>{const h=c.championships[t.id],ids=Array.isArray(h)?h:[h],names=ids.map(id=>liveFounder(id)?.name).filter(Boolean).join(' & ');return `<article><div class="lpw8-belt">★</div><small>${t.name}</small><h2>${names||'VACANT'}</h2><p>Prestige ${t.prestige}</p></article>`}).join('')}</div><button class="btn live-primary" onclick="lpw8RankingScreen()">VIEW POWER RANKINGS</button></section>`)}
+const _lpw8Home=gauntletLiveHome;
+gauntletLiveHome=function(){_lpw8Home();const actions=document.querySelector('.live-home-actions');if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary" onclick="lpw8Championships()">CHAMPIONSHIPS</button><button class="btn secondary" onclick="lpw8RankingScreen()">POWER RANKINGS</button>');const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.0';};
+const _lpw8Finish=gauntletLiveFinishMatch65;
+gauntletLiveFinishMatch65=function(win,oppId){const c=lpw8Init(liveLoad()),me=c.rankings.find(x=>x.id===c.active),op=c.rankings.find(x=>x.id===oppId);if(me){me.points=Math.max(0,me.points+(win?18:-6));me[win?'wins':'losses']++}if(op){op.points=Math.max(0,op.points+(win?-4:14));op[win?'losses':'wins']++}liveSave(c);return _lpw8Finish(win,oppId)};
+
+
+/* LPW 8.0.1 boot completion: render only the final current-version home screen. */
+window.__LPW_BOOT_COMPLETE__ = true;
+home();
+document.documentElement.classList.add('lpw-ready');
+document.documentElement.classList.remove('lpw-booting');
+
+/* LPW 8.0.2 — focused mobile layout fixes: stable cards + career calendar */
+gauntletLiveStable=function(){
+ const c=liveLoad(); if(!c)return gauntletLiveHome();
+ render(`<section class="panel live-stable-screen lpw-stable-clean">
+  <button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button>
+  <div class="tv-kicker">PERMANENT ROSTER</div>
+  <h1>YOUR STABLE</h1>
+  <p>Tap a wrestler to make them active. Open My Career for development.</p>
+  <div class="live-stable-grid">${c.stable.map(id=>{
+   const w=liveFounder(id),p=liveProgress(id,c),active=id===c.active;
+   return `<article class="live-stable-card ${active?'active':''}">
+    <div class="lpw-stable-art" onclick="gauntletLiveSetActive('${id}')">
+     ${imageWithFallback(w,'portrait','art-portrait','collection')}
+     <div class="lpw-stable-overlay">
+      <span><small>${active?'ACTIVE':'OVR '+liveOverall(p)}</small><b>${w.name}</b></span>
+      <button onclick="event.stopPropagation();gauntletLiveCareerCard('${id}')">MY CAREER</button>
+     </div>
+    </div>
+   </article>`
+  }).join('')}</div>
+ </section>`)
+};
 
 gauntletLiveCalendar=function(){
  const c=liveLoad(); if(!c)return gauntletLiveHome();
@@ -1341,35 +1430,106 @@ gauntletLiveCalendar=function(){
  </section>`)
 };
 
-
-/* Version 8.1 — complete character-system integration for roster 21–28 */
-Object.assign(PERSONALITY_PROFILES,{
- 'ace-riot':{archetype:'Rebel Technician',events:['fires back with fearless precision','turns the crowd into a rebellion','refuses to follow the expected match plan','snaps into a perfectly timed counter']},
- 'everest':{archetype:'Immovable Giant',events:['plants his feet and refuses to move','overwhelms the exchange with impossible strength','absorbs the impact without taking a backward step','casts a giant shadow across the ring']},
- 'axel-voss':{archetype:'Human Wrecking Ball',events:['launches himself into the opposition','turns momentum into violent impact','crashes through the defence without hesitation','creates chaos with explosive power']},
- 'slater-nova':{archetype:'Freefall Artist',events:['takes flight before anyone can react','changes direction in mid-air','turns the ropes into a launch system','risks everything for one spectacular moment']},
- 'savannah-sinclair':{archetype:'Wrestling Heiress',events:['dictates the pace with inherited confidence','reminds everyone that excellence is expected','turns perfect posture into ruthless precision','commands the spotlight like wrestling royalty']},
- 'bianca-balboa':{archetype:'People’s Fighter',events:['draws strength from every voice in the arena','keeps fighting when the easier choice is surrender','turns hard work into a furious comeback','raises a fist for the people before charging']},
- 'zara-monroe':{archetype:'Self-Made Icon',events:['creates a camera-ready counter','shows why she believes she is the standard','turns style into sharp technical control','poses for one beat before striking with precision']},
- 'chloe-carter':{archetype:'Heart of the Roster',events:['rallies the audience with genuine belief','fights with warmth until the bell demands ferocity','refuses to let her partner lose hope','turns optimism into a determined comeback']}
-});
-Object.assign(WRESTLER_DECISIONS,{
- 'ace-riot':[['Start a Riot','Break the Pattern','Challenge Authority'],['Technical Rebellion','Cut the Signal','Riot Combination'],['Refuse to Stay Down','Fight Through It','Turn the Crowd'],['Riot Trigger','Last Word','Rebel Finish']],
- 'everest':[['Hold the Centre','Absorb the Charge','Show No Movement'],['Mountain Pressure','Crush the Escape','Slow the Match'],['Rise Again','Plant Your Feet','Avalanche Counter'],['Summit Slam','Peak Impact','End at the Summit']],
- 'axel-voss':[['Immediate Impact','Crash the Guard','Explosive Start'],['Wrecking Ball Rush','Corner Collision','Break the Structure'],['Violent Recovery','Power Through','Zero Hesitation'],['Impact Zero','Total Collision','Final Wreckage']],
- 'slater-nova':[['Take Flight Early','Test the Distance','Freefall Feint'],['Rope-Line Burst','Change Altitude','Nova Sequence'],['Desperate Launch','Escape Upward','Risk the Landing'],['Nova Fall','Final Flight','One Last Leap']],
- 'savannah-sinclair':[['Claim the Centre','Royal Opening','Set the Standard'],['Heiress Control','Technical Decree','Command the Pace'],['Refuse the Humiliation','Regal Counter','Reclaim the Ring'],['Crown Jewel','Dynasty Finish','Inheritance Collected']],
- 'bianca-balboa':[['Fight for the People','Working-Class Rush','Earn the Opening'],['Balboa Pressure','Never Stop Working','Crowd-Powered Attack'],['Get Back Up','People’s Comeback','Refuse to Quit'],['Balboa Breaker','Finish for the Fans','One More Fight']],
- 'zara-monroe':[['Make an Entrance','Set the Standard','Iconic Counter'],['Monroe Method','Picture-Perfect Control','Own the Camera'],['Protect the Legacy','Statement Comeback','Steal the Spotlight'],['Iconic Statement','Final Pose','The Standard Ends It']],
- 'chloe-carter':[['Lead with Heart','Lift the Crowd','Friendly Feint'],['Heartfelt Pressure','Keep Believing','Team First'],['Find Another Gear','Hope Spot','Fight for Everyone'],['Heart and Soul','Heartfelt Finish','Never Stop Believing']]
-});
-Object.assign(VICTORY_CELEBRATIONS,{
- 'ace-riot':'raises a fist as the arena joins the rebellion.',
- 'everest':'stands immovable in the centre of the ring.',
- 'axel-voss':'paces through the wreckage of the match.',
- 'slater-nova':'climbs the turnbuckle and celebrates above the arena.',
- 'savannah-sinclair':'accepts the victory with the confidence of wrestling royalty.',
- 'bianca-balboa':'shares the victory with the people who carried her through.',
- 'zara-monroe':'finds the hard camera and confirms that the Icon is the standard.',
- 'chloe-carter':'celebrates with the crowd and thanks them from every side of the ring.'
-});
+/* ============================================================
+   LEGACY PRO WRESTLING 8.1 — START THE SHOW HOTFIX
+   Repairs invalid Career show plan entries before advancing.
+   ============================================================ */
+function lpwValidCareerWrestler(id){
+ const w=liveFounder(id);
+ return !!(w&&w.id&&w.name);
+}
+function lpwPickCareerOpponent(c,exclude=[]){
+ const blocked=new Set([c?.active,...exclude].filter(Boolean));
+ const pool=WRESTLERS.filter(w=>w&&w.id&&w.name&&!blocked.has(w.id));
+ return pool.length?one(pool):WRESTLERS.find(w=>w&&w.id&&w.name);
+}
+function lpwRepairShowItem(c,item){
+ if(!c)return null;
+ if(liveIsSupercard(c))return {type:'supercard'};
+ let fixed=(item&&typeof item==='object')?{...item}:{type:'singles'};
+ const allowed=['singles','tag','multi','segment'];
+ if(!allowed.includes(fixed.type))fixed.type='singles';
+ if(fixed.type==='segment'){
+  if(!LIVE_SEGMENTS.includes(fixed.segment))fixed.segment='promo';
+  return fixed;
+ }
+ if(fixed.type==='tag'){
+  let partner=lpwValidCareerWrestler(fixed.partner)?fixed.partner:null;
+  if(!partner)partner=lpwPickCareerOpponent(c)?.id;
+  let opponents=Array.isArray(fixed.opponents)?fixed.opponents.filter(lpwValidCareerWrestler):[];
+  opponents=[...new Set(opponents)].filter(id=>id!==c.active&&id!==partner);
+  while(opponents.length<2){
+   const pick=lpwPickCareerOpponent(c,[partner,...opponents]);
+   if(!pick||opponents.includes(pick.id))break;
+   opponents.push(pick.id);
+  }
+  if(!partner||opponents.length<2)return lpwRepairShowItem(c,{type:'singles'});
+  return {...fixed,partner,opponents:opponents.slice(0,2)};
+ }
+ if(fixed.type==='multi'){
+  let opponents=Array.isArray(fixed.opponents)?fixed.opponents.filter(lpwValidCareerWrestler):[];
+  opponents=[...new Set(opponents)].filter(id=>id!==c.active);
+  while(opponents.length<2){
+   const pick=lpwPickCareerOpponent(c,opponents);
+   if(!pick||opponents.includes(pick.id))break;
+   opponents.push(pick.id);
+  }
+  if(opponents.length<2)return lpwRepairShowItem(c,{type:'singles'});
+  return {...fixed,opponents:opponents.slice(0,3)};
+ }
+ let opponents=Array.isArray(fixed.opponents)?fixed.opponents.filter(lpwValidCareerWrestler):[];
+ opponents=[...new Set(opponents)].filter(id=>id!==c.active);
+ if(!opponents.length){
+  const rival=liveFeudOpponent(c);
+  const pick=(rival&&lpwValidCareerWrestler(rival.id)&&rival.id!==c.active)?rival:lpwPickCareerOpponent(c);
+  if(pick)opponents=[pick.id];
+ }
+ return {...fixed,type:'singles',opponents:opponents.slice(0,1)};
+}
+function lpwPersistRepairedShowItem(c,item){
+ if(!c||!item||liveIsSupercard(c))return item;
+ liveEnsureWorld(c);
+ const slot=liveMonthSlot(c);
+ if(Array.isArray(c.world.monthPlan)&&slot>=0){c.world.monthPlan[slot]=item;liveSave(c)}
+ return item;
+}
+gauntletLiveRunShowSegment=function(){
+ try{
+  const c=liveLoad();
+  if(!c)return gauntletLiveHome();
+  const item=lpwPersistRepairedShowItem(c,lpwRepairShowItem(c,livePlanItem(c)));
+  if(!item)throw new Error('Unable to create tonight\'s show segment.');
+  if(liveIsSupercard(c)||item.type==='singles'||item.type==='tag')return gauntletLiveMatchCard65();
+  if(item.type==='multi')return gauntletLiveMultiMatch(item);
+  return gauntletLiveStorySegment(item.segment);
+ }catch(err){
+  console.error('Start the Show failed:',err);
+  const c=liveLoad();
+  if(c){liveGenerateMonthlyPlan(c);liveSave(c)}
+  render(`<section class="panel live-world-screen"><div class="tv-kicker">CAREER RECOVERY</div><h1>SHOW CARD REBUILT</h1><p>Tonight's card contained invalid match data and has been repaired.</p><button class="btn live-primary" onclick="gauntletLiveRunShowSegment()">START THE SHOW</button><button class="btn secondary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`);
+ }
+};
+gauntletLiveMatchCard65=function(){
+ try{
+  const c=liveLoad();if(!c)return gauntletLiveHome();
+  const isSC=liveIsSupercard(c),player=liveFounder(c.active);
+  if(!player)throw new Error('Active wrestler is missing.');
+  let item=lpwRepairShowItem(c,livePlanItem(c));
+  const rival=liveFeudOpponent(c);
+  if(isSC){
+   const opponent=(rival&&lpwValidCareerWrestler(rival.id)&&rival.id!==c.active)?rival:lpwPickCareerOpponent(c);
+   if(!opponent)throw new Error('No valid Supercard opponent is available.');
+   item={type:'singles',opponents:[opponent.id]};
+  }else item=lpwPersistRepairedShowItem(c,item);
+  const type=item.type,opponents=item.opponents||[],partner=item.partner||null;
+  const roster=[player,...(partner?[liveFounder(partner)]:[]),...opponents.map(liveFounder)].filter(Boolean);
+  const expected=type==='tag'?4:2;
+  if(roster.length<expected)throw new Error('Tonight\'s match roster is incomplete.');
+  c.pending={opponent:opponents[0],opponents,type,partner,isSupercard:isSC};liveSave(c);
+  render(`<section class="panel live-match-card"><button class="shell-back" onclick="gauntletLiveCalendar()">← CALENDAR</button>${isSC?`<div class="lpw-ple-title">${liveCurrentSupercard(c).toUpperCase()}</div>`:lpwShowLogo(liveShowName(c))}<h1>${isSC?'FEUD FINALE':type==='tag'?'TAG TEAM MATCH':'FEATURED SINGLES MATCH'}</h1><div class="live-match-lineup ${type} portrait-lineup">${roster.map((w,i)=>lpwPortraitCard(w,i===0?'YOUR WRESTLER':i===1&&partner?'YOUR PARTNER':'OPPONENT')).join('')}</div><div class="live-npc-scene compact producer-card">${npcImage('raymond-briggs','portrait')}<div><small>MATCH PRODUCER</small><b>Raymond Briggs</b><p>Use the broadcast decisions to control the pace. The result will shape what happens tomorrow.</p></div></div><button class="btn live-primary" onclick="gauntletLiveLaunchBroadcast65()">BEGIN MATCH BROADCAST</button></section>`);
+ }catch(err){
+  console.error('Career match card failed:',err);
+  const c=liveLoad();if(c){liveGenerateMonthlyPlan(c);liveSave(c)}
+  render(`<section class="panel live-world-screen"><div class="tv-kicker">CAREER RECOVERY</div><h1>MATCH CARD REPAIRED</h1><p>The match card could not be loaded, so Career rebuilt tonight's segment.</p><button class="btn live-primary" onclick="gauntletLiveShowIntro()">RETURN TO SHOW</button><button class="btn secondary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`);
+ }
+};
