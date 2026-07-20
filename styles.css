@@ -1689,3 +1689,47 @@ body.career-mode main{padding-top:0!important}
   margin-left:auto!important;
   margin-right:auto!important;
 }
+
+
+/* VERSION 8.2.0 BUILD 1 — Career UI consolidation + Match Psychology 2.0 */
+body.career-view main > section.panel{
+  border-left:0!important;
+  border-right:0!important;
+}
+body.career-view .lpw-feud-origin > .btn,
+body.career-view .live-match-card > .live-primary{
+  display:block!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+body.career-view .lpw-show-logo{
+  text-align:center;
+}
+body.career-view .lpw-show-logo span{
+  display:block;
+  margin-bottom:.35rem;
+}
+.story-decision .choice-grid .choice{
+  border-color:rgba(255,255,255,.22)!important;
+  background:linear-gradient(180deg,#17181d,#101116)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+.decision-outcome{animation:psychologyReveal .22s ease-out both;text-align:center}
+.outcome-deltas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.outcome-deltas span{display:grid;gap:3px;padding:12px 6px;border:1px solid rgba(255,212,59,.35);background:#0c0d11}
+.outcome-deltas b{font-size:1.45rem;color:#ffd43b}
+.outcome-deltas small{font-size:.62rem;letter-spacing:.08em;color:#c8c8cc}
+.decision-outcome.outcome-failure h2,.decision-outcome.outcome-major-failure h2{color:#fff}
+@keyframes psychologyReveal{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.psychology-breakdown{margin:20px 0;padding:18px;background:#0e0f13;border:1px solid rgba(255,255,255,.16)}
+.psychology-breakdown h2{margin:.25rem 0 1rem}
+.psychology-breakdown article{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}
+.psychology-breakdown article:first-of-type{border-top:0}
+.psychology-breakdown article span{font-weight:900;color:#ffd43b}
+.psychology-breakdown article small{grid-column:1/-1;color:#bbb}
+@media(max-width:700px){
+ body.career-view main{padding-left:0!important;padding-right:0!important}
+ body.career-view main > section.panel{border-left:0!important;border-right:0!important}
+ .outcome-deltas b{font-size:1.15rem}
+}

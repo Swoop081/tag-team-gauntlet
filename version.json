@@ -1,7 +1,7 @@
 {
-  "version": "8.1.2.8",
-  "label": "Build 1.7 — Onboarding Polish",
+  "version": "8.2.0",
+  "label": "Build 1 — UI Polish + Match Psychology 2.0",
   "released": "2026-07-20",
-  "build": "1.7",
-  "name": "Onboarding Polish"
+  "build": "1",
+  "name": "UI Polish + Match Psychology 2.0"
 }
