@@ -1249,3 +1249,11 @@ body.career-view>header{display:none}body.career-view main{padding-top:max(14px,
   transform:translateX(-50%)!important;
   z-index:40!important;
 }
+
+
+/* VERSION 8.0.17 — feud-origin VS position is also enforced inline in game.js. */
+.lpw-feud-origin .origin-matchup-811>.origin-vs-817{
+  position:absolute!important;
+  left:50%!important; right:auto!important; top:auto!important; bottom:0!important;
+  transform:translateX(-50%)!important; margin:0!important; z-index:50!important;
+}

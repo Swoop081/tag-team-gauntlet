@@ -1,5 +1,5 @@
 {
-  "version": "8.0.166",
-  "name": "Feud VS Bottom Alignment",
-  "build": "focused-feud-origin-vs-bottom-alignment"
+  "version": "8.0.17",
+  "name": "Feud VS Inline Baseline Fix",
+  "build": "focused-feud-origin-vs-inline-baseline"
 }
