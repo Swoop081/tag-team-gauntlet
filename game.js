@@ -243,7 +243,7 @@ function statisticsMenu(tab='career'){
  if(tab==='wrestlers')detail=wrestlerRows.length?`<div class="stats-table"><div class="stats-row stats-head"><span>WRESTLER</span><span>M</span><span>W</span><span>L</span><span>WIN %</span></div>${wrestlerRows.map(x=>`<div class="stats-row"><span>${x.name}</span><span>${x.matches}</span><span>${x.wins}</span><span>${x.losses}</span><span>${pct(x.wins,x.matches)}%</span></div>`).join('')}</div>`:`<p class="stats-empty">Complete a match to begin wrestler records.</p>`;
  if(tab==='teams')detail=teamRows.length?`<div class="stats-table"><div class="stats-row stats-head"><span>TEAM</span><span>M</span><span>W</span><span>L</span><span>WIN %</span></div>${teamRows.map(x=>`<div class="stats-row"><span>${x.name}</span><span>${x.matches}</span><span>${x.wins}</span><span>${x.losses}</span><span>${pct(x.wins,x.matches)}%</span></div>`).join('')}</div>`:`<p class="stats-empty">Complete a Tag Team match to begin team records.</p>`;
  if(tab==='records')detail=`<div class="stats-detail-grid"><article><small>BEST GAUNTLET RUN</small><b>${stats.bestGauntlet}</b><span>Longest Classic streak</span></article><article><small>BEST WIN STREAK</small><b>${stats.bestWinStreak}</b><span>Across all modes</span></article><article><small>HIGHEST RATED MATCH</small><b>${stats.highestRated?stats.highestRated.rating.toFixed(1):'—'}</b><span>${stats.highestRated?`${stats.highestRated.type} · ${stats.highestRated.winner}`:'No completed matches'}</span></article><article><small>LAST RESULT</small><b>${stats.lastMatch?stats.lastMatch.winner:'—'}</b><span>${stats.lastMatch?`${stats.lastMatch.mode} · ${stats.lastMatch.rating.toFixed(1)} stars`:'No completed matches'}</span></article></div>`;
- render(`<section class="stats-framework">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">YOUR LEGACY</div><h1>STATISTICS</h1><p>Persistent records from Tag Team Gauntlet and Quick Match.</p></div></header><div class="stat-cards"><article><small>CAREER</small><b>${stats.total}</b><span>Total Matches</span></article><article><small>RECORD</small><b>${record}</b><span>Wins & Losses</span></article><article><small>BEST RUN</small><b>${stats.bestGauntlet}</b><span>Longest Gauntlet Streak</span></article><article><small>COLLECTION</small><b>${WRESTLERS.length}</b><span>Founding Twenty Profiles</span></article></div><div class="stats-tabs"><button class="${tab==='career'?'active':''}" onclick="statisticsMenu('career')">CAREER</button><button class="${tab==='wrestlers'?'active':''}" onclick="statisticsMenu('wrestlers')">WRESTLERS</button><button class="${tab==='teams'?'active':''}" onclick="statisticsMenu('teams')">TEAMS</button><button class="${tab==='records'?'active':''}" onclick="statisticsMenu('records')">RECORDS</button></div><div class="stats-detail">${detail}</div></section>`)
+ render(`<section class="stats-framework">${shellBack()}<header class="section-heading"><div><div class="tv-kicker">YOUR LEGACY</div><h1>STATISTICS</h1><p>Persistent records from Tag Team Gauntlet and Quick Match.</p></div></header><div class="stat-cards"><article><small>CAREER</small><b>${stats.total}</b><span>Total Matches</span></article><article><small>RECORD</small><b>${record}</b><span>Wins & Losses</span></article><article><small>BEST RUN</small><b>${stats.bestGauntlet}</b><span>Longest Gauntlet Streak</span></article><article><small>COLLECTION</small><b>${WRESTLERS.length}</b><span>Wrestler Profiles</span></article></div><div class="stats-tabs"><button class="${tab==='career'?'active':''}" onclick="statisticsMenu('career')">CAREER</button><button class="${tab==='wrestlers'?'active':''}" onclick="statisticsMenu('wrestlers')">WRESTLERS</button><button class="${tab==='teams'?'active':''}" onclick="statisticsMenu('teams')">TEAMS</button><button class="${tab==='records'?'active':''}" onclick="statisticsMenu('records')">RECORDS</button></div><div class="stats-detail">${detail}</div></section>`)
 }
 function optionsMenu(){
  render(`<section class="panel mode-landing">${shellBack()}<div class="mode-landing-copy"><div class="tv-kicker">COMING SOON</div><h1>OPTIONS</h1><p>Broadcast speed, animation, audio and accessibility controls will live here.</p></div></section>`)
@@ -1433,6 +1433,32 @@ Object.assign(WRESTLER_DECISIONS,{
  'slater-nova':[['Paint the Opening','Test the Highest Rope','Trust the Instinct','Create the First Moment','Take the Unusual Path'],['Turn the Ring into a Canvas','Attempt the Impossible','Change Direction Mid-Flight','Make the Crowd Believe','Risk Everything for the Moment'],['Create from the Fall','Reach for the Ropes','Turn Pain into Motion','Find One More Flight','Refuse the Safe Choice'],['Call for Nova Fall','Take the Final Flight','Create the Lasting Image','Finish from the Sky','Risk It All One More Time']]
 });
 
+/* LEGACY Pro Wrestling 8.2.8 — roster 29–32 presentation and psychology */
+Object.assign(FEATURE_LINES,{
+ 'rex-hunter':'The Renegade lives for the moment nobody can control.',
+ 'magnus-fury':'The Berserker brings an entire arena to its feet.',
+ 'travis-stone':'When Big Rig starts moving, nothing stops the load.',
+ 'marco-montana':'The Don always makes an offer his opponent cannot survive.'
+});
+Object.assign(BIOS,{
+ 'rex-hunter':'A flamboyant renegade whose intensity, instinct and showmanship can turn any match into an unforgettable spectacle.',
+ 'magnus-fury':'A colourful powerhouse driven by raw adrenaline, explosive speed and an apparently limitless reserve of fighting spirit.',
+ 'travis-stone':'A towering enforcer whose quiet confidence and industrial strength make every movement feel inevitable.',
+ 'marco-montana':'A smooth, calculating operator who combines technical precision, streetwise timing and effortless superstar swagger.'
+});
+Object.assign(PERSONALITY_PROFILES,{
+ 'rex-hunter':{archetype:'The Renegade',events:['points skyward before surging forward','turns toward the crowd and feeds on the noise','changes rhythm without warning','laughs through the opponent’s offence','creates chaos and somehow controls it','signals that the next moment belongs to him']},
+ 'magnus-fury':{archetype:'The Berserker',events:['shakes the ropes with uncontrollable energy','bursts forward in a wave of colour and power','roars back to his feet','absorbs the impact and demands another','fires up as the arena rises','moves with impossible speed for his size']},
+ 'travis-stone':{archetype:'The Juggernaut',events:['steps forward without changing expression','cuts off the ring with one heavy stride','shrugs away the strike','raises one fist and waits','drives through the opponent with industrial force','stands over the damage in complete silence']},
+ 'marco-montana':{archetype:'The Don',events:['adjusts his gold chain and smiles','waves away the opponent’s challenge','controls the exchange with effortless timing','leans close and offers one final warning','turns a cheap opening into perfect strategy','smirks at the hard camera after taking control']}
+});
+Object.assign(WRESTLER_DECISIONS,{
+ 'rex-hunter':[['Create the First Moment','Point to the Sky','Change the Rhythm','Feed on the Noise','Start the Hunt'],['Turn Chaos into Control','Make It Unforgettable','Follow the Instinct','Raise the Intensity','Take Over the Spotlight'],['Fight Through the Madness','Refuse the Quiet Ending','Find Another Gear','Hear the Crowd Again','Hunt for the Opening'],['Call for Hunter\'s Mark','Finish the Hunt','Create the Lasting Moment','End It on His Terms','Make the Final Statement']],
+ 'magnus-fury':[['Release the Energy','Shake the Foundations','Charge Without Fear','Call to the Crowd','Begin the Rampage'],['Become Unstoppable','Overwhelm with Power','Move at Full Force','Roar Through the Pain','Break Their Resistance'],['Rise Like a Berserker','Find the Final Reserve','Refuse to Stay Down','Turn Pain into Fury','Summon One More Charge'],['Call for Berserker Bomb','End the Rampage','Deliver the Final Surge','Finish with Raw Power','Unleash Everything']],
+ 'travis-stone':[['Claim the Road','Move the Heavy Load','Cut Off the Ring','Set the Pace','Make the First Impact'],['Build Industrial Pressure','Drive Straight Through','Carry the Full Weight','Take Away Every Exit','Keep the Engine Running'],['Restart the Engine','Haul Himself Upright','Absorb the Collision','Refuse to Be Moved','Find One More Mile'],['Call for Dead Freight','Deliver the Final Load','End of the Road','Bring the Rig Through','Finish the Haul']],
+ 'marco-montana':[['Set the Terms','Make the First Offer','Control the Business','Show Who Owns the Ring','Take the Advantage'],['Change the Arrangement','Collect What Is Owed','Make It Personal','Control Every Detail','Offer No Escape'],['Refuse the Bad Deal','Buy Another Moment','Turn Trouble into Profit','Protect the Reputation','Find a Better Angle'],['Call for Final Offer','Close the Deal','Collect the Payment','Make the Offer Final','End the Negotiation']]
+});
+
 const LPW8_TITLES=[
  {id:'world',name:'LEGACY World Championship',short:'WORLD',prestige:100},
  {id:'television',name:'LEGACY Television Championship',short:'TELEVISION',prestige:82},
@@ -1663,7 +1689,7 @@ gauntletLiveMatchCard65=function(){
 };
 
 
-/* ==========================================================================\n   LEGACY PRO WRESTLING 8.2.7 — CAREER TESTING CONSOLIDATION\n   ========================================================================== */
+/* ==========================================================================\n   LEGACY PRO WRESTLING 8.2.8 — ROSTER 29–32 INTEGRATION\n   ========================================================================== */
 function lpwCleanDecisionName(name){
  const wrestler=S?.team?.[0];
  let clean=String(name||'').trim();

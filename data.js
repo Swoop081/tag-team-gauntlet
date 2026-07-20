@@ -354,16 +354,28 @@ const WRESTLERS = [
     "id":"slater-nova","name":"Slater Nova","title":"The Freefall Artist","faction":"Independent","signature":"Nova Fall","overall":96,"rarity":"Legendary","tag":92,"power":68,"speed":99,"technique":88,"charisma":97,"versatility":99,"loyalty":91,"resilience":91,"image":"assets/wrestlers/slater-nova/full.webp","finisher":"Nova Fall"
   },
   {
-    "id":"savannah-sinclair","name":"Savannah Sinclair","title":"The Heiress","faction":"Independent","signature":"Crown Jewel","overall":97,"rarity":"Legendary","tag":91,"power":91,"speed":86,"technique":98,"charisma":100,"versatility":96,"loyalty":82,"resilience":96,"image":"assets/wrestlers/savannah-sinclair/full.png","finisher":"Crown Jewel"
+    "id":"savannah-sinclair","name":"Savannah Sinclair","title":"The Heiress","faction":"Independent","signature":"Crown Jewel","overall":97,"rarity":"Legendary","tag":91,"power":91,"speed":86,"technique":98,"charisma":100,"versatility":96,"loyalty":82,"resilience":96,"image":"assets/wrestlers/savannah-sinclair/full.webp","finisher":"Crown Jewel"
   },
   {
-    "id":"bianca-balboa","name":"Bianca Balboa","title":"The People's Champion","faction":"Independent","signature":"Balboa Breaker","overall":96,"rarity":"Legendary","tag":94,"power":88,"speed":91,"technique":95,"charisma":99,"versatility":97,"loyalty":98,"resilience":99,"image":"assets/wrestlers/bianca-balboa/full.png","finisher":"Balboa Breaker"
+    "id":"bianca-balboa","name":"Bianca Balboa","title":"The People's Champion","faction":"Independent","signature":"Balboa Breaker","overall":96,"rarity":"Legendary","tag":94,"power":88,"speed":91,"technique":95,"charisma":99,"versatility":97,"loyalty":98,"resilience":99,"image":"assets/wrestlers/bianca-balboa/full.webp","finisher":"Balboa Breaker"
   },
   {
-    "id":"zara-monroe","name":"Zara Monroe","title":"The Icon","faction":"Independent","signature":"Iconic Statement","overall":96,"rarity":"Legendary","tag":93,"power":78,"speed":96,"technique":99,"charisma":100,"versatility":99,"loyalty":84,"resilience":94,"image":"assets/wrestlers/zara-monroe/full.png","finisher":"Iconic Statement"
+    "id":"zara-monroe","name":"Zara Monroe","title":"The Icon","faction":"Independent","signature":"Iconic Statement","overall":96,"rarity":"Legendary","tag":93,"power":78,"speed":96,"technique":99,"charisma":100,"versatility":99,"loyalty":84,"resilience":94,"image":"assets/wrestlers/zara-monroe/full.webp","finisher":"Iconic Statement"
   },
   {
-    "id":"chloe-carter","name":"Chloe Carter","title":"The Heart","faction":"Independent","signature":"Heart and Soul","overall":95,"rarity":"Legendary","tag":98,"power":82,"speed":90,"technique":94,"charisma":99,"versatility":96,"loyalty":100,"resilience":98,"image":"assets/wrestlers/chloe-carter/full.png","finisher":"Heart and Soul"
+    "id":"chloe-carter","name":"Chloe Carter","title":"The Heart","faction":"Independent","signature":"Heart and Soul","overall":95,"rarity":"Legendary","tag":98,"power":82,"speed":90,"technique":94,"charisma":99,"versatility":96,"loyalty":100,"resilience":98,"image":"assets/wrestlers/chloe-carter/full.webp","finisher":"Heart and Soul"
+  },
+  {
+    "id":"rex-hunter","name":"Rex Hunter","title":"The Renegade","faction":"Independent","signature":"Hunter's Mark","overall":97,"rarity":"Legendary","tag":91,"power":91,"speed":88,"technique":94,"charisma":100,"versatility":97,"loyalty":80,"resilience":98,"image":"assets/wrestlers/rex-hunter/full.webp","finisher":"Hunter's Mark"
+  },
+  {
+    "id":"magnus-fury","name":"Magnus Fury","title":"The Berserker","faction":"Independent","signature":"Berserker Bomb","overall":98,"rarity":"Legendary","tag":86,"power":99,"speed":91,"technique":84,"charisma":99,"versatility":91,"loyalty":89,"resilience":100,"image":"assets/wrestlers/magnus-fury/full.webp","finisher":"Berserker Bomb"
+  },
+  {
+    "id":"travis-stone","name":"Travis Stone","title":"Big Rig","faction":"Independent","signature":"Dead Freight","overall":97,"rarity":"Legendary","tag":90,"power":100,"speed":72,"technique":90,"charisma":94,"versatility":88,"loyalty":85,"resilience":99,"image":"assets/wrestlers/travis-stone/full.webp","finisher":"Dead Freight"
+  },
+  {
+    "id":"marco-montana","name":"Marco Montana","title":"The Don","faction":"Independent","signature":"Final Offer","overall":97,"rarity":"Legendary","tag":94,"power":89,"speed":91,"technique":96,"charisma":100,"versatility":97,"loyalty":76,"resilience":95,"image":"assets/wrestlers/marco-montana/full.webp","finisher":"Final Offer"
   }
 ];
 
