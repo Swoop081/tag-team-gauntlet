@@ -1877,3 +1877,15 @@ body.career-view .presentation-summary .winner-celebration{
   z-index:2;
 }
 .lpw-founder-clean .live-founder-card>*{pointer-events:none}
+
+/* LEGACY 8.3.2 founder-selection interaction hardening */
+.lpw-founder-clean .live-founder-grid{position:relative;z-index:10}
+.lpw-founder-clean .live-founder-card{
+  display:flex!important;
+  pointer-events:auto!important;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-tap-highlight-color:rgba(244,196,64,.2);
+}
+.lpw-founder-clean .live-founder-card:active{transform:scale(.985)}
+.lpw-founder-clean .founder-select-label{display:block;margin-top:8px;color:#f3c640;font-size:.7rem;letter-spacing:.16em}
