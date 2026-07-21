@@ -1868,24 +1868,29 @@ body.career-view .presentation-summary .winner-celebration{
  .lpw-calendar-830 .live-today{margin-top:12px}
 }
 
-/* LEGACY 8.3.1 hotfix — founder cards must remain directly interactive on touch devices. */
-.lpw-founder-clean .live-founder-card{
-  pointer-events:auto!important;
-  touch-action:manipulation;
-  cursor:pointer;
-  position:relative;
-  z-index:2;
-}
-.lpw-founder-clean .live-founder-card>*{pointer-events:none}
 
-/* LEGACY 8.3.2 founder-selection interaction hardening */
-.lpw-founder-clean .live-founder-grid{position:relative;z-index:10}
-.lpw-founder-clean .live-founder-card{
-  display:flex!important;
-  pointer-events:auto!important;
-  -webkit-user-select:none;
-  user-select:none;
-  -webkit-tap-highlight-color:rgba(244,196,64,.2);
+
+/* LEGACY 8.3.3 — restore founder grid layout and reliable mobile tap targets. */
+.lpw-founder-clean .live-founder-grid{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:18px 14px!important;
+ width:100%!important;
+ position:relative;
 }
+.lpw-founder-clean .live-founder-card{
+ display:grid!important;
+ grid-template-rows:auto auto!important;
+ width:100%!important;
+ min-width:0!important;
+ pointer-events:auto!important;
+ touch-action:manipulation;
+ cursor:pointer;
+ -webkit-tap-highlight-color:rgba(244,196,64,.22);
+}
+.lpw-founder-clean .live-founder-card>img,
+.lpw-founder-clean .live-founder-card>span{pointer-events:none!important}
 .lpw-founder-clean .live-founder-card:active{transform:scale(.985)}
-.lpw-founder-clean .founder-select-label{display:block;margin-top:8px;color:#f3c640;font-size:.7rem;letter-spacing:.16em}
+@media(max-width:390px){
+ .lpw-founder-clean .live-founder-grid{gap:16px 10px!important}
+}

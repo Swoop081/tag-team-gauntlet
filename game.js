@@ -2001,52 +2001,45 @@ gauntletLiveBeginDay=function(skipBreaking=false){
  return _lpw830BeginDay();
 };
 
-/* LEGACY 8.3.2 hotfix — robust founder selection on iOS/PWA.
-   Uses one direct commit path plus capture-phase delegation so taps cannot be lost. */
-function lpwCommitFounderSelection(id){
+
+
+/* LEGACY 8.3.3 — founder selection progression-blocker fix.
+   Save the core career first; optional world setup can never block selection. */
+function lpwSelectCareerFounder(id){
+ const w=liveFounder(id);
+ if(!w||!LIVE_FOUNDERS.includes(id))return false;
+ const c={
+  version:7,founder:id,active:id,stable:[id],week:1,month:1,day:0,
+  wins:0,losses:0,momentum:50,popularity:20,
+  training:{power:0,speed:0,technique:0,charisma:0,recovery:0},
+  progression:{},history:[],created:new Date().toISOString(),world:{}
+ };
+ try{liveEnsureProgression(c)}catch(e){console.warn('Progression setup skipped',e)}
+ try{liveEnsureWorld(c)}catch(e){console.warn('World setup skipped',e)}
+ /* Persist immediately so ancillary story generation cannot trap the user. */
+ liveSave(c);
  try{
-  const w=liveFounder(id);
-  if(!w||!LIVE_FOUNDERS.includes(id))return false;
-  const c={
-   version:6,founder:id,active:id,stable:[id],week:1,month:1,day:0,
-   wins:0,losses:0,momentum:50,popularity:20,
-   training:{power:0,speed:0,technique:0,charisma:0,recovery:0},
-   history:[],created:new Date().toISOString(),
-   world:{onboardingSeen:true,news:[],worldStories:[],katieThisWeek:0}
-  };
-  liveEnsureWorld(c);
   const rival=livePickDifferent(c);
   if(rival)liveStartFeud(c,rival.id,'Veronica Vale has selected your first monthly rival.');
   liveGenerateMonthlyPlan(c);
   liveSave(c);
-  gauntletLiveFeudOrigin();
-  return true;
- }catch(error){
-  console.error('Founder selection failed',error);
-  return false;
+ }catch(e){
+  console.warn('Initial feud/plan setup deferred',e);
+  liveSave(c);
  }
+ if(liveFeud(c))gauntletLiveFeudOrigin();
+ else gauntletLiveCalendar();
+ return false;
 }
-window.lpwCommitFounderSelection=lpwCommitFounderSelection;
-window.gauntletLiveChooseFounder=lpwCommitFounderSelection;
-gauntletLiveChooseFounder=lpwCommitFounderSelection;
+window.lpwSelectCareerFounder=lpwSelectCareerFounder;
+window.gauntletLiveChooseFounder=lpwSelectCareerFounder;
+gauntletLiveChooseFounder=lpwSelectCareerFounder;
 
 gauntletLiveFounderSelect=function(){
  const founders=LIVE_FOUNDERS.map(liveFounder).filter(Boolean);
- render(`<section class="panel live-founder-screen lpw-founder-clean"><button type="button" class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button type="button" class="live-founder-card" data-founder-id="${w.id}" onclick="return lpwCommitFounderSelection('${w.id}')" aria-label="Choose ${w.name}">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b><strong class="founder-select-label">SELECT</strong></span></button>`).join('')}</div></section>`);
+ render(`<section class="panel live-founder-screen lpw-founder-clean"><button type="button" class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button type="button" class="live-founder-card" data-founder-id="${w.id}" aria-label="Choose ${w.name}">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`);
+ document.querySelectorAll('.live-founder-card[data-founder-id]').forEach(card=>{
+  card.onclick=function(){return lpwSelectCareerFounder(this.dataset.founderId)};
+ });
 };
 window.gauntletLiveFounderSelect=gauntletLiveFounderSelect;
-
-(function installFounderSelectionDelegation(){
- if(window.__LPW_FOUNDER_DELEGATION__)return;
- window.__LPW_FOUNDER_DELEGATION__=true;
- const selectFromEvent=function(event){
-  const target=event.target&&event.target.closest?event.target.closest('.live-founder-card[data-founder-id]'):null;
-  if(!target)return;
-  event.preventDefault();
-  event.stopPropagation();
-  const id=target.getAttribute('data-founder-id');
-  if(id)lpwCommitFounderSelection(id);
- };
- document.addEventListener('pointerup',selectFromEvent,true);
- document.addEventListener('click',selectFromEvent,true);
-})();
