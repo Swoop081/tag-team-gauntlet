@@ -1,3 +1,7 @@
+8.3.5 - Verified Founder Selection Repair
+- Guarded obsolete match-decision hooks that stopped game.js initialization.
+- Founder cards now use explicit event listeners and successfully create a Career save.
+
 LEGACY PRO WRESTLING 7.0
 - Full game rebrand and Career presentation update.
 - See VERSION-7.0-TEST-NOTES.md.

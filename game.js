@@ -1710,17 +1710,23 @@ function lpwCleanDecisionName(name){
  };
  return fixes[clean]||clean;
 }
-const _resolveDecision827=resolveDecision;
-resolveDecision=function(index){
- if(M?.currentDecision?.choices?.[index])M.currentDecision.choices[index].name=lpwCleanDecisionName(M.currentDecision.choices[index].name);
- return _resolveDecision827(index);
-};
-const _showDecision827=showDecision;
-showDecision=function(){
- const result=_showDecision827();
- if(M?.currentDecision?.choices)M.currentDecision.choices.forEach(c=>c.name=lpwCleanDecisionName(c.name));
- return result;
-};
+/* These legacy hooks only apply when the older match-decision functions exist.
+   Guard them so Career Mode initialization cannot be aborted by missing globals. */
+if(typeof window.resolveDecision==='function'){
+ const _resolveDecision827=window.resolveDecision;
+ window.resolveDecision=function(index){
+  if(window.M?.currentDecision?.choices?.[index])window.M.currentDecision.choices[index].name=lpwCleanDecisionName(window.M.currentDecision.choices[index].name);
+  return _resolveDecision827(index);
+ };
+}
+if(typeof window.showDecision==='function'){
+ const _showDecision827=window.showDecision;
+ window.showDecision=function(){
+  const result=_showDecision827();
+  if(window.M?.currentDecision?.choices)window.M.currentDecision.choices.forEach(c=>c.name=lpwCleanDecisionName(c.name));
+  return result;
+ };
+}
 
 milestoneData=function(){
  if(S?.liveMode){
@@ -1986,51 +1992,45 @@ gauntletLiveBeginDay=function(skipBreaking=false){
  return _lpw830BeginDay();
 };
 
-/* LEGACY 8.3.4 — founder selection hard reset.
-   Uses a simple two-stage flow: tap a founder, immediately show confirmation,
-   then initialise the Career world. This avoids silent setup failures. */
-function lpw834ChooseFounder(id){
+/* LEGACY 8.3.5 — verified founder selection repair.
+   The 8.2.8 legacy decision hooks are now guarded above, allowing this file to
+   finish initialising. Founder cards use explicit event listeners and create
+   the Career save before optional rivalry setup. */
+function lpw835ChooseFounder(id){
  const wrestler=liveFounder(id);
- if(!wrestler||!LIVE_FOUNDERS.includes(id)){
-  return gauntletLiveFounderSelect();
- }
- render(`<section class="panel live-world-screen lpw-founder-confirm"><div class="tv-kicker">NEW CAREER</div><h1>${wrestler.name.toUpperCase()} SELECTED</h1>${imageWithFallback(wrestler,'full','art-full','quickMatch')}<p>Creating your first rivalry and opening calendar…</p></section>`);
- window.setTimeout(function(){
-  const career={
-   version:8,founder:id,active:id,stable:[id],week:1,month:1,day:0,
-   wins:0,losses:0,momentum:50,popularity:20,
-   training:{power:0,speed:0,technique:0,charisma:0,recovery:0},
-   progression:{},history:[],created:new Date().toISOString(),
-   world:{onboardingSeen:true,news:[],worldStories:[],katieThisWeek:0,lastResult:null,manager:null,nextMatchBonus:0}
-  };
-  try{liveEnsureProgression(career)}catch(error){console.warn('Career progression setup:',error)}
-  try{liveEnsureWorld(career)}catch(error){console.warn('Career world setup:',error)}
+ if(!wrestler||!LIVE_FOUNDERS.includes(id))return gauntletLiveFounderSelect();
+ const career={
+  version:8,founder:id,active:id,stable:[id],week:1,month:1,day:0,
+  wins:0,losses:0,momentum:50,popularity:20,
+  training:{power:0,speed:0,technique:0,charisma:0,recovery:0},
+  progression:{},history:[],created:new Date().toISOString(),
+  world:{onboardingSeen:true,news:[],worldStories:[],katieThisWeek:0,lastResult:null,manager:null,nextMatchBonus:0}
+ };
+ try{liveEnsureProgression(career)}catch(error){console.warn('Career progression setup:',error)}
+ try{liveEnsureWorld(career)}catch(error){console.warn('Career world setup:',error)}
+ liveSave(career);
+ try{
+  const rival=livePickDifferent(career);
+  if(rival)liveStartFeud(career,rival.id,'Veronica Vale has selected your first monthly rival.');
+  liveGenerateMonthlyPlan(career);
   liveSave(career);
-  try{
-   const rival=livePickDifferent(career);
-   if(rival)liveStartFeud(career,rival.id,'Veronica Vale has selected your first monthly rival.');
-   liveGenerateMonthlyPlan(career);
-   liveSave(career);
-  }catch(error){
-   console.error('Career opening setup failed:',error);
-   liveSave(career);
-  }
-  try{
-   if(liveFeud(career))return gauntletLiveFeudOrigin();
-  }catch(error){console.error('Feud origin failed:',error)}
-  gauntletLiveCalendar();
- },50);
- return false;
+ }catch(error){
+  console.error('Career opening setup failed:',error);
+  liveSave(career);
+ }
+ try{if(liveFeud(career))return gauntletLiveFeudOrigin()}catch(error){console.error('Feud origin failed:',error)}
+ return gauntletLiveCalendar();
 }
-window.lpw834ChooseFounder=lpw834ChooseFounder;
-window.gauntletLiveChooseFounder=lpw834ChooseFounder;
-gauntletLiveChooseFounder=lpw834ChooseFounder;
+window.lpw835ChooseFounder=lpw835ChooseFounder;
+window.gauntletLiveChooseFounder=lpw835ChooseFounder;
+gauntletLiveChooseFounder=lpw835ChooseFounder;
 
 gauntletLiveFounderSelect=function(){
  const founders=LIVE_FOUNDERS.map(liveFounder).filter(Boolean);
- render(`<section class="panel live-founder-screen lpw-founder-clean lpw-founder-834"><button type="button" class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<article class="live-founder-card" data-founder-id="${w.id}" onclick="lpw834ChooseFounder('${w.id}')" role="button" tabindex="0" aria-label="Choose ${w.name}">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b><button type="button" class="founder-select-button" onclick="event.stopPropagation();lpw834ChooseFounder('${w.id}')">SELECT</button></span></article>`).join('')}</div></section>`);
- document.querySelectorAll('.lpw-founder-834 .live-founder-card').forEach(function(card){
-  card.addEventListener('keydown',function(event){if(event.key==='Enter'||event.key===' '){event.preventDefault();lpw834ChooseFounder(card.dataset.founderId)}});
+ render(`<section class="panel live-founder-screen lpw-founder-clean lpw-founder-835"><button type="button" class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">NEW CAREER</div><h1>CHOOSE YOUR WRESTLER</h1><p class="sub">This wrestler becomes the first member of your stable.</p><div class="live-founder-grid">${founders.map(w=>`<button type="button" class="live-founder-card" data-founder-id="${w.id}" aria-label="Choose ${w.name}">${imageWithFallback(w,'full','art-full','quickMatch')}<span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div></section>`);
+ document.querySelectorAll('.lpw-founder-835 .live-founder-card').forEach(function(card){
+  card.addEventListener('click',function(){lpw835ChooseFounder(card.dataset.founderId)});
  });
 };
 window.gauntletLiveFounderSelect=gauntletLiveFounderSelect;
+

@@ -1869,8 +1869,3 @@ body.career-view .presentation-summary .winner-celebration{
 }
 
 /* LEGACY 8.3.4 — explicit founder selection controls. */
-.lpw-founder-834 .live-founder-card{display:grid!important;grid-template-rows:auto auto!important;cursor:pointer!important;pointer-events:auto!important;touch-action:manipulation!important}
-.lpw-founder-834 .live-founder-card *{pointer-events:none}
-.lpw-founder-834 .founder-select-button{display:block!important;pointer-events:auto!important;margin:10px auto 0!important;padding:9px 18px!important;border:1px solid #f0c84a!important;background:#f0c84a!important;color:#111!important;font-weight:900!important;letter-spacing:.08em!important}
-.lpw-founder-confirm{text-align:center;max-width:700px;margin:0 auto}
-.lpw-founder-confirm img{display:block;height:min(55vh,520px);max-width:100%;object-fit:contain;margin:20px auto}
