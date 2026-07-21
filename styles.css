@@ -1869,3 +1869,22 @@ body.career-view .presentation-summary .winner-celebration{
 }
 
 /* LEGACY 8.3.4 — explicit founder selection controls. */
+
+/* LEGACY 8.3.6 — Media, consequence and NPC presentation */
+.lpw-media-screen,.lpw-npc-standard,.lpw-consequence-screen{border-color:#2d3037!important}
+.lpw-media-screen:before,.lpw-npc-standard:before,.lpw-consequence-screen:before{display:none!important}
+.lpw-media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}
+.lpw-media-grid article,.lpw-archive-list article,.lpw-team-grid article{background:#101116;border:1px solid #343741;padding:16px}
+.lpw-media-grid small,.lpw-archive-list small,.lpw-team-grid small{display:block;color:#f1c74f;font-size:10px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase}
+.lpw-media-grid b,.lpw-archive-list b,.lpw-team-grid b{display:block;font:italic 24px Impact;margin:7px 0;text-transform:uppercase}
+.lpw-media-grid p,.lpw-archive-list p,.lpw-team-grid p{color:#b9bcc4;line-height:1.45;margin:0}
+.lpw-disclaimer{font-size:11px;color:#81848d;border-top:1px solid #30323a;padding-top:14px}
+.lpw-npc-placeholder{width:min(310px,42vw);min-height:290px;display:grid;place-items:center;align-content:center;background:radial-gradient(circle,#30333b,#101116 70%);border:1px solid #3c4049;color:#f1c74f}
+.lpw-npc-placeholder span{font:italic 78px Impact}.lpw-npc-placeholder small{font-size:9px;letter-spacing:1.5px;color:#aaa}
+.lpw-change-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:20px 0}
+.lpw-change-grid>div{padding:16px;background:#101116;border:1px solid #343741;text-align:center}.lpw-change-grid small,.lpw-change-grid b,.lpw-change-grid em{display:block}.lpw-change-grid small{color:#f1c74f;letter-spacing:1.5px;font-weight:900}.lpw-change-grid b{font:italic 28px Impact;margin:8px 0}.lpw-change-grid b span{color:#777}.lpw-change-grid em{font-style:normal;color:#75dfa0;font-size:11px;font-weight:900}
+.lpw-consequence-host{display:flex;justify-content:center;align-items:center;gap:12px}.lpw-consequence-host img{width:92px;height:92px;object-fit:contain}.lpw-consequence-host small,.lpw-consequence-host b{display:block}.lpw-consequence-host b{font:italic 25px Impact}
+.lpw-world-reaction,.lpw-ripple{padding:14px 16px;margin:10px 0;background:#101116;border-left:3px solid #f1c74f}.lpw-world-reaction small,.lpw-ripple b{display:block;color:#f1c74f;font-size:10px;letter-spacing:1.5px}.lpw-world-reaction p,.lpw-ripple span{display:block;margin:5px 0 0;color:#d2d4da}
+.lpw-archive-list{display:grid;gap:10px}.lpw-team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.lpw-team-grid img{width:100%;height:190px;object-fit:contain;background:#0b0c0f}.lpw-team-grid .lpw-npc-placeholder{width:100%;min-height:190px}.lpw-team-grid .lpw-npc-placeholder span{font-size:52px}
+.live-npc-scene.large .npc-art{max-height:430px!important;object-fit:contain!important}.live-npc-scene{border-color:#343741!important}
+@media(max-width:760px){.lpw-media-grid{grid-template-columns:1fr}.lpw-team-grid{grid-template-columns:1fr 1fr}.lpw-npc-placeholder{width:100%;min-height:240px}.live-npc-scene.large{grid-template-columns:1fr!important}.live-npc-scene.large .npc-art{height:300px!important;width:100%!important}.lpw-change-grid{grid-template-columns:1fr 1fr}}

@@ -2034,3 +2034,154 @@ gauntletLiveFounderSelect=function(){
 };
 window.gauntletLiveFounderSelect=gauntletLiveFounderSelect;
 
+
+/* ========================================================================== 
+   LEGACY PRO WRESTLING 8.3.6 — MONTH ONE MEDIA & CAREER DEVELOPMENT
+   ========================================================================== */
+Object.assign(SUPPORT_CAST,{
+ 'derek-pierce':{id:'derek-pierce',name:'Derek Pierce',role:'Dirt Sheet Writer',group:'Media'},
+ 'madison-price':{id:'madison-price',name:'Madison Price',role:'Director of Sponsorships',group:'Business'},
+ 'noah-grant':{id:'noah-grant',name:'Noah Grant',role:'Broadcast Producer',group:'Broadcast Team'},
+ 'marcus-steele':{id:'marcus-steele',name:'Marcus Steele',role:'Talent Relations Director',group:'Operations'},
+ 'olivia-chase':{id:'olivia-chase',name:'Olivia Chase',role:'Live Events Coordinator',group:'Business'}
+});
+SUPPORT_CAST['ava-cross'].role='Social Media Correspondent';
+SUPPORT_CAST['coach-hank-dawson'].role='Head Performance Coach';
+SUPPORT_CAST['dr-lena-hart'].role='Chief Medical Officer';
+
+const LPW836_TEAM=[
+ ['veronica-vale','General Manager','Runs LPW and oversees contracts, opportunities and major career decisions.'],
+ ['mike-sullivan','Play-by-Play Commentator','Calls the action and keeps the television audience informed.'],
+ ['johnny-cannon','Colour Commentator','Adds analysis, personality and strong opinions to every broadcast.'],
+ ['katie-morgan','Backstage Interviewer','Conducts interviews and gives wrestlers a chance to shape their own story.'],
+ ['coach-hank-dawson','Head Performance Coach','Runs the Performance Centre and develops wrestler attributes.'],
+ ['ava-cross','Social Media Correspondent','Tracks hashtags, polls, fan reactions and the weekly online conversation.'],
+ ['derek-pierce','Dirt Sheet Writer','Publishes rumours, ratings, awards and backstage speculation.'],
+ ['leon-ward','Head of Security','Handles investigations, attacks and backstage incidents.'],
+ ['dr-lena-hart','Chief Medical Officer','Manages injuries, recovery and medical clearance.'],
+ ['ethan-brooks','Director of Competition','Oversees rankings, tournaments and SuperCard ring introductions.'],
+ ['madison-price','Director of Sponsorships','Brings commercial offers, endorsements and brand opportunities.'],
+ ['noah-grant','Broadcast Producer','Controls television placement, production requests and exposure.'],
+ ['marcus-steele','Talent Relations Director','Manages locker-room morale, disputes and wrestler relations.'],
+ ['olivia-chase','Live Events Coordinator','Organises fan events, appearances and publicity opportunities.']
+];
+
+function lpw836Ensure(c){
+ c.world=c.world||{};
+ c.world.mediaArchive=Array.isArray(c.world.mediaArchive)?c.world.mediaArchive:[];
+ c.world.metNpcs=c.world.metNpcs||{};
+ c.world.lastDevelopmentNpc=c.world.lastDevelopmentNpc||'';
+ return c;
+}
+const _lpw836Load=liveLoad;
+liveLoad=function(){const c=_lpw836Load();if(c){lpw836Ensure(c);liveSave(c)}return c};
+
+function lpw836Week(c){return ((Math.max(1,c.week)-1)%4)+1}
+function lpw836MediaMeta(c){
+ const week=lpw836Week(c);
+ if(week===1)return {host:'ava-cross',kicker:'LPW SOCIAL',title:"AVA'S PULSE",button:'OPEN LPW SOCIAL',desc:'See what is trending across the LPW Universe.'};
+ if(week===2)return {host:'derek-pierce',kicker:'WEEKLY MEDIA',title:'DIRT SHEET DIGEST',button:'READ DIRT SHEET',desc:'Catch up on rumours, ratings, awards and backstage gossip.'};
+ if(week===3)return {host:'ava-cross',kicker:'LPW SOCIAL',title:"AVA'S PULSE",button:'OPEN LPW SOCIAL',desc:'The fans have spoken. See what is making headlines this week.'};
+ return {host:'derek-pierce',kicker:'SUPERCARD SPECIAL',title:'INSTANT REACTION',button:'VIEW SUPERCARD REACTION',desc:'Immediate reaction, awards and rumours from the month’s biggest event.'};
+}
+
+const _lpw836CalendarActivity=lpwCalendarActivity;
+lpwCalendarActivity=function(d){
+ if(d.weekday===6&&!lpwCalendarIsSupercard(d)){
+  const c=liveLoad(),m=lpw836MediaMeta(c);return m.title;
+ }
+ return _lpw836CalendarActivity(d);
+};
+const _lpw836CalendarDescription=lpwCalendarDescription;
+lpwCalendarDescription=function(d){
+ if(d.weekday===6&&!lpwCalendarIsSupercard(d)){const c=liveLoad();return lpw836MediaMeta(c).desc}
+ if(d.weekday===2)return 'A dynamic career development meeting is waiting. Training, media, management or another department may call.';
+ return _lpw836CalendarDescription(d);
+};
+
+function lpw836Archive(c,type,title,body){
+ c.world.mediaArchive.unshift({month:c.month,week:lpw836Week(c),type,title,body,date:new Date().toISOString()});
+ c.world.mediaArchive=c.world.mediaArchive.slice(0,96);liveSave(c);
+}
+function lpw836NoPhoto(id){const p=npc(id);return `<div class="lpw-npc-placeholder"><span>${(p?.name||id).split(' ').map(x=>x[0]).join('')}</span><small>PORTRAIT COMING SOON</small></div>`}
+function lpw836NpcVisual(id,type='full'){const known=CHARACTER_IMAGE_MANAGER[id];return known?npcImage(id,type):lpw836NoPhoto(id)}
+function lpw836FirstMeeting(id,next){
+ const c=liveLoad(),p=npc(id);if(!c.world.metNpcs[id]){c.world.metNpcs[id]=true;liveSave(c);const intro={
+  'derek-pierce':'Some people call it journalism. Others call it stirring the pot. If it is worth talking about, it will probably appear in my Dirt Sheet Digest.',
+  'madison-price':'Build your reputation and I will bring you opportunities that extend far beyond the ring.',
+  'noah-grant':'A great wrestler wins matches. A superstar creates unforgettable television.',
+  'marcus-steele':'Respect behind the curtain matters as much as performance under the lights.',
+  'olivia-chase':'Fans do not just watch LPW. They experience it, and I help create those moments.'
+ }[id]||`I am ${p.name}. You will be hearing from my department as your career develops.`;
+ return render(`<section class="panel live-world-screen lpw-npc-standard"><div class="tv-kicker">FIRST MEETING</div><h1>MEET THE TEAM</h1><div class="live-npc-scene large">${lpw836NpcVisual(id,'full')}<div><small>${p.role}</small><h2>${p.name}</h2><p>“${intro}”</p></div></div><button class="btn live-primary" onclick="${next}">CONTINUE</button></section>`)}
+ return false;
+}
+
+function lpw836AvaPulse(){
+ const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c),last=c.world.lastResult;
+ const hashtag=`#${p.name.replace(/[^A-Za-z0-9]/g,'')}`;
+ const result=last?(last.win?`${p.name}'s latest victory is driving the conversation.`:`Fans are debating how ${p.name} should respond to the latest defeat.`):`${p.name}'s Career debut is beginning to attract attention.`;
+ const rival=r?`${p.name} vs ${r.name} is the most discussed rivalry in LPW.`:'Fans are waiting to see who steps forward next.';
+ const body=`${result} ${rival}`;
+ lpw836Archive(c,'pulse',"Ava's Pulse",body);
+ render(`<section class="panel live-world-screen lpw-media-screen"><div class="tv-kicker">LPW SOCIAL</div><h1>AVA'S PULSE</h1><div class="live-npc-scene large">${lpw836NpcVisual('ava-cross','full')}<div><small>SOCIAL MEDIA CORRESPONDENT</small><h2>Ava Cross</h2><p>“Here is what the LPW audience is talking about before the new week begins.”</p></div></div><div class="lpw-media-grid"><article><small>TRENDING</small><b>${hashtag}</b><p>${result}</p></article><article><small>FAN POLL</small><b>${r?'Who wins the rivalry?':'Who should step up next?'}</b><p>${p.name} leads with ${55+Math.floor(Math.random()*31)}% of the vote.</p></article><article><small>COMMUNITY PULSE</small><b>MOST DISCUSSED</b><p>${rival}</p></article><article><small>VIRAL CLIP</small><b>${last?.win?'THE FINISH':'THE FALLOUT'}</b><p>Highlights have passed ${120+Math.floor(Math.random()*780)},000 views.</p></article></div><button class="btn live-primary" onclick="lpw836CompleteMedia()">CONTINUE</button></section>`);
+}
+function lpw836DirtSheet(supercard=false){
+ const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c),last=c.world.lastResult;
+ const match=last?`${last.win?p.name:liveFounder(last.opponent)?.name} vs ${last.win?liveFounder(last.opponent)?.name:p.name}`:`${p.name}'s next featured match`;
+ const stars=(3.5+Math.random()*1.4).toFixed(2).replace(/0$/,'');
+ const body=supercard?`Instant reaction to ${liveCurrentSupercard(c)}. ${p.name} is the central headline.`:`Rumours and awards from Week ${lpw836Week(c)}. ${p.name} remains under close scrutiny.`;
+ lpw836Archive(c,supercard?'supercard-reaction':'dirt-sheet',supercard?'SuperCard Instant Reaction':'Dirt Sheet Digest',body);
+ render(`<section class="panel live-world-screen lpw-media-screen"><div class="tv-kicker">${supercard?'SUPERCARD SPECIAL':'WEEKLY MEDIA'}</div><h1>${supercard?'INSTANT REACTION':'DIRT SHEET DIGEST'}</h1><div class="live-npc-scene large">${lpw836NpcVisual('derek-pierce','full')}<div><small>DIRT SHEET WRITER</small><h2>Derek Pierce</h2><p>“${supercard?'The final bell has only just rung, but the reaction has already started.':'Take this with a grain of salt, but people backstage are talking.'}”</p></div></div><div class="lpw-media-grid"><article><small>MATCH OF THE ${supercard?'NIGHT':'WEEK'}</small><b>${match}</b><p>${stars} stars</p></article><article><small>SUPERSTAR OF THE ${supercard?'NIGHT':'WEEK'}</small><b>${last?.win?p.name:(r?.name||p.name)}</b><p>The strongest headline performance.</p></article><article><small>${supercard?'BIGGEST SHOCK':'RUMOUR OF THE WEEK'}</small><b>SOURCES SAY...</b><p>${r?`Officials are discussing another major opportunity connected to ${p.name} and ${r.name}.`:`Management may be preparing a major announcement.`}</p></article><article><small>STOCK ${last?.win?'RISING':'UNDER PRESSURE'}</small><b>${p.name}</b><p>${last?.win?'Momentum is building quickly.':'The next response will be closely watched.'}</p></article></div><p class="lpw-disclaimer">The views and rumours published in the Dirt Sheet Digest are based on anonymous sources and backstage speculation. LPW has not verified these claims.</p><button class="btn live-primary" onclick="lpw836CompleteMedia()">CONTINUE</button></section>`);
+}
+function lpw836MediaDay(){const c=liveLoad(),m=lpw836MediaMeta(c);if(lpw836FirstMeeting(m.host,`lpw836MediaDay()`))return;if(lpw836Week(c)===1||lpw836Week(c)===3)return lpw836AvaPulse();return lpw836DirtSheet(lpw836Week(c)===4)}
+function lpw836CompleteMedia(){const c=liveLoad();liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar()}
+
+function lpw836Outcome(title,npcId,before,after,reaction,ripple){
+ const rows=Object.keys(after).map(k=>{const a=before[k],b=after[k],delta=(typeof a==='number'&&typeof b==='number')?b-a:null;return `<div><small>${k.toUpperCase()}</small><b>${a} <span>→</span> ${b}</b><em>${delta===null?'':delta>0?`+${delta}`:delta<0?`${delta}`:'NO CHANGE'}</em></div>`}).join('');
+ render(`<section class="panel live-day-complete lpw-consequence-screen"><div class="tv-kicker">OUTCOME</div><h1>${title}</h1><div class="lpw-consequence-host">${lpw836NpcVisual(npcId,'portrait')}<span><small>${npc(npcId)?.role||''}</small><b>${npc(npcId)?.name||''}</b></span></div><div class="lpw-change-grid">${rows}</div><div class="lpw-world-reaction"><small>WORLD REACTION</small><p>${reaction}</p></div><div class="lpw-ripple"><b>THE RIPPLE EFFECT</b><span>${ripple}</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)
+}
+function lpw836ApplyOutcome(npcId,title,changes,reaction,ripple){
+ const c=liveLoad(),p=liveProgress(c.active,c),f=liveFeud(c);const before={};
+ Object.keys(changes).forEach(k=>{before[k]=['power','speed','technique','charisma','recovery'].includes(k)?p.stats[k]:k==='feud'?(f?.intensity||0):(c[k]||0)});
+ Object.entries(changes).forEach(([k,v])=>{if(k==='feud'){if(f)f.intensity=liveClamp(f.intensity+v,0,100)}else if(['power','speed','technique','charisma','recovery'].includes(k)){p.stats[k]=Math.min(p.caps[k],p.stats[k]+v)}else c[k]=liveClamp((c[k]||0)+v,0,100)});
+ const after={};Object.keys(changes).forEach(k=>{after[k]=['power','speed','technique','charisma','recovery'].includes(k)?p.stats[k]:k==='feud'?(f?.intensity||0):(c[k]||0)});
+ liveAwardXp(c,c.active,35,'Career activity');liveAdvanceDay(c);liveSave(c);lpw836Outcome(title,npcId,before,after,reaction,ripple);
+}
+function lpw836Training(){
+ if(lpw836FirstMeeting('coach-hank-dawson','lpw836Training()'))return;
+ render(`<section class="panel live-world-screen lpw-npc-standard"><div class="tv-kicker">PERFORMANCE CENTRE</div><h1>TRAINING SESSION</h1><div class="live-npc-scene large">${lpw836NpcVisual('coach-hank-dawson','full')}<div><small>HEAD PERFORMANCE COACH</small><h2>Coach Hank Dawson</h2><p>“Choose the area that needs work. We train with purpose and make the session count.”</p></div></div><div class="live-choice-grid"><button onclick="lpw836ApplyOutcome('coach-hank-dawson','POWER TRAINING COMPLETE',{power:1},'Coach Hank is pleased with the focused session.','The improved attribute will influence future match performance.')"><b>POWER DRILLS</b><span>Power +1</span></button><button onclick="lpw836ApplyOutcome('coach-hank-dawson','SPEED TRAINING COMPLETE',{speed:1},'Your movement looked sharper by the end of the circuit.','The improved attribute will influence future match performance.')"><b>SPEED CIRCUIT</b><span>Speed +1</span></button><button onclick="lpw836ApplyOutcome('coach-hank-dawson','TECHNIQUE TRAINING COMPLETE',{technique:1},'The technical repetitions produced a measurable improvement.','The improved attribute will influence future match performance.')"><b>TECHNICAL CLINIC</b><span>Technique +1</span></button></div></section>`)
+}
+const LPW836_DEVELOPMENT=[
+ {id:'coach-hank-dawson',weight:4,run:'lpw836Training()'},
+ {id:'katie-morgan',title:'EXCLUSIVE INTERVIEW',copy:'Katie asks what you want the locker room to hear before your next appearance.',a:['DELIVER A CONFIDENT PROMO',{popularity:5},'Fans respond to the confidence.','Commentary may reference your words on the next show.'],b:['WARN YOUR RIVAL',{feud:7},'Your rival immediately takes notice.','The rivalry is more likely to escalate.']},
+ {id:'veronica-vale',title:'GM MEETING',copy:'Veronica Vale wants to discuss your direction and expectations.',a:['ASK FOR AN OPPORTUNITY',{momentum:5},'Management appreciates the ambition.','A future opportunity may be influenced by this meeting.'],b:['FOCUS ON RESULTS',{popularity:3},'The professional response earns quiet respect.','Management will remember your discipline.']},
+ {id:'leon-ward',title:'SECURITY BRIEFING',copy:'Leon has new information about a possible backstage incident.',a:['ESCALATE THE RESPONSE',{feud:6},'The situation becomes more personal.','Security expects further tension.'],b:['LET SECURITY HANDLE IT',{momentum:3},'The calm response protects your focus.','The incident may still resurface later.']},
+ {id:'madison-price',title:'SPONSORSHIP OFFER',copy:'A sponsor wants to attach its name to your growing profile.',a:['ACCEPT THE CAMPAIGN',{popularity:6},'The campaign expands your visibility.','Commercial success may unlock larger offers.'],b:['PROTECT YOUR IMAGE',{momentum:3},'Fans respect the selective approach.','Your brand remains tightly controlled.']},
+ {id:'noah-grant',title:'PRODUCTION MEETING',copy:'Noah wants a clear television objective for your next appearance.',a:['CHASE THE MAIN EVENT',{popularity:5},'Production sees main-event ambition.','Your television placement may improve.'],b:['FOCUS ON MATCH QUALITY',{momentum:4},'The broadcast team values the professional approach.','Future match presentation may reflect this choice.']},
+ {id:'marcus-steele',title:'TALENT RELATIONS',copy:'Marcus asks you to help settle growing tension in the locker room.',a:['MEDIATE THE DISPUTE',{popularity:4},'The locker room appreciates your leadership.','Other wrestlers may remember who stepped forward.'],b:['STAY OUT OF IT',{momentum:2},'You preserve your own focus.','The unresolved tension may return.']},
+ {id:'olivia-chase',title:'LIVE EVENT OPPORTUNITY',copy:'Olivia offers a fan appearance before the next broadcast.',a:['MEET THE FANS',{popularity:6},'The appearance creates strong goodwill.','Fan support may carry into future shows.'],b:['PREPARE FOR THE RING',{momentum:3},'The extra preparation sharpens your focus.','The audience may question your absence.']},
+ {id:'dr-lena-hart',title:'MEDICAL CHECK-IN',copy:'Dr. Hart reviews your condition and recovery plan.',a:['FOLLOW THE RECOVERY PLAN',{recovery:1},'The careful approach improves recovery.','Your long-term health is better protected.'],b:['REQUEST CLEARANCE',{momentum:3},'Your determination is clear.','Pushing too hard may carry future risk.']},
+ {id:'ethan-brooks',title:'COMPETITION UPDATE',copy:'Ethan has information about rankings and upcoming match opportunities.',a:['PUSH FOR A HIGHER RANKING',{popularity:4},'Your ambition becomes part of the conversation.','Competition officials will track your next result closely.'],b:['EARN IT IN THE RING',{momentum:4},'The answer earns respect from competition officials.','Your next match will carry added significance.']}
+];
+function lpw836CareerDevelopment(){
+ const c=liveLoad(),bag=[];LPW836_DEVELOPMENT.forEach(e=>{for(let i=0;i<(e.weight||1);i++)bag.push(e)});let e=one(bag);if(e.id===c.world.lastDevelopmentNpc)e=one(LPW836_DEVELOPMENT.filter(x=>x.id!==e.id));c.world.lastDevelopmentNpc=e.id;liveSave(c);
+ if(e.run)return window.eval(e.run);if(lpw836FirstMeeting(e.id,'lpw836CareerDevelopment()'))return;
+ render(`<section class="panel live-world-screen lpw-npc-standard"><div class="tv-kicker">CAREER DEVELOPMENT</div><h1>${e.title}</h1><div class="live-npc-scene large">${lpw836NpcVisual(e.id,'full')}<div><small>${npc(e.id).role}</small><h2>${npc(e.id).name}</h2><p>${e.copy}</p></div></div><div class="live-choice-grid"><button onclick='lpw836ApplyOutcome(${JSON.stringify(e.id)},${JSON.stringify(e.a[0])},${JSON.stringify(e.a[1])},${JSON.stringify(e.a[2])},${JSON.stringify(e.a[3])})'><b>${e.a[0]}</b><span>Choose this response</span></button><button onclick='lpw836ApplyOutcome(${JSON.stringify(e.id)},${JSON.stringify(e.b[0])},${JSON.stringify(e.b[1])},${JSON.stringify(e.b[2])},${JSON.stringify(e.b[3])})'><b>${e.b[0]}</b><span>Choose this response</span></button></div></section>`)
+}
+
+const _lpw836Begin=gauntletLiveBeginDay;
+gauntletLiveBeginDay=function(skipBreaking=false){
+ const c=liveLoad();if(!c)return gauntletLiveHome();const d=lpwCalendarDate(c);
+ if(d.weekday===6&&!lpwCalendarIsSupercard(d))return lpw836MediaDay();
+ if(d.weekday===2&&!c.world.injury)return lpw836CareerDevelopment();
+ return _lpw836Begin(skipBreaking);
+};
+
+function lpw836MediaArchive(){const c=liveLoad(),items=c.world.mediaArchive||[];render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">CAREER HISTORY</div><h1>MEDIA ARCHIVE</h1><p>Revisit the headlines, rumours and fan reactions that followed your career.</p><div class="lpw-archive-list">${items.length?items.map(x=>`<article><small>MONTH ${x.month} · WEEK ${x.week}</small><b>${x.title}</b><p>${x.body}</p></article>`).join(''):'<article><b>NO REPORTS YET</b><p>Weekly media reports will be stored here after they are viewed.</p></article>'}</div></section>`)}
+function lpw836MeetTeam(){render(`<section class="panel live-world-screen"><button class="shell-back" onclick="gauntletLiveHome()">← CAREER</button><div class="tv-kicker">HELP GUIDE</div><h1>MEET THE TEAM</h1><div class="lpw-team-grid">${LPW836_TEAM.map(([id,title,bio])=>`<article>${lpw836NpcVisual(id,'portrait')}<small>${title}</small><b>${npc(id)?.name||id}</b><p>${bio}</p></article>`).join('')}</div></section>`)}
+const _lpw836Home=gauntletLiveHome;
+gauntletLiveHome=function(){_lpw836Home();const actions=document.querySelector('.live-home-actions');if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary" onclick="lpw836MediaArchive()">MEDIA ARCHIVE</button><button class="btn secondary" onclick="lpw836MeetTeam()">MEET THE TEAM</button>')}const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.3.6'};
+
+/* Natural wrestler decision wording: remove archetype labels from any legacy-generated option. */
+Object.keys(WRESTLER_DECISIONS).forEach(id=>{WRESTLER_DECISIONS[id]=WRESTLER_DECISIONS[id].map(stage=>stage.map(text=>String(text).replace(/^Supernatural\s+/i,'').replace(/^Royal\s+/i,'').replace(/^Hollywood\s+/i,''))) });
