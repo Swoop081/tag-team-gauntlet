@@ -29,3 +29,14 @@ Version 5.1 — Mobile Presentation & Flow
 - Temporarily disabled Dave Maddox and Logan Steele from all active roster pools.
 - Applied safe contain-based sizing across all wrestler image contexts.
 - Added alpha-bound audited per-character scaling with protected headroom.
+
+8.3.7 BUILD 2 — CONSOLIDATED CAREER QA
+- Rebuilt World Champion introduction with victory art, championship belt presentation and top skip control.
+- Moved Start the Show beneath both weekly show logos for first-screen mobile access.
+- Removed FOLLOW-UP developer terminology from broadcast continuity items.
+- Added consequence explanations to Career Development choices and rewrote Madison Price sponsorship presentation.
+- Reworked Power Rankings seeding, champion separation and controlled weekly movement.
+- Redesigned champion ranking tiles with wrestler portraits and tag champion pairing art.
+- Corrected World Recap winner/loser visual order and Biggest Disappointment logic.
+- Removed remaining red result framing, renamed Match Readiness and Decision Impact, replaced singles Match MVP, and moved result actions to the bottom.
+- Updated cache/version metadata for Build 2.
