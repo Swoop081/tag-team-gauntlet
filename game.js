@@ -2574,7 +2574,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const archetypePrefixes=new Set([
   'Rebel','Royal','Heroic','Primal','Olympian','Street','Rockstar','Playboy','Veteran','Legendary','Heartbreaker',
   'Kingmaker','Iceman','Sentinel','Hollywood','Lunatic','Workhorse','Warlord','Showman','Strategist','Enforcer',
-  'Powerhouse','Aerialist','Purist','Assassin','Hardcore','Megastar','Con Artist','Brawler'
+  'Powerhouse','Aerialist','Purist','Assassin','Hardcore','Megastar','Con Artist','Brawler','Supernatural','Undead','Dark','Masked','Canadian','Streetwise','Technical'
  ]);
  const stripDecisionPrefix=(name)=>{
   let n=String(name||'').replace(/[“”"]/g,'').trim();
@@ -2594,15 +2594,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
   const playerTier=M.decisionOutcome.key;
   const oppQuality=((opp.overall||75)+(opp.technique||75)+(opp.resilience||75))/3;
   const playerQuality=((player.overall||75)+(player.technique||75)+(player.resilience||75))/3;
-  let chance=.48+(oppQuality-playerQuality)/180;
-  if(playerTier==='failure')chance+=.15;if(playerTier==='major-failure')chance+=.25;
-  if(playerTier==='major-success')chance-=.12;if(playerTier==='success')chance-=.06;
+  let chance=.38+(oppQuality-playerQuality)/220;
+  if(playerTier==='failure')chance+=.08;if(playerTier==='major-failure')chance+=.14;
+  if(playerTier==='major-success')chance-=.15;if(playerTier==='success')chance-=.09;
   const roll=Math.random();
   let tier=roll<chance*.22?'major-success':roll<chance*.72?'success':roll<chance+.14?'mixed':roll<.94?'failure':'major-failure';
   const impact={
-   'major-success':{score:18,control:20,crowd:14,mom:20},success:{score:12,control:13,crowd:9,mom:13},
-   mixed:{score:5,control:4,crowd:2,mom:4},failure:{score:-5,control:-7,crowd:-3,mom:-7},
-   'major-failure':{score:-10,control:-13,crowd:-7,mom:-13}
+   'major-success':{score:15,control:16,crowd:11,mom:16},success:{score:10,control:10,crowd:7,mom:10},
+   mixed:{score:4,control:3,crowd:2,mom:3},failure:{score:-4,control:-5,crowd:-2,mom:-5},
+   'major-failure':{score:-8,control:-9,crowd:-5,mom:-9}
   }[tier];
   if(impact.score>0)addMatchScore('opp',impact.score,'decision');else addMatchScore('player',Math.round(Math.abs(impact.score)*.45),'decision');
   shiftControl(-impact.control,`${opp.name} answered with a ${tier.replace('-',' ')}.`);
@@ -2630,16 +2630,16 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    const playerPositive=(M.decisionHistory||[]).filter(x=>/SUCCESS/.test(x.outcome)).length;
    const playerFailures=(M.decisionHistory||[]).filter(x=>/FAILURE/.test(x.outcome)).length;
    const strengthEdge=Math.round((oStrength-pStrength)*1.1);
-   const volatility=Math.round(rnd(-18,24));
-   M.performancePlayer=Math.round((M.performancePlayer||0)*.78);
-   M.decisionPlayer=Math.round((M.decisionPlayer||0)*.72);
-   M.performanceOpp=Math.max(M.performanceOpp||0,Math.round(28+(oStrength-70)*.8+aiPositive*6+playerFailures*5+volatility));
-   M.decisionOpp=Math.max(M.decisionOpp||0,Math.round(30+aiCalls*5+aiPositive*8+strengthEdge+Math.max(0,volatility)));
-   M.crowdOpp=Math.max(M.crowdOpp||0,Math.round(18+aiPositive*7+Math.max(0,strengthEdge)));
-   if(playerFailures>M.decisionHistory.length/2){M.performanceOpp+=12;M.decisionOpp+=15}
+   const volatility=Math.round(rnd(-12,14));
+   M.performancePlayer=Math.round((M.performancePlayer||0)*.94);
+   M.decisionPlayer=Math.round((M.decisionPlayer||0)*.90);
+   M.performanceOpp=Math.max(M.performanceOpp||0,Math.round(18+(oStrength-70)*.55+aiPositive*3+playerFailures*2+volatility));
+   M.decisionOpp=Math.max(M.decisionOpp||0,Math.round(18+aiCalls*3+aiPositive*4+Math.round(strengthEdge*.65)+Math.max(0,volatility)));
+   M.crowdOpp=Math.max(M.crowdOpp||0,Math.round(11+aiPositive*4+Math.max(0,Math.round(strengthEdge*.45))));
+   if(playerFailures>M.decisionHistory.length/2){M.performanceOpp+=6;M.decisionOpp+=8}
    if(playerPositive===M.decisionHistory.length&&M.decisionHistory.length>=4){M.decisionPlayer+=10}
    /* First career match remains onboarding-friendly, but only narrowly protected. */
-   if(c&&c.history?.length===0){M.performancePlayer+=12;M.decisionPlayer+=10}
+   if(c&&c.history?.length===0){M.performancePlayer+=16;M.decisionPlayer+=12}
   }
   return oldResolveFinish();
  };
@@ -2795,4 +2795,84 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  /* Keep visible version labels accurate. */
  const priorHome=gauntletLiveHome;
  gauntletLiveHome=function(){const r=priorHome();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;const tag=document.querySelector('.build-tag');if(tag)tag.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;return r};
+})();
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.3.7 BUILD 7 — VERIFIED INJURY + BALANCE HOTFIX
+   ============================================================================= */
+(function(){
+ const BUILD='7';
+ const dayIndex=c=>((Number(c.month||1)-1)*28+(Number(c.week||1)-1)*7+Number(c.day||0));
+ const injuryDuration=type=>type==='push'?5:4;
+ function normalizeInjury(c){
+  c.world=c.world||{};
+  let i=c.world.injury;
+  if(!i)return null;
+  if(typeof i!=='object')i={severity:'Minor'};
+  const detail=c.world.injuryDetail||{};
+  i={name:i.name||detail.name||'Bruised ribs',severity:i.severity||detail.severity||'Minor',recovery:i.recovery||detail.recovery||'3–5 days',cause:i.cause||detail.cause||'a hard landing during your previous match',...i};
+  /* Existing Build 5/6 saves with treatment data have already been diagnosed. */
+  if(i.treatment||i.until||i.risk)i.diagnosed=true;
+  if(i.diagnosed){
+   i.active=true;
+   i.treatment=i.treatment||'rest';
+   i.risk=i.risk||(i.treatment==='push'?'High':'Reduced');
+   if(!Number.isFinite(Number(i.started)))i.started=dayIndex(c)-1;
+   if(!Number.isFinite(Number(i.until)))i.until=dayIndex(c)+injuryDuration(i.treatment);
+  }
+  c.world.injury=i;
+  return i;
+ }
+ function clearInjury(c,i){
+  c.world.lastInjuryCleared=dayIndex(c);
+  c.world.lastClearedInjury=i.name||'injury';
+  c.world.injury=null;c.world.injuryDetail=null;
+  c.world.injuryCooldownUntil=dayIndex(c)+56;
+  liveSave(c);
+ }
+ function clearance(c,i){
+  clearInjury(c,i);
+  render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL CLEARANCE</div><h1>CLEARED TO COMPETE</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><div class="lpw-world-reaction"><small>RECOVERY COMPLETE</small><p>Your ${i.name||'injury'} has healed and all physical restrictions have been removed.</p></div><div class="lpw-ripple"><b>INJURY PROTECTION</b><span>No new random injury can occur for the next two in-game months.</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`);
+ }
+ function progress(c,i){
+  const remain=Math.max(1,Number(i.until)-dayIndex(c));
+  render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL PROGRESS</div><h1>RECOVERY CONTINUES</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><div class="lpw-world-reaction"><small>${i.name}</small><p>Your diagnosis is complete. Medical staff are monitoring the recovery plan you selected.</p></div><div class="lpw-ripple"><b>EXPECTED CLEARANCE</b><span>${remain===1?'Final assessment tomorrow':`${remain} days remaining`} · Risk: ${i.risk}</span></div><button class="btn live-primary" onclick="lpw837b7AdvanceRecovery()">CONTINUE TO NEXT DAY</button></section>`);
+ }
+ window.lpw837b7AdvanceRecovery=function(){const c=liveLoad();if(!c)return gauntletLiveHome();const i=normalizeInjury(c);if(i){i.lastProgressDay=dayIndex(c);c.world.injury=i}liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar()};
+ const doctorOriginal=gauntletLiveDoctorVisit;
+ gauntletLiveDoctorVisit=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const i=normalizeInjury(c);liveSave(c);
+  if(i?.diagnosed){if(dayIndex(c)>=Number(i.until))return clearance(c,i);return progress(c,i)}
+  return doctorOriginal();
+ };
+ gauntletLiveClearInjury=function(type){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const pending=normalizeInjury(c)||c.world.injuryDetail||{};
+  const before={momentum:c.momentum,'injury status':'Diagnosed'};
+  c.world.injury={name:pending.name||'Bruised ribs',severity:pending.severity||'Minor',recovery:pending.recovery||'3–5 days',cause:pending.cause||'a hard landing during your previous match',active:true,diagnosed:true,treatment:type,risk:type==='push'?'High':'Reduced',started:dayIndex(c),until:dayIndex(c)+injuryDuration(type)};
+  c.world.injuryDetail={name:c.world.injury.name,severity:c.world.injury.severity,recovery:c.world.injury.recovery,cause:c.world.injury.cause};
+  c.momentum=liveClamp(c.momentum+(type==='push'?5:-3),0,100);
+  liveAwardXp(c,c.active,20,'Medical decision');liveAdvanceDay(c);liveSave(c);
+  lpw836Outcome(type==='push'?'COMPETING AGAINST ADVICE':'RECOVERY PLAN ACCEPTED','dr-lena-hart',before,{momentum:c.momentum,'injury status':type==='push'?'Active · High risk':'Recovering'},type==='push'?'You remain available, but medical restrictions stay active.':'Rest and treatment reduce the chance of aggravation.',type==='push'?'The original diagnosis will not repeat; future days show progress until clearance.':'The original diagnosis will not repeat; future days show progress until clearance.');
+ };
+ const beginOriginal=gauntletLiveBeginDay;
+ gauntletLiveBeginDay=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const i=normalizeInjury(c);if(!i)return beginOriginal();liveSave(c);
+  /* Pending injury: initial diagnosis exactly once. */
+  if(!i.diagnosed)return gauntletLiveDoctorVisit();
+  if(dayIndex(c)>=Number(i.until))return clearance(c,i);
+  if(c.day===0||c.day===3||liveIsSupercard(c))return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL RESTRICTION</div><h1>NON-WRESTLING APPEARANCE</h1><div class="lpw-consequence-host">${npcImage('katie-morgan','portrait')}<span><small>BACKSTAGE INTERVIEWER</small><b>Katie Morgan</b></span></div><p>You are still recovering from ${i.name}, so tonight’s match has been replaced by an interview segment.</p><div class="live-choice-grid"><button onclick="lpw836ApplyOutcome('katie-morgan','RECOVERY UPDATE',{popularity:4},'Your honest update earns support from the audience.','Medical restrictions remain active until clearance.')"><b>ADDRESS THE INJURY</b><span>Popularity +4</span></button><button onclick="lpw836ApplyOutcome('katie-morgan','MESSAGE TO YOUR RIVAL',{feud:5},'You warn your rival that the injury has not changed your intentions.','The rivalry stays active while you recover.')"><b>SEND A WARNING</b><span>Feud +5</span></button></div></section>`);
+  if(c.day===2)return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">RECOVERY DAY</div><h1>PHYSICAL TRAINING RESTRICTED</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><p>Coach Hank has cancelled physical drills. Choose a non-physical development activity.</p><div class="live-choice-grid"><button onclick="gauntletLiveCompleteChoice(0,[['Film study','Technique +1','technique',1]])"><b>FILM STUDY</b><span>Technique +1</span></button><button onclick="gauntletLiveCompleteChoice(0,[['Media interview','Popularity +6','popularity',6]])"><b>MEDIA INTERVIEW</b><span>Popularity +6</span></button></div></section>`);
+  return progress(c,i);
+ };
+ /* Injury generation respects the post-clearance cooldown. */
+ const finishOriginal=gauntletLiveFinishMatch65;
+ gauntletLiveFinishMatch65=function(win,oppId){
+  const c=liveLoad();if(c?.world?.injuryCooldownUntil&&dayIndex(c)<Number(c.world.injuryCooldownUntil)&&c.world.injury&&!c.world.injury.diagnosed){c.world.injury=null;c.world.injuryDetail=null;liveSave(c)}
+  return finishOriginal(win,oppId);
+ };
+ /* Center Level Up character consistently. */
+ const levelOriginal=gauntletLiveLevelCelebration;
+ gauntletLiveLevelCelebration=function(){const r=levelOriginal.apply(this,arguments);setTimeout(()=>{const img=document.querySelector('.lpw-level-up-art img,.lpw837-level-art img,.live-level-celebration img');if(img){img.style.display='block';img.style.marginLeft='auto';img.style.marginRight='auto';img.style.objectPosition='center center'}},0);return r};
+ const homeOriginal=gauntletLiveHome;gauntletLiveHome=function(){const r=homeOriginal();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;const tag=document.querySelector('.build-tag');if(tag)tag.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;return r};
 })();
