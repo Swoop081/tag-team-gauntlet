@@ -342,44 +342,6 @@ const WRESTLERS = [
     "finisher": "Golden Touch"
   },
   {
-    "id": "dave-maddox",
-    "name": "Dave Maddox",
-    "title": "The Workhorse",
-    "faction": "Guardians",
-    "signature": "Second Wind",
-    "overall": 96,
-    "rarity": "Legendary",
-    "tag": 94,
-    "power": 88,
-    "speed": 82,
-    "technique": 93,
-    "charisma": 91,
-    "versatility": 95,
-    "loyalty": 98,
-    "resilience": 99,
-    "image": "assets/wrestlers/dave-maddox/full.webp",
-    "finisher": "Second Wind"
-  },
-  {
-    "id": "logan-steele",
-    "name": "Logan Steele",
-    "title": "The Living Legend",
-    "faction": "Guardians",
-    "signature": "Icon Slam",
-    "overall": 98,
-    "rarity": "Legendary",
-    "tag": 95,
-    "power": 98,
-    "speed": 76,
-    "technique": 89,
-    "charisma": 100,
-    "versatility": 91,
-    "loyalty": 99,
-    "resilience": 100,
-    "image": "assets/wrestlers/logan-steele/full.webp",
-    "finisher": "Icon Slam"
-  },
-  {
     "id":"ace-riot","name":"Ace Riot","title":"The Voice of Rebellion","faction":"Independent","signature":"Riot Trigger","overall":96,"rarity":"Legendary","tag":88,"power":82,"speed":90,"technique":98,"charisma":99,"versatility":97,"loyalty":78,"resilience":95,"image":"assets/wrestlers/ace-riot/full.webp","finisher":"Riot Trigger"
   },
   {
@@ -414,6 +376,44 @@ const WRESTLERS = [
   },
   {
     "id":"marco-montana","name":"Marco Montana","title":"The Don","faction":"Independent","signature":"Final Offer","overall":97,"rarity":"Legendary","tag":94,"power":89,"speed":91,"technique":96,"charisma":100,"versatility":97,"loyalty":76,"resilience":95,"image":"assets/wrestlers/marco-montana/full.webp","finisher":"Final Offer"
+  }
+  ,{
+    "id": "dave-maddox",
+    "name": "Dave Maddox",
+    "title": "The Workhorse",
+    "faction": "Guardians",
+    "signature": "Maddox Cutter",
+    "overall": 91,
+    "rarity": "Legendary",
+    "tag": 91,
+    "power": 88,
+    "speed": 82,
+    "technique": 90,
+    "charisma": 86,
+    "versatility": 92,
+    "loyalty": 95,
+    "resilience": 97,
+    "image": "assets/wrestlers/dave-maddox/full.webp",
+    "finisher": "Maddox Cutter"
+  },
+  {
+    "id": "logan-steele",
+    "name": "Logan Steele",
+    "title": "The Living Legend",
+    "faction": "Guardians",
+    "signature": "Icon Slam",
+    "overall": 96,
+    "rarity": "Legendary",
+    "tag": 93,
+    "power": 97,
+    "speed": 78,
+    "technique": 88,
+    "charisma": 99,
+    "versatility": 87,
+    "loyalty": 98,
+    "resilience": 98,
+    "image": "assets/wrestlers/logan-steele/full.webp",
+    "finisher": "Icon Slam"
   }
 ];
 

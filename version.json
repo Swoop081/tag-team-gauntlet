@@ -1,6 +1,6 @@
 {
-  "version": "8.4.4",
-  "build": "Career and Full Roster Hotfix",
+  "version": "8.4.5",
+  "build": "Battle Royal Playable Test",
   "released": "2026-07-22",
-  "notes": "Restores the Career main-menu action and permanently returns Dave Maddox and Logan Steele to the master roster, all selection screens, CPU pools, Living Careers and the Battle Royal entrant pool. Existing Career saves are repaired automatically."
+  "notes": "Adds a standalone 20-person Battle Royal with a dedicated stamina, decision, CPU elimination, final-two and results engine. Career integration remains reserved for the September SuperCard after testing."
 }

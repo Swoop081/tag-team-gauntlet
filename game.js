@@ -3263,7 +3263,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    ============================================================================= */
 (function(){
  const BUILD='8.4.1';
- const rosterIds=()=>LIVE_ROSTER.map(w=>w.id);
+ const rosterIds=()=>WRESTLERS.map(w=>w.id);
  const monthKey=c=>String(c.month||1);
  function rankOf(c,id){const i=lpw8Rankings(c).findIndex(x=>x.id===id);return i<0?rosterIds().length:i+1}
  function ensureCareer(c,id){
@@ -3372,8 +3372,8 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    Broadcast package, career history, dashboard, news network and deeper memory.
    ============================================================================= */
 (function(){
- const V='8.4.2';
- const ids=()=>LIVE_ROSTER.map(w=>w.id);
+ const V='8.4.5';
+ const ids=()=>WRESTLERS.map(w=>w.id);
  const career=(c,id)=>{c.livingCareers=c.livingCareers||{};return c.livingCareers[id]||(c.livingCareers[id]={id,wins:0,losses:0,streak:0,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0})};
  const rank=(c,id)=>Math.max(1,lpw8Rankings(c).findIndex(r=>r.id===id)+1);
  const wrestler=id=>liveFounder(id)||{id,name:'Unknown Wrestler'};
@@ -3453,36 +3453,19 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  /* Broadcast memory: show openings and media now surface current-world facts. */
  const intro=gauntletLiveShowIntro;gauntletLiveShowIntro=function(){const c=ensure(liveLoad()),a=wrestler(c.active),r=liveFeudOpponent(c),champ=wrestler(c.championships.world);pushNews(c,'preview',`${liveShowName(c).toUpperCase()}: ${a.name} IN ACTION`,r?`${a.name}'s rivalry with ${r.name} continues while World Champion ${champ.name} watches the rankings.`:`${a.name} looks to improve a #${rank(c,c.active)} ranking.`,c.active);liveSave(c);const out=intro();setTimeout(()=>{const sec=document.querySelector('.live-show-intro,.panel');if(sec&&!document.querySelector('.lpw84-earlier-tonight'))sec.insertAdjacentHTML('afterbegin',`<div class="lpw84-earlier-tonight"><small>TONIGHT ON LPW</small><b>${a.name} enters ranked #${rank(c,c.active)}</b><span>${r?`${r.name} remains the central threat.`:`The Power Rankings remain wide open.`}</span></div>`)},0);return out};
 
- const home=gauntletLiveHome;gauntletLiveHome=function(){const r=home();setTimeout(()=>{document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4.2');const menu=document.querySelector('.live-mode-actions,.live-home-actions');if(menu&&!document.querySelector('.lpw84-home-dashboard'))menu.insertAdjacentHTML('beforeend','<button class="btn lpw84-home-dashboard" onclick="lpw84Dashboard()">LIVING WORLD DASHBOARD</button>')},0);return r};
+ const home=gauntletLiveHome;gauntletLiveHome=function(){const r=home();setTimeout(()=>{document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4.5');const menu=document.querySelector('.live-mode-actions,.live-home-actions');if(menu&&!document.querySelector('.lpw84-home-dashboard'))menu.insertAdjacentHTML('beforeend','<button class="btn lpw84-home-dashboard" onclick="lpw84Dashboard()">LIVING WORLD DASHBOARD</button>')},0);return r};
 
  /* Final language cleanup. */
  const render0=render;render=function(html){return render0(String(html||'').replace(/stable member(s)?/gi,'roster member$1').replace(/MANAGE STABLE/gi,'VIEW ROSTER').replace(/ACTIVE WRESTLER/gi,'CAMERA FOCUS'))};
 })();
 
 /* =============================================================
-   LEGACY PRO WRESTLING 8.4.4 — CAREER & ROSTER HOTFIX
+   LEGACY PRO WRESTLING 8.4.5 — 20-PERSON BATTLE ROYAL ENGINE
    Standalone main-menu test mode. Career integration intentionally
    deferred until the September SuperCard implementation is approved.
    ============================================================= */
 (function(){
  const BR_SAVE_KEY='lpw_battle_royal_history_v1';
- // Build 8.4.4 roster safety: Dave Maddox and Logan Steele are permanent playable wrestlers.
- const PERMANENT_ROSTER_IDS=['dave-maddox','logan-steele'];
- function repairPermanentRosterInCareer(){
-  try{
-   const c=liveLoad();if(!c)return;
-   c.stable=Array.isArray(c.stable)?c.stable:[];
-   c.rankings=Array.isArray(c.rankings)?c.rankings:[];
-   c.livingCareers=c.livingCareers||{};
-   PERMANENT_ROSTER_IDS.forEach((id,index)=>{
-    if(!c.stable.includes(id))c.stable.push(id);
-    if(!c.rankings.some(r=>r.id===id))c.rankings.push({id,wins:0,losses:0,points:Math.max(10,35-index*3)});
-    if(!c.livingCareers[id])c.livingCareers[id]={id,wins:0,losses:0,streak:0,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0};
-   });
-   liveSave(c);
-  }catch(error){console.warn('Permanent roster repair skipped',error)}
- }
- repairPermanentRosterInCareer();
  let BR=null;
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
  const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -3502,15 +3485,8 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
   const nav=document.querySelector('.hub-menu');
   if(!nav||document.getElementById('battleRoyalMenuButton'))return;
   const b=document.createElement('button');b.id='battleRoyalMenuButton';b.className='hub-option battle-royal-menu';
-  b.onclick=battleRoyalHome;b.innerHTML='<b>20-PERSON BATTLE ROYAL</b><small>Twenty enter. One survives. Playable now.</small>';
-  const career=nav.querySelector('button');
-  if(career){
-   career.id='careerMenuButton';
-   career.type='button';
-   career.onclick=function(event){event.preventDefault();event.stopPropagation();window.gauntletLiveHome()};
-   career.style.pointerEvents='auto';
-   career.after(b);
-  }else nav.prepend(b);
+  b.onclick=()=>window.battleRoyalHome();b.innerHTML='<b>20-PERSON BATTLE ROYAL</b><small>Twenty enter. One survives. Playable now.</small>';
+  const career=nav.querySelector('button');career?.after(b);
  }
  const oldHome=window.home;
  window.home=function(){const r=oldHome.apply(this,arguments);setTimeout(installMenuButton,0);return r};
