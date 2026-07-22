@@ -2710,3 +2710,89 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  /* Current build label. */
  const oldHome=gauntletLiveHome;gauntletLiveHome=function(){const r=oldHome();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;const tag=document.querySelector('.build-tag');if(tag)tag.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;return r};
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.3.7 BUILD 6 — INJURY LOOP HOTFIX
+   ============================================================================= */
+(function(){
+ const BUILD='6';
+ const dayIndex=c=>((c.month-1)*28+(c.week-1)*7+c.day);
+ const remainingDays=(c,injury)=>Math.max(0,Number(injury?.until||dayIndex(c))-dayIndex(c));
+
+ function renderRecoveryProgress(c,injury){
+  const remaining=remainingDays(c,injury);
+  const risk=injury.risk||'Reduced';
+  render(`<section class="panel live-world-screen lpw-consequence-screen">
+   <div class="tv-kicker">MEDICAL PROGRESS</div>
+   <h1>RECOVERY CONTINUES</h1>
+   <div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div>
+   <div class="lpw-world-reaction"><small>${injury.name||'ACTIVE INJURY'}</small><p>Your original diagnosis has already been completed. Medical staff are continuing to monitor your recovery.</p></div>
+   <div class="lpw-ripple"><b>EXPECTED CLEARANCE</b><span>${remaining<=1?'Final assessment is expected tomorrow.':`${remaining} days remaining`} · Current risk: ${risk}</span></div>
+   <button class="btn live-primary" onclick="lpw837b6CompleteRecoveryDay()">CONTINUE TO NEXT DAY</button>
+  </section>`);
+ }
+
+ window.lpw837b6CompleteRecoveryDay=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();
+  const injury=c.world?.injury;
+  if(injury?.active){
+   injury.diagnosed=true;
+   injury.lastProgressDay=dayIndex(c);
+   c.world.injury=injury;
+  }
+  liveAdvanceDay(c);liveSave(c);gauntletLiveCalendar();
+ };
+
+ /* The diagnosis screen is a one-time event. Active injuries can never reopen it. */
+ const priorDoctorVisit=gauntletLiveDoctorVisit;
+ gauntletLiveDoctorVisit=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();
+  const injury=c.world?.injury;
+  if(injury?.active&&injury.diagnosed)return renderRecoveryProgress(c,injury);
+  return priorDoctorVisit();
+ };
+
+ /* Preserve the selected treatment state and mark the injury as diagnosed. */
+ gauntletLiveClearInjury=function(type){
+  const c=liveLoad();if(!c)return gauntletLiveHome();
+  const detail=c.world.injuryDetail||c.world.injury||{name:'Bruised ribs',severity:'Minor',recovery:'3–5 days',cause:'a hard landing during your previous match'};
+  const before={momentum:c.momentum,'injury status':'Active'};
+  const duration=type==='push'?5:4;
+  c.world.injury={...detail,active:true,diagnosed:true,treatment:type,risk:type==='push'?'High':'Reduced',started:dayIndex(c),until:dayIndex(c)+duration};
+  c.momentum=liveClamp(c.momentum+(type==='push'?5:-3),0,100);
+  liveAwardXp(c,c.active,20,'Medical decision');liveAdvanceDay(c);liveSave(c);
+  lpw836Outcome(type==='push'?'COMPETING AGAINST ADVICE':'RECOVERY PLAN ACCEPTED','dr-lena-hart',before,{momentum:c.momentum,'injury status':type==='push'?'Active · High risk':'Recovering'},type==='push'?'You have chosen to remain available despite the injury.':'Rest and treatment reduce the chance of aggravation.',type==='push'?'Physical activity remains restricted and the injury may affect future booking.':'You will not be booked in a match until medical clearance.');
+ };
+
+ /* Fully consume every active-injury day so the legacy daily diagnosis branch cannot run. */
+ const priorBeginDay=gauntletLiveBeginDay;
+ gauntletLiveBeginDay=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();
+  const injury=c.world?.injury;
+  if(!injury?.active)return priorBeginDay();
+
+  /* Repair saves created before this hotfix. */
+  injury.diagnosed=true;
+  if(!Number.isFinite(Number(injury.until)))injury.until=dayIndex(c)+(injury.treatment==='push'?5:4);
+  c.world.injury=injury;liveSave(c);
+
+  if(dayIndex(c)>=injury.until){
+   c.world.lastInjuryCleared=dayIndex(c);
+   c.world.injury=null;
+   c.world.injuryDetail=null;
+   c.world.injuryCooldownUntil=dayIndex(c)+56;
+   liveSave(c);
+   return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL CLEARANCE</div><h1>CLEARED TO COMPETE</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><div class="lpw-world-reaction"><small>RECOVERY COMPLETE</small><p>Your ${injury.name||'injury'} has healed and all physical restrictions have been removed.</p></div><div class="lpw-ripple"><b>INJURY PROTECTION</b><span>You will not receive another random injury for the next two in-game months.</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`);
+  }
+
+  if(c.day===0||c.day===3||liveIsSupercard(c))return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL RESTRICTION</div><h1>NON-WRESTLING APPEARANCE</h1><div class="lpw-consequence-host">${npcImage('katie-morgan','portrait')}<span><small>BACKSTAGE INTERVIEWER</small><b>Katie Morgan</b></span></div><p>You are still recovering from ${injury.name||'an injury'}, so tonight’s match has been replaced by an interview segment.</p><div class="live-choice-grid"><button onclick="lpw836ApplyOutcome('katie-morgan','RECOVERY UPDATE',{popularity:4},'Your honest update earns support from the audience.','Medical restrictions remain active until clearance.')"><b>ADDRESS THE INJURY</b><span>Popularity +4</span></button><button onclick="lpw836ApplyOutcome('katie-morgan','MESSAGE TO YOUR RIVAL',{feud:5},'You warn your rival that the injury has not changed your intentions.','The rivalry stays active while you recover.')"><b>SEND A WARNING</b><span>Feud +5</span></button></div></section>`);
+
+  if(c.day===2)return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">RECOVERY DAY</div><h1>PHYSICAL TRAINING RESTRICTED</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><p>Coach Hank has cancelled physical drills. Choose a non-physical development activity.</p><div class="live-choice-grid"><button onclick="gauntletLiveCompleteChoice(0,[['Film study','Technique +1','technique',1]])"><b>FILM STUDY</b><span>Technique +1</span></button><button onclick="gauntletLiveCompleteChoice(0,[['Media interview','Popularity +6','popularity',6]])"><b>MEDIA INTERVIEW</b><span>Popularity +6</span></button></div></section>`);
+
+  return renderRecoveryProgress(c,injury);
+ };
+
+ /* Keep visible version labels accurate. */
+ const priorHome=gauntletLiveHome;
+ gauntletLiveHome=function(){const r=priorHome();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;const tag=document.querySelector('.build-tag');if(tag)tag.textContent=`VERSION 8.3.7 BUILD ${BUILD}`;return r};
+})();
