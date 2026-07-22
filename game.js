@@ -596,7 +596,7 @@ function resolveFinish(){
  // Career opponents must remain active participants unless a future explicit squash flag says otherwise.
  if(S.liveMode){
   const aiPerfFloor=Math.round(rnd(12,24));
-  const aiDecisionFloor=Math.round(rnd(4,11));
+  const aiDecisionFloor=Math.round(rnd(20,42));
   const aiCrowdFloor=Math.round(rnd(10,28));
   M.performanceOpp=Math.max(M.performanceOpp,aiPerfFloor);
   M.decisionOpp=Math.max(M.decisionOpp,aiDecisionFloor);
@@ -658,12 +658,12 @@ function showSummary(win){
  const winningSide=win?S.team:S.opp;
  const resultArt=winningSide.map(w=>heroPortrait(w,'winner',characterImageConfig(w)?'victory':'full','resultVictory')).join('');
  render(`<section class="panel match-result summary-panel presentation-summary">
- <div class="actions top-actions lpw837-result-actions-hidden">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.tournament?'ADVANCE TO NEXT ROUND':(S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST')}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
- <div class="result-banner"><small>OFFICIAL RESULT</small><strong>${win?'YOU WON':'YOU LOST'}</strong></div><div class="winner-celebration television-winners result-${win?'win':'loss'}"><div class="confetti-field"></div><div class="winning-team-art ${isSinglesMatch()?'singles-winner':''}">${resultArt}</div><div class="winner-copy"><small>${isSinglesMatch()?'MATCH WINNER':'WINNING TEAM'}</small><h2>${teamName(winningSide)}</h2><p>${isSinglesMatch()?victoryCelebration(M.winner):'The winning duo stands tall after a hard-fought victory.'}</p></div></div><div class="result-broadcast-header below-winners"><small>${S.exhibition?'EXHIBITION RESULT':'GAUNTLET RESULT'} · ${isSinglesMatch()?'SINGLES':'TAG TEAM'}</small><h1>${finishHeadline()}</h1><p>${currentVenue()} · ${length}</p></div>${win&&S.manager?`<div class="manager-celebration">${npcImage(S.manager.id,'portrait')}<p><b>${S.manager.name}</b> celebrates at ringside: “${S.manager.voice}”</p></div>`:''}
+ <div class="actions top-actions lpw837-result-actions-top">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.tournament?'ADVANCE TO NEXT ROUND':(S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST')}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div>
+ <div class="result-banner"><small>OFFICIAL RESULT</small><strong>${win?'YOU WON':'YOU LOST'}</strong></div><div class="winner-celebration television-winners result-${win?'win':'loss'}"><div class="confetti-field"></div><div class="winning-team-art ${isSinglesMatch()?'singles-winner':''}">${resultArt}</div><div class="winner-copy"><small>${isSinglesMatch()?'MATCH WINNER':'WINNING TEAM'}</small><h2>${teamName(winningSide)}</h2><p>${isSinglesMatch()?victoryCelebration(M.winner):`${winningSide[0].name} and ${winningSide[1].name} combine effectively and celebrate a commanding team victory.`}</p></div></div><div class="result-broadcast-header below-winners"><small>${S.exhibition?'EXHIBITION RESULT':'GAUNTLET RESULT'} · ${isSinglesMatch()?'SINGLES':'TAG TEAM'}</small><h1>${finishHeadline()}</h1><p>${currentVenue()} · ${length}</p></div>${win&&S.manager?`<div class="manager-celebration">${npcImage(S.manager.id,'portrait')}<p><b>${S.manager.name}</b> celebrates at ringside: “${S.manager.voice}”</p></div>`:''}
  ${M.decisionHistory?.length?`<div class="psychology-breakdown"><div class="tv-kicker">MATCH PSYCHOLOGY 2.0</div><h2>YOUR DECISIONS</h2>${M.decisionHistory.map(x=>`<article><b>${x.choice}</b><span>${x.outcome}</span><small>Score ${x.score>0?'+':''}${x.score} · Control ${x.control>0?'+':''}${x.control} · Crowd ${x.crowd>0?'+':''}${x.crowd} · Momentum ${x.momentum>0?'+':''}${x.momentum||0}</small></article>`).join('')}</div>`:''}<div class="result-accolades"><article><small>MATCH RATING</small><span class="result-stars">${ratingData.stars}</span><strong>${rating.toFixed(1)} · ${ratingData.label}</strong></article><article><small>CROWD REACTION</small><b>${crowdReaction()}</b><strong>EXCITEMENT ${Math.round(M.crowd)}%</strong></article><article><small>FINISH</small><b>${M.finishType.toUpperCase()}</b><strong>${M.winner.name} · ${M.winner.finisher}</strong></article></div>
  <div class="match-breakdown"><h3>Match Score Breakdown</h3><div class="breakdown-head"><strong>${S.team.map(x=>x.name).join(' & ')}</strong><b>${M.finalPlayer} – ${M.finalOpp}</b><strong>${S.opp.map(x=>x.name).join(' & ')}</strong></div><div class="breakdown-row"><span>Match Readiness</span><b>${M.startPlayer}</b><i>${M.startOpp}</i></div><div class="breakdown-row"><span>Performance</span><b>${Math.round(M.performancePlayer)}</b><i>${Math.round(M.performanceOpp)}</i></div><div class="breakdown-row"><span>Crowd Bonus</span><b>${playerCrowd}</b><i>${oppCrowd}</i></div><div class="breakdown-row"><span>Decision Impact</span><b>${Math.round(M.decisionPlayer)}</b><i>${Math.round(M.decisionOpp)}</i></div></div>
  <div class="summary-grid"><article><small>MATCH STORY</small><p>${story}</p></article><article><small>MATCH ANALYSIS</small><p>${isSinglesMatch()?`${M.winner.name} controlled the decisive exchange and converted the final opening.`:mvpReason(M.mvp)}</p></article><article><small>TURNING POINT</small><p>${M.turningPoint||'The match remained balanced until the final exchange.'}</p></article><article><small>BEST MOMENT</small><p>${M.bestMoment||`${M.winner.name} delivered ${M.winner.finisher} to end the match.`}</p></article></div>
- <div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div>${milestoneData().length?`<div class="milestone-grid">${milestoneData().map(m=>`<article><small>ACHIEVEMENT ANNOUNCER</small><h2>${m[0]}</h2><p>${m[1]}</p></article>`).join('')}</div>`:''}<div class="actions lpw837-result-actions-bottom">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.tournament?'ADVANCE TO NEXT ROUND':(S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST')}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div></section>`)
+ <div class="highlight-reel"><h3>Broadcast Highlights</h3>${highlights.map(x=>`<p>${x}</p>`).join('')}</div><div class="actions lpw837-result-actions-bottom">${S.exhibition?`<button class="btn" onclick="quickRematch()">REMATCH</button><button class="btn secondary" onclick="quickMatchMenu()">QUICK MATCH MENU</button>`:(win?`<button class="btn" onclick="postMatchFlow()">${S.tournament?'ADVANCE TO NEXT ROUND':(S.specialSingles?'RETURN TO GAUNTLET':'CONTINUE BROADCAST')}</button>`:`<button class="btn" onclick="handleLoss()">CONTINUE</button>`)}</div></section>`)
 }
 
 function postMatchFlow(){
@@ -2385,3 +2385,113 @@ gauntletLiveFinishMatch65=function(win,oppId){
  }
  return result;
 };
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.3.7 BUILD 3 — WEEK 1–2 QA CONSOLIDATION
+   ============================================================================= */
+const LPW837_BUILD3='3';
+
+function lpw837b3StatLabel(key){return ({feud:'Feud intensity',recovery:'Recovery',power:'Power',speed:'Speed',technique:'Technique',charisma:'Charisma',momentum:'Momentum',popularity:'Popularity'})[key]||key.replace(/(^|_)([a-z])/g,(_,a,b)=>`${a?' ':''}${b.toUpperCase()}`)}
+
+/* Every old-style one-stat choice now receives the same outcome screen. */
+gauntletLiveResolveDynamic=function(type,val,msg){
+ const c=liveLoad();if(!c)return gauntletLiveHome();
+ const p=liveProgress(c.active,c),f=liveFeud(c),before={};
+ before[type]=['power','speed','technique','charisma','recovery'].includes(type)?p.stats[type]:type==='feud'?(f?.intensity||0):(c[type]||0);
+ if(type==='feud'){if(f)f.intensity=liveClamp(f.intensity+val,0,100)}
+ else if(['power','speed','technique','charisma','recovery'].includes(type))p.stats[type]=Math.min(p.caps[type],p.stats[type]+val);
+ else c[type]=liveClamp((c[type]||0)+val,0,100);
+ const after={};after[type]=['power','speed','technique','charisma','recovery'].includes(type)?p.stats[type]:type==='feud'?(f?.intensity||0):(c[type]||0);
+ liveAwardXp(c,c.active,35,'Career activity');liveAdvanceDay(c);liveSave(c);
+ const host=type==='feud'?'katie-morgan':type==='recovery'?'dr-lena-hart':'coach-hank-dawson';
+ lpw836Outcome(msg.toUpperCase(),host,before,after,`${lpw837b3StatLabel(type)} changed because of your decision.`,`This result has been saved and can influence future broadcasts and events.`)
+};
+
+gauntletLiveClearInjury=function(type){
+ const c=liveLoad();if(!c)return gauntletLiveHome();
+ const diagnosis=c.world.injuryDetail||{name:'Bruised ribs',severity:'Minor',recovery:'3–5 days'};
+ const before={momentum:c.momentum,'injury risk':type==='push'?'Moderate':'Moderate'};
+ c.momentum=liveClamp(c.momentum+(type==='push'?5:-3),0,100);
+ c.world.injury=type==='push'?{...diagnosis,active:true,risk:'High'}:null;
+ const after={momentum:c.momentum,'injury risk':type==='push'?'High':'Reduced'};
+ liveAwardXp(c,c.active,20,'Medical decision');liveAdvanceDay(c);liveSave(c);
+ lpw836Outcome(type==='push'?'CLEARED TO COMPETE':'RECOVERY PLAN ACCEPTED','dr-lena-hart',before,after,type==='push'?'You have chosen to compete despite medical advice.':'Rest and treatment have reduced the chance of aggravating the injury.',type==='push'?'The injury remains active and may affect the next broadcast.':'The injury is expected to settle before your next appearance.')
+};
+
+gauntletLiveDoctorVisit=function(){
+ const c=liveLoad();if(!c)return gauntletLiveHome();
+ const detail=c.world.injuryDetail||{name:'Bruised ribs',severity:'Minor',recovery:'3–5 days',cause:'a hard landing during your previous match'};c.world.injuryDetail=detail;liveSave(c);
+ render(`<section class="panel live-world-screen lpw-npc-standard lpw837b3-one-screen"><div class="tv-kicker">MEDICAL EVALUATION</div><h1>DOCTOR'S ORDERS</h1><div class="live-npc-scene large">${npcImage('dr-lena-hart','full')}<div><small>MEDICAL DIRECTOR</small><h2>Dr. Lena Hart</h2><p>“You suffered <b>${detail.name}</b> after ${detail.cause}. This is a <b>${detail.severity.toLowerCase()}</b> injury with an expected recovery of <b>${detail.recovery}</b>.”</p><div class="lpw837b3-diagnosis"><span>INJURY <b>${detail.name}</b></span><span>SEVERITY <b>${detail.severity}</b></span><span>RECOVERY <b>${detail.recovery}</b></span></div></div></div><div class="live-choice-grid"><button onclick="gauntletLiveClearInjury('rest')"><b>REST & RECOVER</b><span>Momentum -3 · injury risk reduced</span></button><button onclick="gauntletLiveClearInjury('push')"><b>COMPETE THROUGH IT</b><span>Momentum +5 · injury remains active</span></button></div></section>`)
+};
+
+/* Replace Ethan's competition-office role with Katie Morgan and connected answers. */
+lpw837CompetitionOffice=function(){
+ const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c),rank=Math.max(1,lpw8Rankings(lpw837SeedRankings(c)).findIndex(x=>x.id===c.active)+1);
+ render(`<section class="panel live-world-screen lpw-npc-standard lpw837b3-one-screen"><div class="tv-kicker">BACKSTAGE INTERVIEW</div><h1>CAREER UPDATE</h1><div class="live-npc-scene large">${lpw836NpcVisual('katie-morgan','full')}<div><small>BACKSTAGE INTERVIEWER</small><h2>Katie Morgan</h2><p>“${p.name}, your latest result has moved you to #${rank}. Management is taking notice${r?`, and the rivalry with ${r.name} is adding pressure`:''}. Do you call for a bigger opportunity, or let your matches speak?”</p></div></div><div class="live-choice-grid"><button onclick="lpw836ApplyOutcome('katie-morgan','YOU CALLED YOUR SHOT',{popularity:4},'Your demand for stronger opposition becomes a talking point.','Management will judge your next result against the higher expectations you created.')"><b>CALL YOUR SHOT</b><span>Ask for tougher opposition · Popularity +4</span></button><button onclick="lpw836ApplyOutcome('katie-morgan','LET THE RESULTS SPEAK',{momentum:4},'The measured answer earns respect backstage.','Your next performance will carry added competitive significance.')"><b>LET THE MATCHES SPEAK</b><span>Stay focused on winning · Momentum +4</span></button></div></section>`)
+};
+const competitionB3=LPW836_DEVELOPMENT.find(x=>x.id==='ethan-brooks');if(competitionB3){competitionB3.id='katie-morgan';competitionB3.run='lpw837CompetitionOffice()';competitionB3.weight=2}
+
+/* More specific Olivia copy. */
+const oliviaB3=LPW836_DEVELOPMENT.find(x=>x.id==='olivia-chase');if(oliviaB3){
+ oliviaB3.copy='A local fan event has requested an appearance before the next broadcast. Meeting supporters will build public goodwill, while declining gives you more time to prepare for the ring.';
+ oliviaB3.a=['MEET THE FANS',{popularity:6},'Hundreds of supporters attended the appearance and shared photos across LPW Social.','The next live crowd begins slightly more receptive to you.'];
+ oliviaB3.b=['PREPARE FOR THE RING',{momentum:3},'You used the extra time to study your next opponent and sharpen your preparation.','Your match focus improves, but you receive no additional fan exposure.'];
+}
+
+/* Clean wrestler decision language without mechanically prefixing names/themes. */
+const _lpwCleanDecisionNameB3QA=typeof lpwCleanDecisionName==='function'?lpwCleanDecisionName:(x=>x);
+lpwCleanDecisionName=function(name){
+ let n=_lpwCleanDecisionNameB3QA(name||'');
+ n=n.replace(/^Royal\s+(?=(Commit|Turn|Risk|Refuse|Leave))/i,'');
+ n=n.replace(/^Victor Royale\s*[-:]?\s*/i,'');
+ return n.replace(/\s{2,}/g,' ').trim();
+};
+
+/* First-show world state and evolving commentary. */
+gauntletLiveShowIntro=function(){
+ const c=liveLoad(),item=livePlanItem(c),firstShow=c.week===1&&c.day===0&&!c.world.lastResult,venue=one(VENUES),attendance=Math.floor(rnd(11000,20500)).toLocaleString(),show=liveIsSupercard(c)?liveCurrentSupercard(c).toUpperCase():liveShowName(c),p=liveFounder(c.active),r=liveFeudOpponent(c);
+ let stories=[];if(!firstShow)stories=liveSimulateWorld(c);liveSave(c);
+ const recent=firstShow?[]:lpw837Recent(c,null,2);
+ const card=firstShow?`<li>${p.name} makes a first televised Career appearance tonight.</li><li>${r?`${r.name} is scheduled to appear as the opening rivalry begins.`:'The LEGACY World Championship picture begins to take shape.'}</li>`:stories.slice(0,2).map(s=>`<li>${s.text}</li>`).join('')+recent.map(x=>`<li class="lpw837-continuity">${x.text.replace(/^[A-Z ]+:\s*/,'')}</li>`).join('');
+ const mike=firstShow?`Welcome to Monday Night Mayhem, LEGACY Pro Wrestling's flagship show—where rivalries begin, careers are made and anything can happen.`:c.week>1?`${p.name} enters Week ${c.week} with a ${c.wins}-${c.losses} record and growing expectations.`:(c.world.lastResult?.win?`${p.name}'s victory earlier this week has changed the conversation around the locker room.`:`Tonight gives ${p.name} a chance to respond after the previous result.`);
+ const johnny=firstShow?`I cannot wait to see what unfolds tonight. Everybody on this roster has something to prove.`:r?`${r.name} is watching closely, and every decision now adds another layer to this rivalry.`:'The pressure is rising, and nobody can afford to stand still.';
+ render(`<section class="panel live-show-intro lpw-show-open lpw837-show-open-b2"><div class="show-intro-copy">${liveIsSupercard(c)?`<div class="lpw-ple-title">${show}</div>`:lpwShowLogo(show)}<button class="btn live-primary lpw837-start-first" onclick="gauntletLiveRunShowSegment()">START THE SHOW</button><div class="tv-kicker">LIVE FROM ${venue.toUpperCase()} · ${attendance} IN ATTENDANCE</div><div class="live-commentary-duo show-preview"><div>${npcImage('mike-sullivan','portrait')}<b>Mike Sullivan</b><p>${mike}</p></div><div>${npcImage('johnny-cannon','portrait')}<b>Johnny Cannon</b><p>${johnny}</p></div></div><div class="show-card-list"><small>TONIGHT ON LPW</small><ul>${card}</ul><b>YOUR SEGMENT · ${liveIsSupercard(c)?'FEUD FINALE':item.type==='segment'?liveSegmentTitle(item.segment):item.type.toUpperCase()+' MATCH'}</b></div></div></section>`)
+};
+
+/* A promised public challenge must resolve before the next match. */
+const _lpwBreakingNewsB3QA=lpwBreakingNews;
+lpwBreakingNews=function(c){
+ const rival=liveFeudOpponent(c),player=liveFounder(c.active);if(!rival||!player)return false;
+ const result=_lpwBreakingNewsB3QA(c);
+ if(result){const fresh=liveLoad();if(document.querySelector('.lpw-breaking-news p')?.textContent.includes('public challenge')){fresh.world.pendingPublicChallenge=true;liveSave(fresh)}}
+ return result;
+};
+const _gauntletLiveRunShowSegmentB3QA=gauntletLiveRunShowSegment;
+gauntletLiveRunShowSegment=function(){const c=liveLoad();if(c?.world?.pendingPublicChallenge)return lpw837b3PublicChallenge();return _gauntletLiveRunShowSegmentB3QA()};
+function lpw837b3PublicChallenge(){const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c);render(`<section class="panel live-world-screen lpw837b3-one-screen"><div class="tv-kicker">LIVE ON ${liveShowName(c).toUpperCase()}</div><h1>PUBLIC CHALLENGE</h1><div class="lpw837b3-rival-pair">${imageWithFallback(p,'full','art-full','quickMatch')}${imageWithFallback(r,'full','art-full','quickMatch')}</div><p>${r.name} calls ${p.name} to the stage and demands an answer in front of the live audience.</p><div class="live-choice-grid"><button onclick="lpw837b3ResolveChallenge('ACCEPTED THE CHALLENGE',{momentum:4,feud:8},'You walked onto the stage and accepted without hesitation.')"><b>ACCEPT FACE TO FACE</b><span>Momentum +4 · Feud +8</span></button><button onclick="lpw837b3ResolveChallenge('MOCKED THE CHALLENGE',{popularity:5,feud:5},'You answered from the stage and turned the confrontation into a public spectacle.')"><b>MOCK YOUR RIVAL</b><span>Popularity +5 · Feud +5</span></button></div></section>`)}
+function lpw837b3ResolveChallenge(title,changes,reaction){const c=liveLoad();c.world.pendingPublicChallenge=false;liveSave(c);const originalAdvance=liveAdvanceDay;liveAdvanceDay=function(){};lpw836ApplyOutcome('katie-morgan',title,changes,reaction,'The confrontation will be referenced later in the broadcast.');liveAdvanceDay=originalAdvance;const btn=document.querySelector('.lpw-consequence-screen button');if(btn)btn.setAttribute('onclick','gauntletLiveRunShowSegment()')}
+
+/* Career-record and attribute-point reminders are always authoritative. */
+const _gauntletLiveCareerCardB3QA=gauntletLiveCareerCard;
+gauntletLiveCareerCard=function(id){const c=liveLoad();if(c){const use=id||c.active,p=liveProgress(use,c);if(use===c.active){p.wins=c.wins||0;p.losses=c.losses||0;liveSave(c)}}return _gauntletLiveCareerCardB3QA(id)};
+const _gauntletLiveCalendarB3QA=gauntletLiveCalendar;
+gauntletLiveCalendar=function(){const result=_gauntletLiveCalendarB3QA();setTimeout(()=>{const c=liveLoad();if(!c)return;const p=liveProgress(c.active,c);if(p.points>0&&!document.querySelector('.lpw837b3-points-reminder')){const today=document.querySelector('.live-today');today?.insertAdjacentHTML('afterend',`<button class="lpw837b3-points-reminder" onclick="gauntletLiveCareerCard()"><b>${p.points} ATTRIBUTE POINT${p.points===1?'':'S'} AVAILABLE</b><span>Spend now, or find them later in Career Menu → Manage Stable → My Career.</span></button>`) }},0);return result};
+
+/* Level-up screen tells players where to return if they choose Later. */
+gauntletLiveLevelCelebration=function(id,xp,nextDay,returnMode){const c=liveLoad(),w=liveFounder(id),p=liveProgress(id,c),ovr=liveOverall(p);render(`<section class="panel live-level-celebration"><div class="live-level-rays"></div><div class="tv-kicker">CAREER PROGRESSION</div><h1>LEVEL UP!</h1>${imageWithFallback(w,'victory','art-victory','postMatch')}<div class="live-celebration-level"><small>${w.name}</small><b>LEVEL ${p.level}</b><span>OVR ${ovr}</span></div><div class="live-celebration-rewards">${xp.pointsEarned?`<span><b>+${xp.pointsEarned}</b><small>ATTRIBUTE POINT${xp.pointsEarned===1?'':'S'}</small></span>`:''}${xp.milestonesEarned?`<span><b>TRAIT</b><small>MILESTONE CHOICE READY</small></span>`:''}</div><p class="lpw837b3-later-help">Choose Later to keep playing. Your points remain saved under <b>Career Menu → Manage Stable → My Career</b>, and a reminder stays on the Career Hub.</p><div class="live-result-actions">${p.points?`<button class="btn live-primary" onclick="gauntletLiveSpendPoints('${id}')">SPEND ATTRIBUTE POINTS</button>`:''}<button class="btn secondary" onclick="gauntletLiveCalendar()">LATER</button></div></section>`)};
+
+/* Full-screen, persistent Career achievements instead of a buried report panel. */
+const _postMatchFlowB3QA=postMatchFlow;
+postMatchFlow=function(){const c=liveLoad(),m=milestoneData();if(S?.liveMode&&c&&m.length){c.world.awardedAchievements=c.world.awardedAchievements||[];const key=m[0][0];if(!c.world.awardedAchievements.includes(key)){c.world.awardedAchievements.push(key);c.world.pendingAchievement=m[0];liveSave(c);return lpw837b3AchievementScreen()}}return _postMatchFlowB3QA()};
+function lpw837b3AchievementScreen(){const c=liveLoad(),m=c?.world?.pendingAchievement;if(!m)return _postMatchFlowB3QA();render(`<section class="panel lpw837b3-achievement"><div class="tv-kicker">ACHIEVEMENT UNLOCKED</div><div class="lpw837b3-trophy">★</div><h1>${m[0]}</h1><p>${m[1]}</p><button class="btn live-primary" onclick="lpw837b3ContinueAchievement()">CONTINUE</button></section>`)}
+function lpw837b3ContinueAchievement(){const c=liveLoad();if(c){c.world.pendingAchievement=null;liveSave(c)}_postMatchFlowB3QA()}
+
+/* Recap navigation appears before optional reading. */
+const _gauntletLiveWorldRecapB3QA=gauntletLiveWorldRecap;
+gauntletLiveWorldRecap=function(){const r=_gauntletLiveWorldRecapB3QA();setTimeout(()=>{const h=document.querySelector('.lpw837-recap h1');if(h&&!document.querySelector('.lpw837b3-recap-skip'))h.insertAdjacentHTML('afterend','<button class="btn live-primary lpw837b3-recap-skip" onclick="gauntletLiveCompleteWorldRecap()">CONTINUE TO NEXT DAY</button>')},0);return r};
+const _lpw837DirtSheetB3QA=lpw837DirtSheet;
+lpw837DirtSheet=function(supercard=false){const r=_lpw837DirtSheetB3QA(supercard);setTimeout(()=>{const h=document.querySelector('.lpw837-dirt h1');if(h&&!document.querySelector('.lpw837b3-recap-skip'))h.insertAdjacentHTML('afterend','<button class="btn live-primary lpw837b3-recap-skip" onclick="lpw836CompleteMedia()">CONTINUE TO NEXT DAY</button>')},0);return r};
+
+/* Build label. */
+const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r=_gauntletLiveHomeB3QA();const cycle=document.querySelector('.live-cycle b');if(cycle)cycle.textContent='VERSION 8.3.7 BUILD 3';const tag=document.querySelector('.build-tag');if(tag)tag.textContent='VERSION 8.3.7 BUILD 3';return r};
