@@ -1,6 +1,7 @@
 {
-  "version": "8.5.2",
-  "build": "Result Orientation Hotfix",
+  "version": "8.5.4",
+  "build": "Career Record Integrity Hotfix",
   "date": "2026-07-22",
-  "notes": "Corrects reversed AI win-loss records and World Recap ranking display."
+  "notes": "Corrects reversed AI win-loss records and World Recap ranking display.",
+  "updated": "2026-07-22"
 }

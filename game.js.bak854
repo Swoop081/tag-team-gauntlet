@@ -3324,7 +3324,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 
  /* Only the World Championship exists in Career Mode. */
  lpw8Championships=function(){const c=ensure84(liveLoad()),w=liveFounder(c.championships.world);liveSave(c);render(`<section class="panel lpw8-championships">${shellBack()}<div class="tv-kicker">THE ULTIMATE PRIZE</div><h1>LPW WORLD CHAMPIONSHIP</h1><div class="lpw8-belt-grid lpw84-one-title"><article><div class="lpw8-belt">★</div><small>LPW WORLD CHAMPION</small><h2>${w?.name||'VACANT'}</h2><p>Every wrestler in the Power Rankings is chasing one championship.</p></article></div><button class="btn live-primary" onclick="lpw8RankingScreen()">VIEW POWER RANKINGS</button></section>`)};
- lpw8RankingScreen=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c),champ=liveFounder(c.championships.world);liveSave(c);render(`<section class="panel lpw8-rankings lpw837-rankings-b2">${shellBack()}<div class="tv-kicker">WORLD CHAMPIONSHIP PICTURE</div><h1>POWER RANKINGS</h1><p class="sub">One roster. One ranking. One World Championship.</p><div class="lpw8-title-strip"><article class="lpw837-champion-tile"><div class="lpw837-champion-portraits">${imageWithFallback(champ,'portrait','art-portrait','matchPortrait')}</div><span><small>LPW WORLD CHAMPION</small><b>${champ?.name||'VACANT'}</b></span></article></div><div class="lpw8-ranking-list">${rows.map((r,i)=>{const w=liveFounder(r.id),x=ensureCareer(c,r.id);return `<article><strong>${i+1}</strong>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><b>${w.name}</b><small>${x.status}${''}</small></span><em>${r.points} PTS<br>${x.wins}-${x.losses}</em></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveHome()">RETURN TO CAREER</button></section>`)};
+ lpw8RankingScreen=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c),champ=liveFounder(c.championships.world);liveSave(c);render(`<section class="panel lpw8-rankings lpw837-rankings-b2">${shellBack()}<div class="tv-kicker">WORLD CHAMPIONSHIP PICTURE</div><h1>POWER RANKINGS</h1><p class="sub">One roster. One ranking. One World Championship.</p><div class="lpw8-title-strip"><article class="lpw837-champion-tile"><div class="lpw837-champion-portraits">${imageWithFallback(champ,'portrait','art-portrait','matchPortrait')}</div><span><small>LPW WORLD CHAMPION</small><b>${champ?.name||'VACANT'}</b></span></article></div><div class="lpw8-ranking-list">${rows.map((r,i)=>{const w=liveFounder(r.id),x=ensureCareer(c,r.id);return `<article><strong>${i+1}</strong>${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><b>${w.name}</b><small>${x.status}${r.id===c.active?' · CAMERA FOCUS':''}</small></span><em>${r.points} PTS<br>${x.wins}-${x.losses}</em></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveHome()">RETURN TO CAREER</button></section>`)};
 
  /* Tournament month presentation and booking. */
  const begin0=gauntletLiveBeginDay;gauntletLiveBeginDay=function(skip=false){const c=liveLoad();if(c?.month===3){const t=seedTournament(c);if(!t.announced){t.announced=true;liveSave(c);return render(`<section class="panel live-world-screen lpw84-tournament-news"><div class="tv-kicker">BREAKING NEWS · VERONICA VALE</div><h1>THE ROAD TO THE WORLD CHAMPIONSHIP</h1><div class="live-npc-scene large">${npcImage('veronica-vale','portrait')}<div><small>GENERAL MANAGER</small><h2>Veronica Vale</h2><p>Eight wrestlers will compete throughout March. The winner challenges the LPW World Champion at the SuperCard.</p></div></div><div class="lpw84-bracket-field">${t.field.map((id,i)=>`<span><b>${i+1}</b>${liveFounder(id).name}</span>`).join('')}</div><button class="btn live-primary" onclick="gauntletLiveBeginDay(true)">CONTINUE TO TODAY'S SHOW</button></section>`)}
@@ -3341,12 +3341,12 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const complete0=liveCompleteBroadcast;liveCompleteBroadcast=function(win){const before=liveLoad(),pending=before?.pending?{...before.pending}:null;if(before&&pending?.tournament)tournamentAdvance(before,win),liveSave(before);const result=complete0(win);const c=liveLoad();if(c){const x=syncActive(c),row=c.rankings.find(r=>r.id===c.active);if(row){x.wins=row.wins;x.losses=row.losses}x.streak=win?Math.max(1,x.streak+1):Math.min(-1,x.streak-1);x.lastResult=win?'W':'L';liveSave(c)}return result};
 
  /* End-of-month only character selection; everyone else lives a simulated month. */
- gauntletLiveMonthRosterChoice=function(){const c=ensure84(liveLoad());syncActive(c);simulateInactiveMonth(c);liveSave(c);const rows=lpw8Rankings(c);render(`<section class="panel live-founder-screen lpw84-living-careers"><div class="tv-kicker">MONTH COMPLETE · LIVING CAREERS</div><h1>WHOSE STORY WILL THE CAMERAS FOLLOW?</h1><p class="sub">This choice is locked for the entire next month. Every other wrestler continues under CPU control.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1,streak=x.streak>0?`W${x.streak}`:x.streak<0?`L${Math.abs(x.streak)}`:'—';return `<button class="live-founder-card lpw84-career-card" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'ACTIVE WRESTLER':'AVAILABLE CAREER'}</small><b>${w.name}</b><em>#${rank} · ${x.wins}-${x.losses} · ${streak}</em><i>${x.status}${x.rival?` · Rival: ${liveFounder(x.rival)?.name}`:''}</i></span></button>`}).join('')}</div></section>`)};
+ gauntletLiveMonthRosterChoice=function(){const c=ensure84(liveLoad());syncActive(c);simulateInactiveMonth(c);liveSave(c);const rows=lpw8Rankings(c);render(`<section class="panel live-founder-screen lpw84-living-careers"><div class="tv-kicker">MONTH COMPLETE · LIVING CAREERS</div><h1>WHOSE STORY WILL THE CAMERAS FOLLOW?</h1><p class="sub">This choice is locked for the entire next month. Every other wrestler continues under CPU control.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1,streak=x.streak>0?`W${x.streak}`:x.streak<0?`L${Math.abs(x.streak)}`:'—';return `<button class="live-founder-card lpw84-career-card" onclick="gauntletLiveStartNextMonth('${id}')">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT CAMERA FOCUS':'AVAILABLE CAREER'}</small><b>${w.name}</b><em>#${rank} · ${x.wins}-${x.losses} · ${streak}</em><i>${x.status}${x.rival?` · Rival: ${liveFounder(x.rival)?.name}`:''}</i></span></button>`}).join('')}</div></section>`)};
  gauntletLiveStartNextMonth=function(id){const c=ensure84(liveLoad());if(!c.stable.includes(id))return gauntletLiveMonthRosterChoice();setActive(c,id);c.world.katieThisWeek=0;c.monthSwitchLocked=true;const opp=livePickDifferent(c,c.stable);liveStartFeud(c,opp.id,'A new monthly rivalry begins.');liveGenerateMonthlyPlan(c);if(c.month===3)seedTournament(c);liveSave(c);gauntletLiveCalendar()};
 
  /* Calendar and stable use wrestler-owned records instead of one shared record. */
- const cal0=gauntletLiveCalendar;gauntletLiveCalendar=function(){const c=liveLoad();if(c)syncActive(c);const r=cal0();setTimeout(()=>{const c2=liveLoad(),x=c2&&ensureCareer(c2,c2.active),hero=document.querySelector('.live-career-hero span');if(hero&&x)hero.textContent=`${x.wins}-${x.losses} record · Rank #${rankOf(c2,c2.active)} · ${c2.stable.length} roster members`;const small=document.querySelector('.live-career-hero small');if(small)small.textContent=c2.month===1?'LPW DEBUT':rankOf(c2,c2.active)===1?'#1 CONTENDER':c2.active===c2.championships.world?'WORLD CHAMPION':''},0);return r};
- gauntletLiveStable=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c);render(`<section class="panel live-stable-screen">${shellBack()}<div class="tv-kicker">LIVING CAREERS</div><h1>YOUR ROSTER</h1><p class="sub">Wrestlers can only be selected after the monthly SuperCard.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1;return `<article class="live-founder-card lpw84-career-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'ACTIVE WRESTLER':'CPU CONTROLLED'}</small><b>${w.name}</b><em>Rank #${rank} · ${x.wins}-${x.losses}</em><i>${x.status}</i></span></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`)};
+ const cal0=gauntletLiveCalendar;gauntletLiveCalendar=function(){const c=liveLoad();if(c)syncActive(c);const r=cal0();setTimeout(()=>{const c2=liveLoad(),x=c2&&ensureCareer(c2,c2.active),hero=document.querySelector('.live-career-hero span');if(hero&&x)hero.textContent=`${x.wins}-${x.losses} record · Rank #${rankOf(c2,c2.active)} · ${c2.stable.length} roster members`;const small=document.querySelector('.live-career-hero small');if(small)small.textContent=c2.month===1?'LPW DEBUT':rankOf(c2,c2.active)===1?'#1 CONTENDER':c2.active===c2.championships.world?'WORLD CHAMPION':'CAMERA FOCUS'},0);return r};
+ gauntletLiveStable=function(){const c=ensure84(liveLoad()),rows=lpw8Rankings(c);render(`<section class="panel live-stable-screen">${shellBack()}<div class="tv-kicker">LIVING CAREERS</div><h1>YOUR ROSTER</h1><p class="sub">Wrestlers can only be selected after the monthly SuperCard.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=liveFounder(id),x=ensureCareer(c,id),rank=rows.findIndex(r=>r.id===id)+1;return `<article class="live-founder-card lpw84-career-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT CAMERA FOCUS':'CPU CONTROLLED'}</small><b>${w.name}</b><em>Rank #${rank} · ${x.wins}-${x.losses}</em><i>${x.status}</i></span></article>`}).join('')}</div><button class="btn live-primary" onclick="gauntletLiveCalendar()">RETURN TO CALENDAR</button></section>`)};
 
  const home0=gauntletLiveHome;gauntletLiveHome=function(){const r=home0();document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4');const p=document.querySelector('.live-cycle span');if(p)p.textContent='Living Careers, one World Championship and the annual March #1 Contender Tournament.';return r};
 })();
@@ -3435,7 +3435,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const cal=gauntletLiveCalendar;gauntletLiveCalendar=function(){const c=ensure(liveLoad());updateMonthlyNews(c);liveSave(c);const r=cal();setTimeout(()=>{const top=document.querySelector('.live-calendar-top');if(top&&!document.querySelector('.lpw84-dashboard-btn'))top.insertAdjacentHTML('beforeend','<button class="shell-back lpw84-dashboard-btn" onclick="lpw84Dashboard()">DASHBOARD</button>')},0);return r};
 
  /* Roster becomes a living-career management screen with history access. */
- gauntletLiveStable=function(){const c=ensure(liveLoad()),rows=lpw8Rankings(c);render(`<section class="panel live-stable-screen lpw84-roster"><button class="shell-back" onclick="lpw84Dashboard()">← DASHBOARD</button><div class="tv-kicker">LIVING CAREERS</div><h1>YOUR ROSTER</h1><p class="sub">Career focus can only change after the monthly SuperCard. CPU-controlled wrestlers never earn XP or improve attributes.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=wrestler(id),x=career(c,id),r=rows.findIndex(z=>z.id===id)+1;return `<article class="live-founder-card lpw84-career-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'ACTIVE WRESTLER':'CPU CONTROLLED'}</small><b>${w.name}</b><em>Rank #${r} · ${x.wins}-${x.losses} · ${x.streak>0?'W'+x.streak:x.streak<0?'L'+Math.abs(x.streak):'—'}</em><i>${x.status}</i><button onclick="lpw84CareerHistory('${id}')">VIEW CAREER</button></span></article>`}).join('')}</div></section>`)};
+ gauntletLiveStable=function(){const c=ensure(liveLoad()),rows=lpw8Rankings(c);render(`<section class="panel live-stable-screen lpw84-roster"><button class="shell-back" onclick="lpw84Dashboard()">← DASHBOARD</button><div class="tv-kicker">LIVING CAREERS</div><h1>YOUR ROSTER</h1><p class="sub">Career focus can only change after the monthly SuperCard. CPU-controlled wrestlers never earn XP or improve attributes.</p><div class="live-founder-grid">${c.stable.map(id=>{const w=wrestler(id),x=career(c,id),r=rows.findIndex(z=>z.id===id)+1;return `<article class="live-founder-card lpw84-career-card">${imageWithFallback(w,'portrait','art-portrait','matchPortrait')}<span><small>${id===c.active?'CURRENT CAMERA FOCUS':'CPU CONTROLLED'}</small><b>${w.name}</b><em>Rank #${r} · ${x.wins}-${x.losses} · ${x.streak>0?'W'+x.streak:x.streak<0?'L'+Math.abs(x.streak):'—'}</em><i>${x.status}</i><button onclick="lpw84CareerHistory('${id}')">VIEW CAREER</button></span></article>`}).join('')}</div></section>`)};
 
  /* Returning to a career now receives a factual "Previously on" summary. */
  const nextMonth=gauntletLiveStartNextMonth;gauntletLiveStartNextMonth=function(id){const c=ensure(liveLoad()),old=c.active,x=career(c,id),s=summaryFor(c,id);x.lastCameraRank=s.rank;nextMonth(id);const c2=ensure(liveLoad());c2.world.pendingReturnSummary={id,old,summary:s};liveSave(c2);return lpw84PreviouslyOn()};
@@ -3456,7 +3456,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const home=gauntletLiveHome;gauntletLiveHome=function(){const r=home();setTimeout(()=>{document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent='VERSION 8.4.5');const menu=document.querySelector('.live-mode-actions,.live-home-actions');if(menu&&!document.querySelector('.lpw84-home-dashboard'))menu.insertAdjacentHTML('beforeend','<button class="btn lpw84-home-dashboard" onclick="lpw84Dashboard()">LIVING WORLD DASHBOARD</button>')},0);return r};
 
  /* Final language cleanup. */
- const render0=render;render=function(html){return render0(String(html||'').replace(/stable member(s)?/gi,'roster member$1').replace(/MANAGE STABLE/gi,'VIEW ROSTER').replace(/ACTIVE WRESTLER/gi,'ACTIVE WRESTLER'))};
+ const render0=render;render=function(html){return render0(String(html||'').replace(/stable member(s)?/gi,'roster member$1').replace(/MANAGE STABLE/gi,'VIEW ROSTER').replace(/ACTIVE WRESTLER/gi,'CAMERA FOCUS'))};
 })();
 
 /* =============================================================
@@ -3893,60 +3893,4 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  };
 
  window.LPW_CAREER_INTEGRITY_VERSION=BUILD;
-})();
-
-
-/* ============================================================
-   LEGACY PRO WRESTLING 8.5.4 — SINGLE MATCH ACCOUNTING HOTFIX
-   Deduplicates player match history, limits AI wrestlers to one
-   result per day, rebuilds records from authoritative histories,
-   and removes all remaining Camera Focus labels.
-   ============================================================ */
-(function(){
- const BUILD='8.5.4';
- const n=v=>Number(v)||0;
- const career=(c,id)=>{c.livingCareers=c.livingCareers||{};return c.livingCareers[id]||(c.livingCareers[id]={id,wins:0,losses:0,streak:0,lastResult:null,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0})};
- const row=(c,id)=>Array.isArray(c?.rankings)?c.rankings.find(r=>r.id===id):null;
- const playerKey=(c,h)=>[n(h?.month)||n(c?.month)||1,n(h?.week),n(h?.day),h?.opponent||'',h?.supercard?'SC':'TV',h?.tournamentRound||''].join(':');
- const aiDayKey=h=>[n(h?.month)||1,n(h?.week),n(h?.day),h?.source||'AI'].join(':');
- function dedupePlayerHistory(c){
-  const seen=new Set(),out=[];
-  for(const h of Array.isArray(c?.history)?c.history:[]){
-   if(h?.win!==true&&h?.win!==false)continue;
-   const key=playerKey(c,h);if(seen.has(key))continue;seen.add(key);out.push(h);
-  }
-  c.history=out.slice(0,60);return out;
- }
- function dedupeCareerHistory(c,id){
-  const x=career(c,id),seenExact=new Set(),seenDay=new Set(),out=[];
-  for(const h of Array.isArray(x.history)?x.history:[]){
-   if(h?.win!==true&&h?.win!==false)continue;
-   const exact=[n(h.month)||1,n(h.week),n(h.day),h.opponent||'',h.win?'W':'L',h.source||'AI'].join(':');
-   if(seenExact.has(exact))continue;
-   const source=String(h.source||'');
-   if(source==='WORLD_SIM'){
-    const day=aiDayKey(h);if(seenDay.has(day))continue;seenDay.add(day);
-   }
-   seenExact.add(exact);out.push(h);
-  }
-  x.history=out.slice(0,60);return out;
- }
- function rebuild(c){
-  if(!c)return c;
-  const ph=dedupePlayerHistory(c),px=career(c,c.active),pr=row(c,c.active);
-  px.wins=ph.filter(h=>h.win===true).length;px.losses=ph.filter(h=>h.win===false).length;
-  c.wins=px.wins;c.losses=px.losses;if(pr){pr.wins=px.wins;pr.losses=px.losses}
-  for(const id of Object.keys(c.livingCareers||{})){
-   if(id===c.active)continue;
-   const x=career(c,id),hist=dedupeCareerHistory(c,id);
-   if(hist.length){x.wins=hist.filter(h=>h.win===true).length;x.losses=hist.filter(h=>h.win===false).length;const r=row(c,id);if(r){r.wins=x.wins;r.losses=x.losses}}
-  }
-  return c;
- }
- const load=liveLoad;liveLoad=function(){const c=load();if(c)rebuild(c);return c};
- const save=liveSave;liveSave=function(c){if(c)rebuild(c);return save(c)};
- const cleanDom=()=>document.querySelectorAll('*').forEach(el=>{if(el.children.length===0&&/CAMERA FOCUS/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/\s*·?\s*CAMERA FOCUS/gi,'').trim()});
- const r0=render;render=function(html){const out=r0(String(html||'').replace(/\s*·?\s*CAMERA FOCUS/gi,'').replace(/CURRENT CAMERA FOCUS/gi,'ACTIVE WRESTLER'));setTimeout(cleanDom,0);return out};
- ['gauntletLiveCalendar','lpw8RankingScreen','lpw84Dashboard','gauntletLiveStable','gauntletLiveWorldRecap'].forEach(name=>{const prior=window[name];if(typeof prior!=='function')return;window[name]=function(){const c=liveLoad();if(c)liveSave(rebuild(c));const out=prior.apply(this,arguments);setTimeout(cleanDom,0);return out}});
- window.LPW_SINGLE_MATCH_ACCOUNTING_VERSION=BUILD;
 })();
