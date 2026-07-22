@@ -415,6 +415,19 @@ const WRESTLERS = [
     "image": "assets/wrestlers/logan-steele/full.webp",
     "finisher": "Icon Slam"
   }
+  ,{
+    "id":"valkyrie-hale","name":"Valkyrie Hale","title":"The Nightmare","faction":"Independent","signature":"Midnight Driver","overall":97,"rarity":"Legendary","tag":88,"power":98,"speed":84,"technique":91,"charisma":96,"versatility":92,"loyalty":86,"resilience":99,"image":"assets/wrestlers/valkyrie-hale/full.webp","finisher":"Nightfall Bomb"
+  },
+  {
+    "id":"sienna","name":"Sienna","title":"The Anti-Heroine","faction":"Independent","signature":"Black Veil","overall":96,"rarity":"Legendary","tag":91,"power":82,"speed":91,"technique":98,"charisma":97,"versatility":98,"loyalty":79,"resilience":95,"image":"assets/wrestlers/sienna/full.webp","finisher":"Graves End"
+  },
+  {
+    "id":"kaori-mizuno","name":"Kaori Mizuno","title":"The Sky Dancer","faction":"Independent","signature":"Sky Cutter","overall":96,"rarity":"Legendary","tag":93,"power":70,"speed":100,"technique":97,"charisma":94,"versatility":100,"loyalty":92,"resilience":92,"image":"assets/wrestlers/kaori-mizuno/full.webp","finisher":"Celestial Eclipse"
+  },
+  {
+    "id":"jasmine-monroe","name":"Jasmine Monroe","title":"The Standard","faction":"Independent","signature":"Victory Press","overall":97,"rarity":"Legendary","tag":95,"power":96,"speed":94,"technique":94,"charisma":99,"versatility":98,"loyalty":97,"resilience":98,"image":"assets/wrestlers/jasmine-monroe/full.webp","finisher":"Crown Breaker"
+  }
+
 ];
 
 const RELATIONSHIPS = [

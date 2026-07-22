@@ -1,5 +1,5 @@
 /* LEGACY Pro Wrestling Service Worker 8.3.7 Build 9 */
-const APP_VERSION = '8.4.6-battle-royal';
+const APP_VERSION = '8.5.0-roster-expansion';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
 const CRITICAL_FILES = ['index.html','game.js','onboarding-wording-fix.js','data.js','styles.css','version.json','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 
