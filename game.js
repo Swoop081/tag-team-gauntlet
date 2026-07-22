@@ -3698,3 +3698,76 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 
  window.LPW_HOTFIX_VERSION=HOTFIX_VERSION;
 })();
+
+/* ============================================================
+   LEGACY PRO WRESTLING 8.5.2 HOTFIX — RESULT ORIENTATION
+   Stores AI result stories winner-first, repairs saves affected by
+   reversed AI records, and forces World Recap to show the real rank.
+   ============================================================ */
+(function(){
+ const HOTFIX_KEY='lpw852ResultOrientation';
+ function career(c,id){
+  c.livingCareers=c.livingCareers||{};
+  return c.livingCareers[id]||(c.livingCareers[id]={id,wins:0,losses:0,streak:0,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0});
+ }
+ function row(c,id){return Array.isArray(c.rankings)?c.rankings.find(r=>r.id===id):null}
+ function adjust(obj,key,delta){if(obj)obj[key]=Math.max(0,(Number(obj[key])||0)+delta)}
+ function realRank(c){
+  const rows=Array.isArray(c?.rankings)?[...c.rankings].sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0)):[];
+  const index=rows.findIndex(r=>r.id===c.active);
+  return index>=0?index+1:Math.max(1,rows.length||1);
+ }
+ function normalizeStories(c,repairRecords){
+  const stories=Array.isArray(c?.world?.worldStories)?c.world.worldStories:[];
+  stories.forEach(s=>{
+   if(!s?.winner||!s.a||!s.b)return;
+   if(s.a!==s.winner){
+    const oldA=s.a,oldB=s.b;
+    if(repairRecords&&!s._orientationRecordsRepaired){
+     /* The previous build credited the first stored participant rather
+        than the declared winner. Transfer that single result. */
+     const oldARow=row(c,oldA),oldBRow=row(c,oldB),oldACareer=career(c,oldA),oldBCareer=career(c,oldB);
+     adjust(oldARow,'wins',-1);adjust(oldARow,'losses',1);
+     adjust(oldBRow,'losses',-1);adjust(oldBRow,'wins',1);
+     adjust(oldACareer,'wins',-1);adjust(oldACareer,'losses',1);
+     adjust(oldBCareer,'losses',-1);adjust(oldBCareer,'wins',1);
+     s._orientationRecordsRepaired=true;
+    }
+    s.a=s.winner;s.b=oldA;
+   }
+   s._recordsApplied=true;
+  });
+ }
+
+ const sim=liveSimulateWorld;
+ liveSimulateWorld=function(c){
+  const stories=sim(c)||[];
+  normalizeStories(c,false);
+  return stories;
+ };
+
+ const recap=gauntletLiveWorldRecap;
+ gauntletLiveWorldRecap=function(){
+  const c=liveLoad();
+  if(c){
+   const alreadyFixed=c.world?.[HOTFIX_KEY]===true;
+   normalizeStories(c,!alreadyFixed);
+   c.world=c.world||{};c.world[HOTFIX_KEY]=true;
+   liveSave(c);
+  }
+  const result=recap();
+  setTimeout(()=>{
+   const latest=liveLoad(),rank=latest?realRank(latest):1;
+   document.querySelectorAll('.lpw837-recap-cards b').forEach(el=>{
+    if(/^RANKED #(?:99|\d+)$/.test(el.textContent.trim()))el.textContent=`RANKED #${rank}`;
+   });
+  },0);
+  return result;
+ };
+
+ const rankingScreen=lpw8RankingScreen;
+ lpw8RankingScreen=function(){
+  const c=liveLoad();if(c){normalizeStories(c,c.world?.[HOTFIX_KEY]!==true);c.world=c.world||{};c.world[HOTFIX_KEY]=true;liveSave(c)}
+  return rankingScreen();
+ };
+})();

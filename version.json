@@ -1,6 +1,6 @@
 {
-  "version": "8.5.1",
-  "build": "Rankings and Records Hotfix",
-  "released": "2026-07-22",
-  "notes": "Fixes Career rank #99, preserves and displays wrestler records, records AI world matches, and corrects first-show grammar."
+  "version": "8.5.2",
+  "build": "Result Orientation Hotfix",
+  "date": "2026-07-22",
+  "notes": "Corrects reversed AI win-loss records and World Recap ranking display."
 }

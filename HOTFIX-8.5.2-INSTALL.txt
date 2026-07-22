@@ -1,0 +1,10 @@
+LEGACY PRO WRESTLING 8.5.2 — RESULT ORIENTATION HOTFIX
+
+Apply these files over the 8.5.0 build with the 8.5.1 hotfix already installed.
+Replace matching files when prompted.
+
+Fixes:
+- AI winners and losers are now stored in a consistent winner-first order.
+- Existing reversed records from the current World Recap batch are repaired once.
+- World Recap displays the player’s actual Power Ranking instead of #99.
+- Future recap results, rankings and records use the same winner/loser orientation.
