@@ -3460,12 +3460,29 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
 })();
 
 /* =============================================================
-   LEGACY PRO WRESTLING 8.4.3 — 20-PERSON BATTLE ROYAL ENGINE
+   LEGACY PRO WRESTLING 8.4.4 — CAREER & ROSTER HOTFIX
    Standalone main-menu test mode. Career integration intentionally
    deferred until the September SuperCard implementation is approved.
    ============================================================= */
 (function(){
  const BR_SAVE_KEY='lpw_battle_royal_history_v1';
+ // Build 8.4.4 roster safety: Dave Maddox and Logan Steele are permanent playable wrestlers.
+ const PERMANENT_ROSTER_IDS=['dave-maddox','logan-steele'];
+ function repairPermanentRosterInCareer(){
+  try{
+   const c=liveLoad();if(!c)return;
+   c.stable=Array.isArray(c.stable)?c.stable:[];
+   c.rankings=Array.isArray(c.rankings)?c.rankings:[];
+   c.livingCareers=c.livingCareers||{};
+   PERMANENT_ROSTER_IDS.forEach((id,index)=>{
+    if(!c.stable.includes(id))c.stable.push(id);
+    if(!c.rankings.some(r=>r.id===id))c.rankings.push({id,wins:0,losses:0,points:Math.max(10,35-index*3)});
+    if(!c.livingCareers[id])c.livingCareers[id]={id,wins:0,losses:0,streak:0,momentum:50,popularity:20,status:'Active',history:[],monthsControlled:0,monthsAI:0};
+   });
+   liveSave(c);
+  }catch(error){console.warn('Permanent roster repair skipped',error)}
+ }
+ repairPermanentRosterInCareer();
  let BR=null;
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
  const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -3486,7 +3503,14 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
   if(!nav||document.getElementById('battleRoyalMenuButton'))return;
   const b=document.createElement('button');b.id='battleRoyalMenuButton';b.className='hub-option battle-royal-menu';
   b.onclick=battleRoyalHome;b.innerHTML='<b>20-PERSON BATTLE ROYAL</b><small>Twenty enter. One survives. Playable now.</small>';
-  const career=nav.querySelector('button');career?.after(b);
+  const career=nav.querySelector('button');
+  if(career){
+   career.id='careerMenuButton';
+   career.type='button';
+   career.onclick=function(event){event.preventDefault();event.stopPropagation();window.gauntletLiveHome()};
+   career.style.pointerEvents='auto';
+   career.after(b);
+  }else nav.prepend(b);
  }
  const oldHome=window.home;
  window.home=function(){const r=oldHome.apply(this,arguments);setTimeout(installMenuButton,0);return r};

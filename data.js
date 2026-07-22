@@ -342,6 +342,44 @@ const WRESTLERS = [
     "finisher": "Golden Touch"
   },
   {
+    "id": "dave-maddox",
+    "name": "Dave Maddox",
+    "title": "The Workhorse",
+    "faction": "Guardians",
+    "signature": "Second Wind",
+    "overall": 96,
+    "rarity": "Legendary",
+    "tag": 94,
+    "power": 88,
+    "speed": 82,
+    "technique": 93,
+    "charisma": 91,
+    "versatility": 95,
+    "loyalty": 98,
+    "resilience": 99,
+    "image": "assets/wrestlers/dave-maddox/full.webp",
+    "finisher": "Second Wind"
+  },
+  {
+    "id": "logan-steele",
+    "name": "Logan Steele",
+    "title": "The Living Legend",
+    "faction": "Guardians",
+    "signature": "Icon Slam",
+    "overall": 98,
+    "rarity": "Legendary",
+    "tag": 95,
+    "power": 98,
+    "speed": 76,
+    "technique": 89,
+    "charisma": 100,
+    "versatility": 91,
+    "loyalty": 99,
+    "resilience": 100,
+    "image": "assets/wrestlers/logan-steele/full.webp",
+    "finisher": "Icon Slam"
+  },
+  {
     "id":"ace-riot","name":"Ace Riot","title":"The Voice of Rebellion","faction":"Independent","signature":"Riot Trigger","overall":96,"rarity":"Legendary","tag":88,"power":82,"speed":90,"technique":98,"charisma":99,"versatility":97,"loyalty":78,"resilience":95,"image":"assets/wrestlers/ace-riot/full.webp","finisher":"Riot Trigger"
   },
   {
