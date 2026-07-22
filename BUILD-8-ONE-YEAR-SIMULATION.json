@@ -1,0 +1,31 @@
+{
+  "simulated_careers": 1000,
+  "days_per_career": 364,
+  "mean_matches": 102.25,
+  "mean_win_rate": 0.538,
+  "career_win_rate_p10_p90": [
+    0.495,
+    0.583
+  ],
+  "careers_with_win": 1.0,
+  "careers_with_loss": 1.0,
+  "mean_rating": 3.57,
+  "five_star_equivalent_rate": 0.015,
+  "rating_bands": {
+    "2.x": 13481,
+    "3.x": 68010,
+    "4.x": 20554,
+    "1.x": 201
+  },
+  "mean_injuries": 2.35,
+  "diagnosis_clearance_delta": 0,
+  "injury_loops_detected": 0,
+  "match_of_week_mismatches": 0,
+  "mean_level_at_year_end": 21.0,
+  "supercards_per_year": [
+    13
+  ],
+  "rivalry_cycles_per_year": [
+    13
+  ]
+}
