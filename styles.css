@@ -1936,3 +1936,19 @@ body.career-view .presentation-summary .winner-celebration{
 .lpw837b3-later-help{max-width:620px;margin:15px auto;color:#ddd;text-align:center}.lpw837b3-achievement{min-height:calc(100vh - 98px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at center,#2e2410 0,#0b0c10 45%,#050608 100%)}.lpw837b3-achievement h1{font-size:clamp(2.3rem,9vw,5rem);max-width:850px}.lpw837b3-achievement p{font-size:1.2rem;max-width:600px}.lpw837b3-trophy{font-size:7rem;color:#ffd343;filter:drop-shadow(0 0 24px #f3b51c)}
 .lpw837b3-recap-skip{margin:0 0 24px!important}.lpw-consequence-screen .lpw-change-grid>div small{font-size:.8rem}
 @media(max-width:760px){.lpw837b3-one-screen{padding:22px 18px!important}.lpw837b3-one-screen h1{font-size:2.2rem!important;margin-bottom:14px!important}.lpw837b3-one-screen .live-npc-scene.large{grid-template-columns:105px 1fr!important}.lpw837b3-one-screen .live-npc-scene.large img{max-height:230px!important}.lpw837b3-one-screen .live-npc-scene.large p{font-size:1rem!important;line-height:1.35!important}.lpw837b3-one-screen .live-choice-grid{gap:12px!important}.lpw837b3-one-screen .live-choice-grid button{padding:14px!important}.winner-celebration .winner-copy h2{font-size:clamp(2.2rem,10vw,4rem)!important}}
+
+/* LEGACY 8.3.7 BUILD 4 — mobile event and continuity polish */
+.lpw837-npc-portrait{grid-template-columns:110px 1fr!important;align-items:center!important;min-height:0!important;padding:16px!important}
+.lpw837-npc-portrait img{width:110px!important;height:110px!important;max-height:110px!important;object-fit:contain!important;object-position:center!important}
+.lpw837b4-event{max-width:760px;margin:0 auto;min-height:auto!important}
+.lpw837b4-event .live-choice-grid{gap:10px!important}.lpw837b4-event .live-choice-grid button{min-height:0!important;padding:14px 16px!important}
+.lpw837b4-event h1{margin-bottom:12px!important}.lpw837b4-event .live-npc-scene p{font-size:1rem!important;line-height:1.35!important}
+.lpw837b4-champion-fix>img,.lpw837b4-champion-fix .art-full{max-height:390px!important;margin-bottom:24px!important;object-position:center bottom!important}
+.lpw837b4-champion-fix small{display:block;position:relative;z-index:2;margin-top:12px!important}
+.lpw837b4-bottom-continue{margin:26px auto 8px!important;display:flex!important}
+@media(max-width:720px){
+ .lpw837b4-event{padding:18px 16px!important}.lpw837b4-event h1{font-size:2rem!important}.lpw837b4-event .tv-kicker{margin-bottom:8px!important}
+ .lpw837-npc-portrait{grid-template-columns:88px 1fr!important}.lpw837-npc-portrait img{width:88px!important;height:88px!important;max-height:88px!important}
+ .lpw837b4-event .live-choice-grid button b{font-size:1rem!important}.lpw837b4-event .live-choice-grid button span,.lpw837b4-event .live-choice-grid button em{font-size:.78rem!important}
+ .lpw837b4-champion-fix>img,.lpw837b4-champion-fix .art-full{max-height:36vh!important;margin-bottom:30px!important}
+}
