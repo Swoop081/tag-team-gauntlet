@@ -3000,3 +3000,113 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const priorComplete=liveCompleteBroadcast;
  liveCompleteBroadcast=function(win){const r=priorComplete(win);const c=liveLoad();if(c){c.momentum=liveClamp(Math.round(50+(c.momentum-50)*.82),20,85);liveSave(c)}return r};
 })();
+
+/* ============================================================
+   LEGACY PRO WRESTLING 8.3.7 BUILD 9 — ACTUAL ENGINE YEAR QA
+   ============================================================ */
+(function(){
+ const BUILD='9';
+ const dayIndex=c=>((Number(c?.month||1)-1)*28+(Number(c?.week||1)-1)*7+Number(c?.day||0));
+ function ensureMedical(c){
+  c.world=c.world||{};
+  let i=c.world.injury;
+  if(!i)return null;
+  if(typeof i!=='object')i={severity:'Minor'};
+  const d=c.world.injuryDetail||{};
+  i={name:i.name||d.name||'Bruised ribs',severity:i.severity||d.severity||'Minor',recovery:i.recovery||d.recovery||'3–5 days',cause:i.cause||d.cause||'a hard landing during your previous match',...i};
+  i.id=i.id||`inj-${dayIndex(c)}-${Math.random().toString(36).slice(2,8)}`;
+  if(i.treatment||i.until||i.risk)i.diagnosed=true;
+  if(i.diagnosed){
+   i.active=true;i.diagnosisShown=true;i.treatment=i.treatment||'rest';
+   i.risk=i.risk||(i.treatment==='push'?'High':'Reduced');
+   i.started=Number.isFinite(Number(i.started))?Number(i.started):dayIndex(c)-1;
+   i.until=Number.isFinite(Number(i.until))?Number(i.until):dayIndex(c)+(i.treatment==='push'?5:4);
+  }
+  c.world.injury=i;c.world.injuryDetail={name:i.name,severity:i.severity,recovery:i.recovery,cause:i.cause,id:i.id};return i;
+ }
+ function finishClearance(c,i){
+  c.world.lastInjuryCleared=dayIndex(c);c.world.lastClearedInjury=i.name;c.world.lastClearedInjuryId=i.id;
+  c.world.injury=null;c.world.injuryDetail=null;c.world.injuryCooldownUntil=dayIndex(c)+56;liveSave(c);
+ }
+ const load0=liveLoad;
+ liveLoad=function(){
+  const c=load0();if(!c)return c;const i=ensureMedical(c);
+  if(i?.diagnosed&&dayIndex(c)>Number(i.until)&&c.world.lastClearedInjuryId!==i.id)finishClearance(c,i);
+  if(c.world?.injuryCooldownUntil&&dayIndex(c)<Number(c.world.injuryCooldownUntil)&&c.world.injury&&!c.world.injury.diagnosed){c.world.injury=null;c.world.injuryDetail=null}
+  liveSave(c);return c;
+ };
+ const doctor0=gauntletLiveDoctorVisit;
+ gauntletLiveDoctorVisit=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const i=ensureMedical(c);liveSave(c);
+  if(!i)return gauntletLiveCalendar();
+  if(!i.diagnosed&&!i.diagnosisShown){i.diagnosisShown=true;c.world.injury=i;liveSave(c);return doctor0()}
+  if(i.diagnosed&&dayIndex(c)>=Number(i.until)){
+   finishClearance(c,i);
+   return render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL CLEARANCE</div><h1>CLEARED TO COMPETE</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><div class="lpw-world-reaction"><small>RECOVERY COMPLETE</small><p>Your ${i.name} has healed and all physical restrictions have been removed.</p></div><div class="lpw-ripple"><b>INJURY PROTECTION</b><span>No new random injury can occur for the next two in-game months.</span></div><button class="btn live-primary" onclick="gauntletLiveCalendar()">CONTINUE</button></section>`)
+  }
+  return typeof lpw837b8AdvanceRecovery==='function'?render(`<section class="panel live-world-screen lpw-consequence-screen"><div class="tv-kicker">MEDICAL PROGRESS</div><h1>RECOVERY CONTINUES</h1><div class="lpw-consequence-host">${npcImage('dr-lena-hart','portrait')}<span><small>CHIEF MEDICAL OFFICER</small><b>Dr. Lena Hart</b></span></div><div class="lpw-ripple"><b>EXPECTED CLEARANCE</b><span>${Math.max(1,Number(i.until)-dayIndex(c))} day${Math.max(1,Number(i.until)-dayIndex(c))===1?'':'s'} remaining · Risk: ${i.risk}</span></div><button class="btn live-primary" onclick="lpw837b8AdvanceRecovery()">CONTINUE TO NEXT DAY</button></section>`):gauntletLiveCalendar()
+ };
+ const clear0=gauntletLiveClearInjury;
+ gauntletLiveClearInjury=function(type){
+  const c=liveLoad();if(!c)return gauntletLiveHome();let i=ensureMedical(c)||{};
+  i={...i,id:i.id||`inj-${dayIndex(c)}-${Math.random().toString(36).slice(2,8)}`,active:true,diagnosed:true,diagnosisShown:true,treatment:type,risk:type==='push'?'High':'Reduced',started:dayIndex(c),until:dayIndex(c)+(type==='push'?5:4)};
+  c.world.injury=i;c.world.injuryDetail={name:i.name,severity:i.severity,recovery:i.recovery,cause:i.cause,id:i.id};liveSave(c);
+  return clear0(type)
+ };
+
+ /* A medical restriction may postpone a SuperCard, but it may never erase one. */
+ const begin0=gauntletLiveBeginDay;
+ gauntletLiveBeginDay=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const i=ensureMedical(c);
+  if(i&&liveIsSupercard(c)){
+   c.world.deferredSupercard=c.world.deferredSupercard||{name:liveCurrentSupercard(c),opponent:liveFeudOpponent(c)?.id||liveChooseStoryOpponent(c).id,originalMonth:c.month,originalWeek:c.week};
+   liveSave(c);
+  }
+  if(!i&&c.world?.deferredSupercard){return gauntletLiveDeferredSupercardCard()}
+  return begin0()
+ };
+ window.gauntletLiveDeferredSupercardCard=function(){
+  const c=liveLoad();if(!c)return gauntletLiveHome();const d=c.world.deferredSupercard,player=liveFounder(c.active),opp=liveFounder(d.opponent)||liveChooseStoryOpponent(c);
+  c.pending={opponent:opp.id,isSupercard:true,deferredSupercard:true,supercardName:d.name};liveSave(c);
+  render(`<section class="panel live-match-card"><div class="tv-kicker">POSTPONED SUPERCARD · ${String(d.name||'SUPERCARD').toUpperCase()}</div><h1>MEDICALLY CLEARED FEUD FINALE</h1><div class="live-versus"><div>${imageWithFallback(player,'portrait','art-portrait','matchPortrait')}<b>${player.name}</b></div><strong>VS</strong><div>${imageWithFallback(opp,'portrait','art-portrait','matchPortrait')}<b>${opp.name}</b></div></div><p>The match postponed by medical restriction will now take place before the career moves on.</p><button class="btn live-primary" onclick="gauntletLiveLaunchBroadcast()">BEGIN MATCH BROADCAST</button></section>`)
+ };
+ const card0=gauntletLiveMatchCard;
+ gauntletLiveMatchCard=function(){const c=liveLoad();if(c?.world?.deferredSupercard&&!c.world.injury)return gauntletLiveDeferredSupercardCard();return card0()};
+
+ /* Persist real SuperCard records and avoid immediate rivalry recycling. */
+ const complete0=liveCompleteBroadcast;
+ liveCompleteBroadcast=function(win){
+  const before=liveLoad(),pending=before?.pending?{...before.pending}:null,active=before?.active;
+  const result=complete0(win);const c=liveLoad();if(!c||!pending)return result;
+  if(pending.isSupercard){
+   const p=liveProgress(active,c);p.supercardWins=Number(p.supercardWins)||0;p.supercardLosses=Number(p.supercardLosses)||0;
+   if(win)p.supercardWins++;else p.supercardLosses++;
+   c.world.supercardHistory=Array.isArray(c.world.supercardHistory)?c.world.supercardHistory:[];
+   c.world.supercardHistory.unshift({month:pending.deferredSupercard?(c.world.deferredSupercard?.originalMonth||c.month):c.month,name:pending.supercardName||c.world.deferredSupercard?.name||liveCurrentSupercard(c),opponent:pending.opponent,win});
+   c.world.supercardHistory=c.world.supercardHistory.slice(0,24);
+   if(pending.deferredSupercard)c.world.deferredSupercard=null;
+   liveSave(c)
+  }
+  return result
+ };
+ const pick0=livePickDifferent;
+ livePickDifferent=function(c,exclude=[]){
+  const recent=(c?.world?.supercardHistory||[]).slice(0,6).map(x=>x.opponent);
+  const expanded=[...(Array.isArray(exclude)?exclude:[exclude]),...recent];
+  return pick0(c,expanded)
+ };
+
+ /* Random injuries are uncommon and the two-month cooldown is absolute. */
+ const completeInjuryGuard0=liveCompleteBroadcast;
+ liveCompleteBroadcast=function(win){
+  const before=liveLoad(),had=!!before?.world?.injury,cooldown=Number(before?.world?.injuryCooldownUntil||0),today=dayIndex(before||{});
+  const result=completeInjuryGuard0(win);const c=liveLoad();if(!c)return result;
+  if(!had&&c.world?.injury){
+   if(today<cooldown||Math.random()>.035){c.world.injury=null;c.world.injuryDetail=null;liveSave(c)}
+  }
+  return result
+ };
+
+ /* Version and cache-visible identity. */
+ const home0=gauntletLiveHome;gauntletLiveHome=function(){const r=home0();document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent=`VERSION 8.3.7 BUILD ${BUILD}`);return r};
+})();
