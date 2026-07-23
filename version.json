@@ -1,5 +1,5 @@
 {
-  "version": "8.5.9",
+  "version": "8.6.0",
   "build": "Jett Single-Screen Decision Cards",
   "date": "2026-07-23",
   "notes": "Fits all three Jett decision cards on one mobile screen and limits the text shadow to a local vignette behind the right-aligned copy.",

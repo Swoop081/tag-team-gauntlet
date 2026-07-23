@@ -4101,3 +4101,63 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  };
  window.LPW_CHAMPIONSHIP_PATH_VERSION=BUILD;
 })();
+
+/* LEGACY Pro Wrestling 8.6.0 — Collections & Unlockables */
+(function(){
+ const BUILD='8.6.0';
+ const UNLOCK_KEY='lpw_unlockables_v1';
+ const PENDING_KEY='lpw_pending_unlocks_v1';
+ const JETT_CARDS=[
+  ['break-their-heart','Break Their Heart','Win your first match as Jett Valentine.'],
+  ['heart-of-gold','Heart of Gold','Complete 2 matches as Jett Valentine.'],
+  ['one-last-encore','One Last Encore','Win a match after completing at least 3 matches as Jett Valentine.'],
+  ['tune-up-the-band','Tune Up the Band','Complete 3 matches as Jett Valentine.'],
+  ['showstopper','Showstopper','Win 3 matches as Jett Valentine.'],
+  ['picture-perfect','Picture Perfect','Earn a match rating of 3 stars or higher as Jett Valentine.'],
+  ['feed-off-the-attention','Feed Off the Attention','Complete 5 matches as Jett Valentine.'],
+  ['raise-the-tempo','Raise the Tempo','Win 5 matches as Jett Valentine.'],
+  ['flash-of-brilliance','Flash of Brilliance','Win 2 consecutive matches as Jett Valentine.'],
+  ['steal-the-spotlight','Steal the Spotlight','Complete 8 matches as Jett Valentine.'],
+  ['high-risk','High Risk','Earn a match rating of 4 stars or higher as Jett Valentine.'],
+  ['never-misses','Never Misses','Win a match rated as a decisive finish as Jett Valentine.'],
+  ['stolen-moment','Stolen Moment','Win 7 matches as Jett Valentine.'],
+  ['believe-the-hype','Believe the Hype','Win 10 matches as Jett Valentine.'],
+  ['heartbreaker','Heartbreaker','Complete 20 matches as Jett Valentine.']
+ ];
+ const LOCATIONS={
+  'jack-mercer':'Austin, Texas','victor-royale':'Greenwich, Connecticut','jett-valentine':'San Antonio, Texas','revenant':'Death Valley','nightwatch':'Venice Beach, California','titan':'Miami, Florida','mason-marks':'Calgary, Alberta','hollowman':'Parts Unknown','damian-black':'St. Louis, Missouri','elias-crowe':'Long Island, New York','el-rey-del-cielo':'Mexico City, Mexico','max-justice':'Boston, Massachusetts','primal':'Washington, D.C.','lucas-bennett':'Pittsburgh, Pennsylvania','marcus-king':'Harlem, New York','mateo-vega':'El Paso, Texas','ryder-phoenix':'Winnipeg, Manitoba','sterling-sinclair':'Charlotte, North Carolina','dave-maddox':'Atlanta, Georgia','logan-steele':'Tampa, Florida',
+  'ace-riot':'Chicago, Illinois','axel-voss':'Berlin, Germany','bianca-balboa':'New York City, New York','chloe-carter':'Orlando, Florida','jasmine-monroe':'Knoxville, Tennessee','kaori-mizuno':'Tokyo, Japan','valkyrie-hale':'Adelaide, Australia','sienna':'Norwich, England'
+ };
+ const SIZES={
+  'jett-valentine':['6\'1\"','225 lb'],'jack-mercer':['6\'2\"','252 lb'],'victor-royale':['6\'4\"','270 lb'],'revenant':['6\'9\"','315 lb'],'nightwatch':['6\'3\"','255 lb'],'titan':['6\'5\"','275 lb'],'mason-marks':['6\'0\"','235 lb'],'hollowman':['6\'8\"','326 lb'],'damian-black':['6\'3\"','245 lb'],'elias-crowe':['6\'2\"','287 lb'],'el-rey-del-cielo':['5\'6\"','175 lb'],'max-justice':['6\'1\"','251 lb'],'primal':['6\'5\"','290 lb'],'lucas-bennett':['6\'1\"','238 lb'],'marcus-king':['6\'3\"','250 lb'],'mateo-vega':['5\'9\"','228 lb'],'ryder-phoenix':['6\'0\"','227 lb'],'sterling-sinclair':['6\'1\"','243 lb'],'dave-maddox':['6\'4\"','248 lb'],'logan-steele':['6\'7\"','302 lb']
+ };
+ function profileData(w){
+  const size=SIZES[w.id]||[w.power>=90?'6\'4\"':w.speed>=90?'5\'10\"':'6\'1\"',w.power>=90?'275 lb':w.speed>=90?'205 lb':'235 lb'];
+  const style=(typeof profileFor==='function'?profileFor(w).archetype:'Professional Wrestler');
+  const base=BIOS[w.id]||`${w.name} has earned a place on the LPW roster through a distinctive mix of skill, determination and personality.`;
+  return {height:size[0],weight:size[1],from:LOCATIONS[w.id]||'United States',style,bio:`${base} ${w.name} approaches every contest with a clear identity, using ${w.signature} to turn the smallest opening into a defining moment. Away from the spotlight, the same ambition that brought ${w.name} to LPW continues to drive the pursuit of bigger matches and lasting championship success.`};
+ }
+ function unlocked(){try{return JSON.parse(localStorage.getItem(UNLOCK_KEY)||'{}')}catch(e){return {}}}
+ function saveUnlocked(x){try{localStorage.setItem(UNLOCK_KEY,JSON.stringify(x))}catch(e){}}
+ function pending(){try{return JSON.parse(sessionStorage.getItem(PENDING_KEY)||'[]')}catch(e){return []}}
+ function savePending(x){try{sessionStorage.setItem(PENDING_KEY,JSON.stringify(x))}catch(e){}}
+ function jettStats(){const s=loadStats(),j=s.wrestlers?.['jett-valentine']||{matches:0,wins:0,losses:0};return {matches:j.matches||0,wins:j.wins||0,streak:s.currentStreak||0,rating:s.highestRated?.rating||0,last:s.lastMatch};}
+ function requirementMet(id,st){switch(id){
+  case'break-their-heart':return st.wins>=1;case'heart-of-gold':return st.matches>=2;case'one-last-encore':return st.matches>=3&&st.wins>=1;case'tune-up-the-band':return st.matches>=3;case'showstopper':return st.wins>=3;case'picture-perfect':return st.rating>=3;case'feed-off-the-attention':return st.matches>=5;case'raise-the-tempo':return st.wins>=5;case'flash-of-brilliance':return st.streak>=2;case'steal-the-spotlight':return st.matches>=8;case'high-risk':return st.rating>=4;case'never-misses':return st.wins>=1&&st.last?.winner?.includes('Jett Valentine');case'stolen-moment':return st.wins>=7;case'believe-the-hype':return st.wins>=10;case'heartbreaker':return st.matches>=20;default:return false}}
+ function auditUnlocks(){const u=unlocked(),st=jettStats(),newOnes=[];JETT_CARDS.forEach(c=>{const key='jett-valentine.'+c[0];if(!u[key]&&requirementMet(c[0],st)){u[key]={unlockedAt:new Date().toISOString()};newOnes.push(c[0])}});if(newOnes.length){saveUnlocked(u);savePending([...pending(),...newOnes])}return newOnes}
+ window.lpwShowUnlockCelebration=function(returnAction='collectionProfile(\'jett-valentine\',\'unlockables\')'){
+  const q=pending();if(!q.length){eval(returnAction);return}const id=q.shift();savePending(q);const c=JETT_CARDS.find(x=>x[0]===id);
+  render(`<section class="panel unlock-celebration"><div class="unlock-rays"></div><div class="tv-kicker">NEW UNLOCKABLE</div><h1>${c[1]}</h1><div class="unlock-celebration-card foil-card"><img src="assets/decisions/jett-valentine/${id}.webp" alt="${c[1]}"><i></i></div><p>${c[2]}</p><div class="live-result-actions"><button class="btn live-primary" onclick="collectionProfile('jett-valentine','unlockables')">VIEW IN COLLECTION</button><button class="btn secondary" onclick="${q.length?`lpwShowUnlockCelebration(\`${returnAction}\`)`:returnAction}">CONTINUE</button></div></section>`)
+ };
+ const originalRecord=recordCompletedMatch;recordCompletedMatch=function(win,rating){originalRecord(win,rating);auditUnlocks()};
+ const originalRender=render;render=function(x){originalRender(x);setTimeout(()=>{
+  if(!pending().length)return;const result=document.querySelector('.match-result,.live-day-complete');if(!result||result.dataset.unlockHooked)return;result.dataset.unlockHooked='1';const btn=[...result.querySelectorAll('button')].find(b=>/CONTINUE|NEXT|CALENDAR|REWARD/i.test(b.textContent));if(btn){const action=btn.getAttribute('onclick')||'home()';btn.setAttribute('onclick',`lpwShowUnlockCelebration(\`${action.replace(/`/g,'')}\`)`)}
+ },0)};
+ window.collection=function(){setActiveGameMode(ACTIVE_GAME_MODE==='career'?'career':'home');const managers=Object.values(SUPPORT_CAST).filter(x=>x.group==='Managers'),broadcast=Object.values(SUPPORT_CAST).filter(x=>x.group==='Broadcast Team');const supportTiles=list=>list.map(x=>`<article class="collection-tile support-tile">${npcImage(x.id,'full')}<span><small>${x.role}</small><b>${x.name}</b></span></article>`).join('');render(`<section class="collection-screen">${shellBack()}<header class="section-heading"><div><h1>CHARACTER DATABASE</h1><p>Wrestlers, managers and the broadcast team.</p></div></header><h2 class="collection-section-title">WRESTLERS</h2><div class="collection-grid standardized-collection">${[...WRESTLERS].sort((a,b)=>a.name.replace(/["']/g,'').localeCompare(b.name.replace(/["']/g,''))).map(w=>`<button class="collection-tile" onclick="collectionProfile('${w.id}')"><div class="collection-waist-crop">${imageWithFallback(w,'full','art-full','collection')}</div><span><small>${w.title}</small><b>${w.name}</b></span></button>`).join('')}</div><h2 class="collection-section-title">MANAGERS</h2><div class="collection-grid support-grid">${supportTiles(managers)}</div><h2 class="collection-section-title">BROADCAST TEAM</h2><div class="collection-grid support-grid">${supportTiles(broadcast)}</div></section>`)};
+ window.collectionProfile=function(id,tab='profile'){const w=WRESTLERS.find(x=>x.id===id);if(!w)return collection();const d=profileData(w),u=unlocked();const unlockBody=id==='jett-valentine'?`<div class="unlockables-grid">${JETT_CARDS.map(c=>{const on=!!u['jett-valentine.'+c[0]];return `<button class="unlockable-card ${on?'unlocked foil-card':'locked'}" ${on?`onclick="lpwOpenUnlockable('${c[0]}')"`:''}><img src="assets/decisions/jett-valentine/${c[0]}.webp" alt="${c[1]}"><i></i><span><b>${c[1]}</b><small>${on?'UNLOCKED':c[2]}</small></span></button>`}).join('')}</div>`:`<div class="unlockables-coming"><h2>COMING SOON</h2><p>Unlockable artwork for ${w.name} will be added in a future update.</p></div>`;
+ render(`<section class="profile-screen redesigned-profile"><div class="profile-nav"><button class="shell-back" onclick="collection()">← COLLECTION</button></div><div class="profile-tabs"><button class="${tab==='profile'?'active':''}" onclick="collectionProfile('${id}','profile')">PROFILE</button><button class="${tab==='unlockables'?'active':''}" onclick="collectionProfile('${id}','unlockables')">UNLOCKABLES</button></div>${tab==='profile'?`<div class="profile-art image-framework-profile">${imageWithFallback(w,'full','art-full','profile')}</div><div class="profile-copy"><small>${w.title}</small><h1>${w.name}</h1><div class="profile-signature"><span>SIGNATURE MOVE</span><b>${w.signature}</b></div><p>${d.bio}</p><div class="profile-facts modern"><div><small>HEIGHT</small><b>${d.height}</b></div><div><small>WEIGHT</small><b>${d.weight}</b></div><div><small>FROM</small><b>${d.from}</b></div><div><small>STYLE</small><b>${d.style}</b></div></div></div>`:`<div class="profile-copy unlockables-panel"><small>${w.title}</small><h1>${w.name}</h1>${unlockBody}</div>`}</section>`)};
+ window.lpwOpenUnlockable=function(id){const c=JETT_CARDS.find(x=>x[0]===id);if(!c)return;overlay.innerHTML=`<div class="overlay unlock-lightbox" onclick="if(event.target===this)this.innerHTML='' "><div><button onclick="overlay.innerHTML=''">×</button><div class="foil-card"><img src="assets/decisions/jett-valentine/${id}.webp" alt="${c[1]}"><i></i></div><h2>${c[1]}</h2></div></div>`};
+ const careerHome=gauntletLiveHome;gauntletLiveHome=function(){setActiveGameMode('career');const r=careerHome();setTimeout(()=>{const menu=document.querySelector('.live-mode-actions,.live-home-actions,.hub-menu');if(menu&&!menu.querySelector('.lpw-collection-link'))menu.insertAdjacentHTML('beforeend','<button class="btn secondary lpw-collection-link" onclick="collection()">COLLECTION</button>')},0);return r};
+ document.querySelectorAll('.build-tag').forEach(x=>x.textContent='VERSION '+BUILD);
+ window.LPW_COLLECTIONS_VERSION=BUILD;
+})();
