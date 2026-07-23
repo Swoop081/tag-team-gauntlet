@@ -1,7 +1,7 @@
 {
-  "version": "8.5.5",
-  "build": "Championship Path",
-  "date": "2026-07-22",
-  "notes": "Corrects reversed AI win-loss records and World Recap ranking display.",
+  "version": "8.5.6",
+  "build": "Jett Decision Cards Framework",
+  "date": "2026-07-23",
+  "notes": "Adds illustrated decision cards for Jett Valentine only; all other wrestlers retain the existing decision buttons.",
   "updated": "2026-07-23"
 }

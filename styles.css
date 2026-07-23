@@ -2005,3 +2005,25 @@ body.career-view .presentation-summary .winner-celebration{
 
 /* 8.5.5 champion record */
 .lpw855-champion-record{display:block;margin-top:.35rem;color:#d9d9df;font-style:normal;font-size:.9rem;font-weight:700;letter-spacing:.08em}
+
+/* 8.5.6 — illustrated decision cards. Jett Valentine only. */
+.jett-decision-presentation{max-width:1120px!important}
+.jett-decision-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.jett-decision-card{position:relative;display:block;overflow:hidden;aspect-ratio:3/2;padding:0;border:2px solid #a8792a;border-radius:14px;background:#08080a;color:#fff;cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,.42);isolation:isolate;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.jett-decision-card:hover,.jett-decision-card:focus-visible{transform:translateY(-4px);border-color:#f2cf69;box-shadow:0 17px 35px rgba(0,0,0,.58),0 0 0 2px rgba(242,207,105,.18)}
+.jett-card-art,.jett-card-art img,.jett-card-shade{position:absolute;inset:0;display:block;width:100%;height:100%}
+.jett-card-art img{object-fit:cover;object-position:center}
+.jett-card-shade{background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.34) 62%,rgba(0,0,0,.94) 100%);z-index:1}
+.jett-card-copy{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:18px 15px 14px;text-align:left;text-shadow:0 2px 5px #000}
+.jett-card-copy small{display:block;color:#f3cf64;font-size:.62rem;font-weight:900;letter-spacing:.17em;margin-bottom:4px}
+.jett-card-copy b{display:block;font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;font-size:clamp(1.05rem,2vw,1.55rem);font-style:italic;letter-spacing:.025em;line-height:1;text-transform:uppercase}
+@media(max-width:760px){
+ .jett-decision-presentation{padding:18px 12px!important}
+ .jett-decision-presentation h2{font-size:1.55rem!important;margin:.35rem 0!important}
+ .jett-decision-presentation>p{font-size:.8rem!important;margin:.35rem auto .7rem!important}
+ .jett-decision-grid{gap:7px;margin-top:10px}
+ .jett-decision-card{border-radius:9px;border-width:1px}
+ .jett-card-copy{padding:11px 8px 8px}
+ .jett-card-copy small{font-size:.43rem;letter-spacing:.1em;margin-bottom:2px}
+ .jett-card-copy b{font-size:clamp(.68rem,3vw,.92rem)}
+}

@@ -1361,12 +1361,57 @@ const LPW_DECISION_GUIDANCE=true;
 function lpwRiskLabel(chance){return chance>=.68?{key:'favourable',label:'FAVOURABLE'}:chance>=.52?{key:'balanced',label:'BALANCED'}:{key:'risky',label:'RISKY'}}
 function lpwAttrNames(action){return (ACTION_META[action]?.attrs||[]).map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(' + ')}
 function lpwGuidance(action){return ({risk:'Huge swing if it lands; failure can hand control away.',control:'Reliable way to steady the match and protect your position.',pressure:'Builds control without committing everything to one moment.',comeback:'Can reverse a crisis quickly; failure may deepen the danger.',survive:'Safer counter that stabilises the match for a smaller reward.',finisher:'Match-ending potential with the highest consequences if countered.',tag:'Uses teamwork and fresh energy to change the match.'})[action]||'Changes the next exchange.'}
+/* 8.5.6 Decision Card Framework — enabled only for Jett Valentine. */
+const JETT_DECISION_CARDS={
+ opening:[
+  {name:'Steal the Spotlight',slug:'steal-the-spotlight',action:'risk'},
+  {name:'Showstopper',slug:'showstopper',action:'control'},
+  {name:'Believe the Hype',slug:'believe-the-hype',action:'pressure'},
+  {name:'Never Misses',slug:'never-misses',action:'control'}
+ ],
+ control:[
+  {name:'Feed Off the Attention',slug:'feed-off-the-attention',action:'pressure'},
+  {name:'Raise the Tempo',slug:'raise-the-tempo',action:'risk'},
+  {name:'Flash of Brilliance',slug:'flash-of-brilliance',action:'control'},
+  {name:'Picture Perfect',slug:'picture-perfect',action:'risk'},
+  {name:'Stolen Moment',slug:'stolen-moment',action:'pressure'}
+ ],
+ crisis:[
+  {name:'One Last Encore',slug:'one-last-encore',action:'comeback'},
+  {name:'Heart of Gold',slug:'heart-of-gold',action:'survive'},
+  {name:'Break Their Heart',slug:'break-their-heart',action:'comeback'}
+ ],
+ finish:[
+  {name:'Tune Up the Band',slug:'tune-up-the-band',action:'finisher'},
+  {name:'High Risk',slug:'high-risk',action:'risk'},
+  {name:'Heartbreaker',slug:'heartbreaker',action:'finisher'}
+ ]
+};
+const lpw855BuildPersonalOptions=buildPersonalOptions;
+buildPersonalOptions=function(w,phase){
+ if(!w||w.id!=='jett-valentine')return lpw855BuildPersonalOptions(w,phase);
+ const cards=JETT_DECISION_CARDS[phase]||JETT_DECISION_CARDS.control;
+ return cards.map(card=>({
+  ...card,
+  desc:'',exclusive:true,
+  attr:Math.round(attributeValue(w,card.action)),
+  image:`assets/decisions/jett-valentine/${card.slug}.webp`
+ }));
+};
+function isJettDecisionPresentation(){return S?.team?.[M?.activeP]?.id==='jett-valentine'}
+function jettDecisionCardHTML(option,index){
+ const label=String(option.name||'Decision').replace(/"/g,'&quot;');
+ return `<button type="button" class="jett-decision-card" onclick="storyChoice('choice-${index}')" aria-label="Choose ${label}"><span class="jett-card-art"><img src="${option.image}" alt="${label}" loading="eager"></span><span class="jett-card-shade"></span><span class="jett-card-copy"><small>JETT VALENTINE</small><b>${option.name}</b></span></button>`;
+}
+
 decisionHTML=function(){
  if(M.decisionOutcome){
   const x=M.decisionOutcome,sign=n=>n>0?`+${n}`:`${n}`;
   return `<div class="story-decision psychology-v2-foundation decision-outcome outcome-${x.key}"><div class="your-call-label">YOUR CALL</div><h2>${x.label}</h2><p>${x.summary}</p><div class="outcome-deltas"><span><b>${sign(x.score)}</b><small>MATCH SCORE</small></span><span><b>${sign(x.control)}</b><small>CONTROL</small></span><span><b>${sign(x.crowd)}</b><small>CROWD</small></span></div><div class="outcome-progress">RESULT APPLIED</div><button type="button" class="btn outcome-continue" style="display:block!important;visibility:visible!important;opacity:1!important;margin:18px auto 2px!important;pointer-events:auto!important" onclick="continueDecisionOutcome()">CONTINUE MATCH</button></div>`;
  }
- const d=getDecision();M.currentDecision=d;return `<div class="story-decision psychology-v2-foundation"><div class="your-call-label">YOUR CALL</div><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid psychology-neutral">${d.options.map((x,i)=>`<button class="choice psychology-choice choice-name-only" onclick="storyChoice('choice-${i}')"><b>${x.name}</b></button>`).join('')}</div></div>`
+ const d=getDecision();M.currentDecision=d;
+ if(isJettDecisionPresentation())return `<div class="story-decision psychology-v2-foundation jett-decision-presentation"><div class="your-call-label">YOUR CALL</div><h2>${d.title}</h2><p>${d.text}</p><div class="jett-decision-grid">${d.options.map(jettDecisionCardHTML).join('')}</div></div>`;
+ return `<div class="story-decision psychology-v2-foundation"><div class="your-call-label">YOUR CALL</div><h2>${d.title}</h2><p>${d.text}</p><div class="choice-grid psychology-neutral">${d.options.map((x,i)=>`<button class="choice psychology-choice choice-name-only" onclick="storyChoice('choice-${i}')"><b>${x.name}</b></button>`).join('')}</div></div>`
 };
 
 function lpwEnsureDirector(c){liveEnsureWorld(c);c.world.director=c.world.director||{lastNpc:null,lastType:null,seen:{},managerOfferMonth:0};return c.world.director}
