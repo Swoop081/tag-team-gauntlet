@@ -1343,7 +1343,7 @@ render=function(x){_renderLPW7(x);const html=String(x);const career=html.include
 
 home=function(){
  clearStoryTimer();M=null;overlay.innerHTML='';document.body.classList.remove('career-view','classic-view');const w=featuredSuperstar();
- render(`<section class="game-hub lpw-home"><div class="hub-copy"><h1>LEGACY <span>PRO WRESTLING</span></h1><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>CAREER</b><small>Pursue greatness in a never-ending Career Mode where the stakes change daily.</small></button><button class="hub-option" onclick="classicHome()"><b>TAG TEAM GAUNTLET</b><small>Run the Gauntlet as you try to build your dream team. One loss ends the run.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the roster and discover every wrestler in LEGACY Pro Wrestling.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>SETTINGS</b><small>Presentation and game options.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED WRESTLER</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
+ render(`<section class="game-hub lpw-home"><div class="hub-copy"><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>CAREER</b><small>Pursue greatness in a never-ending Career Mode where the stakes change daily.</small></button><button class="hub-option" onclick="classicHome()"><b>TAG TEAM GAUNTLET</b><small>Run the Gauntlet as you try to build your dream team. One loss ends the run.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the roster and discover every wrestler in LEGACY Pro Wrestling.</small></button><button class="hub-option" onclick="achievementMenu()"><b>ACHIEVEMENTS</b><small>Career milestones and challenges.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>SETTINGS</b><small>Presentation and game options.</small></button></nav></div><article class="featured-superstar"><img class="lpw-feature-logo" src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling"><div class="live-chip">FEATURED WRESTLER</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
 };
 classicHome=function(){resetClassicState();S.previewCaptain=one(WRESTLERS);const captain=S.previewCaptain;render(`<section class="panel mode-landing"><div class="actions top-actions"><button class="btn" onclick="start()">START TAG TEAM GAUNTLET</button>${shellBack()}</div><div class="mode-landing-art">${imageWithFallback(captain,'full','art-full','classicLanding')}<div class="mode-preview-label"><small>YOUR STARTING WRESTLER</small><b>${captain.name}</b></div></div><div class="mode-landing-copy"><div class="tv-kicker">CLASSIC CHALLENGE MODE</div><h1>TAG TEAM GAUNTLET</h1><p>Your run begins with <strong>${captain.name}</strong>. Choose a partner and survive to the end. Lose once and the run is over.</p></div></section>`)};
 
@@ -4329,15 +4329,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================================= */
 (function(){
- window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.8';
- document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.8');
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.9';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.9');
 })();
 
 
 /* ============================================================
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================ */
-window.LPW_BRAND_VERSION='8.6.8';
+window.LPW_BRAND_VERSION='8.6.9';
 function lpwBrandLogo(size='header',extra=''){
  const file=size==='main'?'lpw-logo-main-menu-1200.webp':size==='compact'?'lpw-logo-compact-400.webp':'lpw-logo-header-800.webp';
  return `<img class="lpw-brand-logo lpw-brand-logo-${size} ${extra}" src="assets/branding/${file}" alt="LEGACY Pro Wrestling">`;
