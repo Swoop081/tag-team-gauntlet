@@ -4272,7 +4272,7 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
  const SEEN_KEY='lpw_jett_seen_decision_cards_v1';
  const outcomeCopy={
   'major-success':{status:'MOMENTUM SHIFTS',extra:'The arena comes alive as Jett turns the choice into a defining swing.'},
-  'success':{status:'ADVANTAGE GAINED',extra:'Jett keeps the pressure on and forces the match further into his rhythm.'},
+  'success':{status:'MATCH IMPACT',extra:'Jett keeps the pressure on and forces the match further into his rhythm.'},
   'mixed':{status:'THE MATCH CONTINUES',extra:'The gamble creates movement, but neither competitor has full control yet.'},
   'mixed-result':{status:'THE MATCH CONTINUES',extra:'The gamble creates movement, but neither competitor has full control yet.'},
   'failure':{status:'OPPONENT CAPITALISES',extra:'The opening disappears, and Jett must recover before the damage grows.'},
@@ -4518,7 +4518,7 @@ render=function(html){
    <h1>THE WORLD CHAMPION SPEAKS</h1>
    <div class="lpw902-interview-stage">
     <article class="lpw902-interviewer lpw-katie-left ${speakerIsKatie?'speaking':''}">${npcImage('katie-morgan','full')}<small>BACKSTAGE INTERVIEWER</small><b>Katie Morgan</b></article>
-    <article class="lpw902-champion ${!speakerIsKatie?'speaking':''}">${imageWithFallback(champ,'full','art-full','resultVictory')}<small>REIGNING LEGACY WORLD CHAMPION</small><b>${champ.name}</b>${typeof lpw837BeltGraphic==='function'?lpw837BeltGraphic():''}</article>
+    <article class="lpw902-champion ${!speakerIsKatie?'speaking':''}">${imageWithFallback(champ,'full','art-full','resultVictory')}<small>LEGACY WORLD CHAMPION</small><b>${champ.name}</b>${typeof lpw837BeltGraphic==='function'?lpw837BeltGraphic():''}</article>
    </div>
    <div class="lpw902-dialogue-card ${d.signoff?'signoff':''}"><small>${d.role}</small><h2>${d.speaker}</h2><p>“${d.copy}”</p></div>
    <div class="live-onboarding-progress">${dialogue.map((_,i)=>`<span class="${i<=page?'on':''}"></span>`).join('')}</div>
@@ -4687,5 +4687,83 @@ render=function(html){
  gauntletLiveHome=function(){const r=homeBase.apply(this,arguments);document.querySelectorAll('.build-tag,.live-cycle b').forEach(x=>x.textContent=`VERSION ${BUILD}`);return r};
  window.gauntletLiveHome=gauntletLiveHome;
  document.querySelectorAll('.build-tag').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+})();
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.6 — PRESENTATION & MATCH PREVIEW POLISH
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.6';
+
+ /* True viewport show bumpers: move them outside any transformed app container. */
+ const render906=render;
+ render=function(markup){
+  const isBumper=typeof markup==='string'&&markup.includes('lpw904-show-bumper');
+  if(!isBumper)document.querySelectorAll('body > .lpw904-show-bumper').forEach(n=>n.remove());
+  const result=render906.apply(this,arguments);
+  if(isBumper){
+   const node=document.querySelector('.lpw904-show-bumper');
+   if(node&&node.parentElement!==document.body)document.body.appendChild(node);
+   document.documentElement.classList.add('lpw-show-bumper-active');
+   document.body.classList.add('lpw-show-bumper-active');
+  }else{
+   document.documentElement.classList.remove('lpw-show-bumper-active');
+   document.body.classList.remove('lpw-show-bumper-active');
+  }
+  return result;
+ };
+ window.render=render;
+
+ /* Raymond Briggs is a one-time first-Mayhem tutorial, not permanent preview content. */
+ window.lpw906DismissRaymond=function(){
+  const c=liveLoad();
+  if(c){c.world=c.world||{};c.world.raymondFirstMatchAcknowledged=true;liveSave(c)}
+  document.querySelectorAll('.lpw906-raymond-guide').forEach(n=>n.remove());
+  document.documentElement.classList.remove('lpw-raymond-guide-active');
+  document.body.classList.remove('lpw-raymond-guide-active');
+ };
+ function firstMayhemNeedsRaymond(c){
+  return !!c && Number(c.month||1)===1 && Number(c.week||1)===1 && Number(c.day||0)===0 && !c.world?.raymondFirstMatchAcknowledged;
+ }
+ function mountRaymondGuide(c){
+  document.querySelectorAll('.lpw906-raymond-guide').forEach(n=>n.remove());
+  if(!firstMayhemNeedsRaymond(c))return;
+  const guide=document.createElement('section');
+  guide.className='lpw906-raymond-guide';
+  guide.innerHTML=`<div class="lpw906-raymond-box">${npcImage('raymond-briggs','portrait')}<div><small>MATCH PRODUCER</small><h2>Raymond Briggs</h2><p>Use the broadcast decisions to control the pace. The result will shape what happens tomorrow.</p><button class="btn live-primary" onclick="lpw906DismissRaymond()">GOT IT</button></div></div>`;
+  document.body.appendChild(guide);
+  document.documentElement.classList.add('lpw-raymond-guide-active');
+  document.body.classList.add('lpw-raymond-guide-active');
+ }
+ const card906=gauntletLiveMatchCard65;
+ gauntletLiveMatchCard65=function(){
+  const result=card906.apply(this,arguments);
+  const c=liveLoad();
+  document.querySelectorAll('.live-match-card .producer-card').forEach(n=>n.remove());
+  mountRaymondGuide(c);
+  return result;
+ };
+ window.gauntletLiveMatchCard65=gauntletLiveMatchCard65;
+
+ /* One live control owner only; remove the redundant trailing wrestler label. */
+ const renderMatch906=renderMatch;
+ renderMatch=function(){
+  const result=renderMatch906.apply(this,arguments);
+  const strip=document.querySelector('.match-control');
+  if(strip){
+   const control=Number(M?.playerControl||50),player=S?.team?.[M?.activeP],opp=S?.opp?.[M?.activeO];
+   const heading=strip.querySelector('.team-label:first-child');
+   if(heading&&player&&opp){
+    heading.textContent=Math.abs(control-50)<=3?'MATCH EVENLY BALANCED':`${(control>50?player:opp).name.toUpperCase()} IN CONTROL`;
+   }
+   strip.querySelectorAll('.team-label.right').forEach(n=>n.remove());
+  }
+  return result;
+ };
+ window.renderMatch=renderMatch;
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
  window.LPW_GAMEPLAY_BUILD=BUILD;
 })();

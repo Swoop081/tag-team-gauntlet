@@ -2547,3 +2547,45 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 /* 9.0.5 verified control-owner presentation */
 .match-control .team-label:first-child{color:#f4cf46!important;font-weight:900!important;text-align:center!important}
 .match-control .team-label.right{opacity:.72!important;text-align:center!important}
+
+
+/* LEGACY Pro Wrestling 9.0.6 — presentation polish */
+html.lpw-show-bumper-active,body.lpw-show-bumper-active,
+html.lpw-raymond-guide-active,body.lpw-raymond-guide-active{overflow:hidden!important}
+body>.lpw904-show-bumper{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100vh!important;z-index:2147483000!important;margin:0!important;transform:none!important}
+body>.lpw904-show-bumper .lpw904-show-logo{width:min(94vw,820px)!important;max-height:88dvh!important}
+body>.lpw904-show-bumper .lpw-show-logo,body>.lpw904-show-bumper img{max-height:82dvh!important;object-fit:contain!important}
+
+/* Interview participants align on portrait and yellow role rows; names wrap below. */
+.lpw902-interview-stage{align-items:start!important}
+.lpw902-interview-stage article{display:grid!important;grid-template-rows:275px 26px 50px auto!important;align-items:start!important;justify-items:center!important;min-height:351px!important}
+.lpw902-interview-stage article>img{grid-row:1;width:100%!important;height:275px!important;max-height:275px!important;align-self:end!important}
+.lpw902-interview-stage article>small{grid-row:2;align-self:center!important;min-height:26px!important;white-space:nowrap!important}
+.lpw902-interview-stage article>b{grid-row:3;min-height:50px!important;margin:0!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;line-height:1.15!important;padding-top:4px!important;width:100%!important}
+.lpw902-interview-stage article>.lpw837-world-belt{grid-row:4}
+@media(max-width:700px){
+ .lpw902-interview-stage article{grid-template-rows:185px 24px 44px auto!important;min-height:253px!important}
+ .lpw902-interview-stage article>img{height:185px!important;max-height:185px!important}
+ .lpw902-interview-stage article>small{min-height:24px!important}
+ .lpw902-interview-stage article>b{min-height:44px!important}
+}
+
+/* First-career-match producer acknowledgement. */
+.lpw906-raymond-guide{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;z-index:2147483100!important;background:rgba(1,3,8,.82);backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;padding:22px}
+.lpw906-raymond-box{width:min(92vw,620px);display:grid;grid-template-columns:145px 1fr;gap:18px;align-items:center;background:linear-gradient(145deg,#101727,#070a11);border:1px solid #46516a;border-left:5px solid #f4cf46;padding:22px;box-shadow:0 22px 70px #000}
+.lpw906-raymond-box img{width:145px;height:190px;object-fit:contain;object-position:center bottom}
+.lpw906-raymond-box small{color:#f4cf46;font-weight:900;letter-spacing:.12em}.lpw906-raymond-box h2{margin:5px 0 10px}.lpw906-raymond-box p{line-height:1.5;margin:0 0 16px}.lpw906-raymond-box .btn{margin:0 auto;display:block}
+@media(max-width:560px){.lpw906-raymond-box{grid-template-columns:92px 1fr;gap:12px;padding:16px}.lpw906-raymond-box img{width:92px;height:145px}.lpw906-raymond-box p{font-size:.92rem}}
+
+/* Momentum moves up after permanent producer card removal. */
+.live-match-card .lpw904-momentum{margin-top:14px}
+
+/* One dynamic control heading above the meter. */
+.match-control{grid-template-columns:1fr!important;gap:5px!important}
+.match-control .team-label:first-child{min-height:auto!important;align-items:center!important;justify-content:center!important;color:#f4cf46!important}
+.match-control .team-label.right{display:none!important}
+
+/* Decision impact values: no individual boxes. */
+.jett-decision-outcome .outcome-deltas,.story-decision.decision-outcome .outcome-deltas{gap:18px!important;margin-top:14px!important}
+.jett-decision-outcome .outcome-deltas span,.story-decision.decision-outcome .outcome-deltas span{border:0!important;background:transparent!important;padding:6px 2px!important;box-shadow:none!important}
+.jett-decision-outcome .outcome-deltas b,.story-decision.decision-outcome .outcome-deltas b{font-size:1.65rem!important}
