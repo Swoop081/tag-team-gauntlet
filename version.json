@@ -1,12 +1,13 @@
 {
-  "version": "9.0.0",
-  "build": "brand-url-and-project-cleanup",
+  "version": "9.0.1",
+  "build": "last-man-standing-layout-and-commentary-polish",
   "date": "2026-07-23",
   "notes": [
-    "Added standalone Specialty Matches menu.",
-    "Added playable Last Man Standing match.",
-    "No Career Mode integration or other system changes."
+    "Moved Higher, Lower and wrestler ability controls above commentary.",
+    "Centered Last Man Standing wrestler portraits and removed their blue card backgrounds.",
+    "Added Mike Sullivan and Johnny Cannon portrait commentary presentation using the existing 1v1 assets.",
+    "No changes to other game modes or systems."
   ],
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 9.0 \u2014 Specialty Matches: Last Man Standing"
+  "label": "LEGACY Pro Wrestling 9.0.1 \u2014 Last Man Standing Layout Polish"
 }

@@ -2465,3 +2465,36 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lms-table{text-align:center;margin:24px auto 12px}.lms-card{width:130px;height:170px;margin:10px auto;border:5px solid #fff;border-radius:10px;background:#d92732;display:grid;place-items:center;font-size:5rem;font-weight:900;box-shadow:0 0 0 3px #c79b2b}.lms-turn{font-weight:800;letter-spacing:.08em}.lms-peek{color:#f5c542}.lms-notice{text-align:center;background:#c79b2b;color:#071126;font-weight:900;padding:10px;margin:12px 0}.lms-commentary{border:1px solid #33415e;background:#030914;padding:12px;min-height:96px}.lms-commentary p{margin:5px 0}.lms-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.lms-actions button{font-size:1.4rem;font-weight:900;padding:18px;background:#143776;color:#fff;border:2px solid #4b7fe8}.lms-actions button:last-child{background:#9c1520;border-color:#e5424c}.lms-ability button{width:100%;margin-top:12px;padding:12px;background:#111d35;color:#fff;border:1px solid #c79b2b}.lms-ability b,.lms-ability small{display:block}.lms-ability small{margin-top:4px}.lms-cpu-button{width:100%;margin-top:16px}
 .lms-result{text-align:center}.lms-result-art img{height:430px;max-width:100%;object-fit:contain}.lms-result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.lms-result-stats span{border:1px solid #405174;padding:12px}.lms-result-stats small,.lms-result-stats b{display:block}.lms-result-stats b{font-size:1.5rem;color:#f5c542}
 @media(max-width:700px){.lms-roster-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.lms-roster-card img{height:125px}.lms-roster-card span{padding:8px}.lms-roster-card b{font-size:.85rem}.lms-roster-card small{font-size:.67rem}.lms-versus img{height:260px}.lms-scoreboard{grid-template-columns:1fr 1fr}.lms-scoreboard>strong{display:none}.lms-scoreboard article{display:block;text-align:center;padding:8px}.lms-scoreboard article>img{width:78px;height:78px}.lms-card{width:105px;height:140px;font-size:4rem}.lms-match{padding-left:10px!important;padding-right:10px!important}}
+
+/* 9.0.1 — Last Man Standing mobile control and broadcast polish */
+.lms-scoreboard article{
+  border:0;
+  background:transparent;
+  padding:8px 4px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:center;
+}
+.lms-scoreboard article>img{display:block;margin:0 auto;width:104px;height:104px;object-position:center center}
+.lms-scoreboard article div{width:100%}
+.lms-scoreboard article small,.lms-scoreboard article b,.lms-scoreboard article em{text-align:center}
+.lms-actions,.lms-ability,.lms-cpu-button{position:relative;z-index:2}
+.lms-commentary-heading{margin-top:18px}
+.lms-commentary-heading .commentary-desk{margin-bottom:0}
+.lms-commentary{padding:10px;border-top:0;min-height:0}
+.lms-commentary-line{display:grid;grid-template-columns:54px 1fr;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #26324a}
+.lms-commentary-line:last-child{border-bottom:0}
+.lms-commentary-line .npc-art{width:54px;height:54px;object-fit:contain;object-position:center bottom}
+.lms-commentary-line p{margin:0;line-height:1.4}
+.lms-commentary-line.johnny{grid-template-columns:1fr 54px;text-align:right}
+.lms-commentary-line.johnny .npc-art{grid-column:2;grid-row:1}
+.lms-commentary-line.johnny p{grid-column:1;grid-row:1}
+@media(max-width:700px){
+ .lms-scoreboard{gap:8px}
+ .lms-scoreboard article{padding:5px 2px}
+ .lms-scoreboard article>img{width:92px;height:92px}
+ .lms-scoreboard article b{font-size:1rem;line-height:1.15}
+ .lms-commentary-heading .commentary-desk{min-height:92px}
+}

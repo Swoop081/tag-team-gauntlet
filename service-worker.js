@@ -1,5 +1,5 @@
 /* LEGACY Pro Wrestling Service Worker 8.3.7 Build 9 */
-const APP_VERSION = '9.0.0-last-man-standing';
+const APP_VERSION = '9.0.1-last-man-standing-layout';
 const CACHE_NAME = `lpw-${APP_VERSION}`;
 const CRITICAL_FILES = ['index.html','game.js','data.js','styles.css','version.json','manifest.webmanifest','service-worker.js','update-manager.js','assets/config/imageManager.js'];
 

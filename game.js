@@ -4362,7 +4362,7 @@ render=function(html){
    ============================================================================= */
 (function(){
  'use strict';
- const LMS_VERSION='9.0.0';
+ const LMS_VERSION='9.0.1';
  let LMS=null;
  const byId=id=>WRESTLERS.find(w=>w.id===id);
  const shuffle=list=>{const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -4419,12 +4419,12 @@ render=function(html){
   LMS.current=drawDecisionCard();LMS.log.push(`The opening card is ${LMS.current}.`);lastManStandingRender();
  };
  function healthBar(value){return `<div class="lms-health">${Array.from({length:10},(_,i)=>`<i class="${i<value?'active':''}"></i>`).join('')}</div>`}
- function latestLog(){return LMS.log.slice(-4).reverse().map(x=>`<p>${x}</p>`).join('')}
+ function latestLog(){return LMS.log.slice(-4).reverse().map((x,i)=>{const speaker=i%2===0?COMMENTATORS.play:COMMENTATORS.colour;const npcId=i%2===0?'mike-sullivan':'johnny-cannon';return `<div class="lms-commentary-line ${i%2===0?'mike':'johnny'}">${npcImage(npcId,'portrait')}<p>${commentatorLine(speaker,x)}</p></div>`}).join('')}
  function abilityButton(){const w=byId(LMS.playerId),a=abilityFor(w);if(LMS.playerAbilityUsed)return `<button disabled>ABILITY USED · ${a.name}</button>`;let disabled=a.key==='recover'&&LMS.playerHealth>3;return `<button ${disabled?'disabled':''} onclick="lastManStandingUseAbility()"><b>${a.name}</b><small>${a.desc}</small></button>`}
  window.lastManStandingRender=function(){
   if(!LMS)return specialtyMatchesHome();if(LMS.finished)return lastManStandingResult();
   const p=byId(LMS.playerId),o=byId(LMS.opponentId),playerTurn=LMS.turn==='player';
-  render(`<section class="panel lms-match"><div class="lms-match-top"><button class="shell-back" onclick="lastManStandingExit()">← MAIN MENU</button><span>ROUND <b>${LMS.round+1}</b></span><span>CARDS <b>${LMS.deck.length}</b></span></div><div class="tv-kicker">LAST MAN STANDING</div><div class="lms-scoreboard"><article>${portrait(p)}<div><small>YOU</small><b>${p.name}</b>${healthBar(LMS.playerHealth)}<em>${LMS.playerPressure?'MOMENTUM PRESSURE ARMED':`${LMS.playerStreak}/3 MOMENTUM`}</em></div></article><strong>VS</strong><article>${portrait(o)}<div><small>CPU</small><b>${o.name}</b>${healthBar(LMS.cpuHealth)}<em>${LMS.cpuPressure?'MOMENTUM PRESSURE ARMED':`${LMS.cpuStreak}/3 MOMENTUM`}</em></div></article></div><div class="lms-table"><small>CURRENT CARD</small><div class="lms-card">${LMS.current}</div>${LMS.peek!==null?`<p class="lms-peek">NEXT CARD: <b>${LMS.peek}</b></p>`:''}<p class="lms-turn">${playerTurn?'YOUR CALL':`${o.name.toUpperCase()} IS MAKING THE CALL…`}</p></div>${LMS.notice?`<div class="lms-notice">${LMS.notice}</div>`:''}<div class="lms-commentary">${latestLog()}</div>${playerTurn?`<div class="lms-actions"><button onclick="lastManStandingGuess('higher')">HIGHER</button><button onclick="lastManStandingGuess('lower')">LOWER</button></div><div class="lms-ability">${abilityButton()}</div>`:`<button class="btn live-primary lms-cpu-button" onclick="lastManStandingCpuTurn()">CONTINUE CPU TURN</button>`}</section>`);
+  render(`<section class="panel lms-match"><div class="lms-match-top"><button class="shell-back" onclick="lastManStandingExit()">← MAIN MENU</button><span>ROUND <b>${LMS.round+1}</b></span><span>CARDS <b>${LMS.deck.length}</b></span></div><div class="tv-kicker">LAST MAN STANDING</div><div class="lms-scoreboard"><article>${portrait(p)}<div><small>YOU</small><b>${p.name}</b>${healthBar(LMS.playerHealth)}<em>${LMS.playerPressure?'MOMENTUM PRESSURE ARMED':`${LMS.playerStreak}/3 MOMENTUM`}</em></div></article><strong>VS</strong><article>${portrait(o)}<div><small>CPU</small><b>${o.name}</b>${healthBar(LMS.cpuHealth)}<em>${LMS.cpuPressure?'MOMENTUM PRESSURE ARMED':`${LMS.cpuStreak}/3 MOMENTUM`}</em></div></article></div><div class="lms-table"><small>CURRENT CARD</small><div class="lms-card">${LMS.current}</div>${LMS.peek!==null?`<p class="lms-peek">NEXT CARD: <b>${LMS.peek}</b></p>`:''}<p class="lms-turn">${playerTurn?'YOUR CALL':`${o.name.toUpperCase()} IS MAKING THE CALL…`}</p></div>${LMS.notice?`<div class="lms-notice">${LMS.notice}</div>`:''}${playerTurn?`<div class="lms-actions"><button onclick="lastManStandingGuess('higher')">HIGHER</button><button onclick="lastManStandingGuess('lower')">LOWER</button></div><div class="lms-ability">${abilityButton()}</div>`:`<button class="btn live-primary lms-cpu-button" onclick="lastManStandingCpuTurn()">CONTINUE CPU TURN</button>`}<div class="lms-commentary-heading">${commentaryDesk()}</div><div class="lms-commentary">${latestLog()}</div></section>`);
   LMS.notice='';
  };
  function evaluate(side,guess,next){
@@ -4465,4 +4465,4 @@ render=function(html){
  window.LPW_SPECIALTY_MATCHES_VERSION=LMS_VERSION;
 })();
 
-;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0');
+;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0.1');

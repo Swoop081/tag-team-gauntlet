@@ -23,5 +23,11 @@
     "Once-per-match wrestler abilities",
     "Ten-count themed result screen"
   ],
-  "careerIntegration": false
+  "careerIntegration": false,
+  "patch": "9.0.1",
+  "changes": [
+    "LMS controls moved above commentary",
+    "LMS wrestler portrait cards centered and borderless",
+    "Existing Mike Sullivan and Johnny Cannon portrait assets added to LMS commentary"
+  ]
 }
