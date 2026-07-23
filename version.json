@@ -1,13 +1,5 @@
 {
-  "version": "9.0.1",
-  "build": "last-man-standing-layout-and-commentary-polish",
-  "date": "2026-07-23",
-  "notes": [
-    "Moved Higher, Lower and wrestler ability controls above commentary.",
-    "Centered Last Man Standing wrestler portraits and removed their blue card backgrounds.",
-    "Added Mike Sullivan and Johnny Cannon portrait commentary presentation using the existing 1v1 assets.",
-    "No changes to other game modes or systems."
-  ],
-  "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 9.0.1 \u2014 Last Man Standing Layout Polish"
+  "version": "9.0.2",
+  "build": "Career Channel-Tune Onboarding",
+  "released": "2026-07-24"
 }

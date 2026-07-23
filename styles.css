@@ -2498,3 +2498,28 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
  .lms-scoreboard article b{font-size:1rem;line-height:1.15}
  .lms-commentary-heading .commentary-desk{min-height:92px}
 }
+
+/* LEGACY 9.0.2 — one-time Career channel-tune onboarding */
+.lpw902-channel-static,.lpw902-breaking-card{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#020305;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.lpw902-static-noise{position:absolute;inset:-30%;background-image:repeating-radial-gradient(circle at 15% 30%,#fff 0 1px,#111 1px 3px),repeating-linear-gradient(90deg,transparent 0 2px,rgba(255,255,255,.34) 2px 3px,transparent 3px 5px);background-size:7px 7px,11px 100%;filter:contrast(260%);opacity:.72;animation:lpw902Noise .09s steps(2) infinite}
+.lpw902-static-band{position:absolute;left:-10%;right:-10%;height:18%;background:rgba(255,255,255,.3);filter:blur(5px);animation:lpw902Band .42s linear infinite}
+.lpw902-static-vignette{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0 2px,transparent 2px 5px),radial-gradient(circle,transparent 35%,rgba(0,0,0,.9) 100%)}
+@keyframes lpw902Noise{0%{transform:translate(0,0)}25%{transform:translate(4%,-3%)}50%{transform:translate(-3%,4%)}75%{transform:translate(2%,2%)}100%{transform:translate(-4%,-2%)}}
+@keyframes lpw902Band{0%{top:-25%}100%{top:110%}}
+.lpw902-breaking-card{background:radial-gradient(circle at 50% 45%,#17213a 0,#070b14 52%,#020305 100%);padding:24px}
+.lpw902-breaking-card:before,.lpw902-breaking-card:after{content:"";position:absolute;inset:0;pointer-events:none}.lpw902-breaking-card:before{background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 4px)}.lpw902-breaking-card:after{box-shadow:inset 0 0 140px #000}
+.lpw902-breaking-rule{width:min(76vw,520px);height:3px;background:#d7aa38;box-shadow:0 0 18px rgba(215,170,56,.5);margin-bottom:18px;z-index:1}
+.lpw902-breaking-card small{z-index:1;color:#d7aa38;font-weight:900;letter-spacing:.24em;font-size:clamp(.85rem,3vw,1.1rem)}
+.lpw902-breaking-card h1{z-index:1;margin:8px 0;font-size:clamp(2.1rem,8vw,5rem);line-height:.94;color:#fff;letter-spacing:.035em}
+.lpw902-breaking-card span{z-index:1;color:#aab4c8;letter-spacing:.18em;font-weight:800;font-size:.78rem}
+.lpw902-champion-interview{max-width:980px;margin:0 auto}
+.lpw902-interview-stage{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;align-items:end;min-height:330px;margin:10px 0 14px;overflow:hidden}
+.lpw902-interview-stage article{position:relative;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;opacity:.66;transition:opacity .2s,transform .2s}
+.lpw902-interview-stage article.speaking{opacity:1;transform:translateY(-4px)}
+.lpw902-interview-stage img{max-height:275px;max-width:100%;object-fit:contain;object-position:center bottom}
+.lpw902-interview-stage small{color:#d7aa38;font-weight:800;letter-spacing:.08em;text-align:center}.lpw902-interview-stage b{font-size:1.1rem;text-align:center;margin-top:3px}
+.lpw902-interview-stage .lpw837-world-belt{transform:scale(.72);transform-origin:top center;margin-bottom:-14px}
+.lpw902-dialogue-card{border-left:4px solid #d7aa38;background:linear-gradient(100deg,#111827,#0a0f1a);padding:16px 18px;text-align:left;min-height:145px}
+.lpw902-dialogue-card small{color:#d7aa38;font-weight:900;letter-spacing:.08em}.lpw902-dialogue-card h2{margin:4px 0 8px}.lpw902-dialogue-card p{font-size:1.08rem;line-height:1.55;margin:0}.lpw902-dialogue-card.signoff{border-left-color:#fff}
+.lpw902-champion-interview .live-onboarding-progress{justify-content:center;margin:14px 0}
+@media(max-width:700px){.lpw902-interview-stage{min-height:235px;grid-template-columns:1fr 1fr;gap:4px}.lpw902-interview-stage article{min-height:225px}.lpw902-interview-stage img{max-height:185px}.lpw902-interview-stage b{font-size:.88rem}.lpw902-interview-stage small{font-size:.62rem}.lpw902-interview-stage .lpw837-world-belt{display:none}.lpw902-dialogue-card{min-height:160px;padding:13px}.lpw902-dialogue-card p{font-size:1rem}}
