@@ -6,20 +6,24 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>LEGACY Pro Wrestling 8.3.7 Build 9 — One-Year QA Consolidation</title>
+  <title>LEGACY Pro Wrestling 8.6.6</title>
   <style>
-    html.lpw-booting body{background:#070708;overflow:hidden}
+    html.lpw-booting body{background:#05070d;overflow:hidden}
     html.lpw-booting header,html.lpw-booting main,html.lpw-booting #overlay{visibility:hidden}
-    #lpw-boot-screen{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#3a0b10 0,#160609 42%,#070708 100%);color:#fff;font-family:Arial,sans-serif;text-align:center;padding:24px}
-    #lpw-boot-screen div{width:min(420px,88vw)}
-    #lpw-boot-screen b{display:block;font-size:2rem;letter-spacing:.18em}
-    #lpw-boot-screen span{display:block;margin-top:8px;color:#f3c34d;font-weight:800;letter-spacing:.22em;font-size:.75rem}
-    #lpw-boot-screen small{display:block;margin-top:24px;opacity:.72;letter-spacing:.08em}
+    #lpw-boot-screen{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:#05070d;color:#fff;font-family:Arial,sans-serif;text-align:center;padding:max(28px,env(safe-area-inset-top)) 24px max(32px,env(safe-area-inset-bottom));overflow:hidden}
+    #lpw-boot-screen:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,rgba(29,72,178,.35),transparent 36%),linear-gradient(145deg,rgba(231,48,42,.14),transparent 38%);pointer-events:none}
+    .lpw-start-inner{position:relative;width:min(1000px,94vw);display:flex;flex-direction:column;align-items:center;gap:18px}
+    .lpw-start-logo{display:block;width:min(940px,92vw);max-height:62vh;object-fit:contain;filter:drop-shadow(0 18px 30px rgba(0,0,0,.72))}
+    .lpw-start-version{color:#ffcc26;font-weight:900;letter-spacing:.22em;font-size:clamp(.72rem,2vw,.95rem)}
+    .lpw-start-button{width:min(520px,82vw);padding:18px 24px;border:4px solid #111;background:#e7302a;color:#fff;font:italic clamp(1.4rem,5vw,2.2rem)/1 Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;letter-spacing:.09em;box-shadow:0 0 0 3px #ffcc26,0 14px 30px rgba(0,0,0,.55);cursor:pointer;text-transform:uppercase}
+    .lpw-start-button:disabled{opacity:.45;cursor:wait;filter:grayscale(.4)}
+    .lpw-start-status{min-height:1.2em;color:#c9c9cd;font-weight:700;letter-spacing:.08em;font-size:.76rem}
     html.lpw-ready #lpw-boot-screen{display:none}
+    @media(max-width:760px){.lpw-start-logo{width:94vw;max-height:52vh}.lpw-start-inner{gap:14px}.lpw-start-button{padding:15px 20px}}
   </style>
   <script>
   (function(){
-    var key='lpw-cache-8.6.1';
+    var key='lpw-cache-8.6.6';
     if(!sessionStorage.getItem(key)){
       sessionStorage.setItem(key,'1');
       if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister();}));}).catch(function(){});}
@@ -27,24 +31,33 @@
     }
   })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=8.6.1">
-  <script>window.TTG_APP_VERSION='8.6.5';</script>
-  <script src="update-manager.js?v=8.6.1" defer></script>
-  <script src="data.js?v=8.6.1" defer></script>
-  <script src="assets/config/imageManager.js?v=8.6.1" defer></script>
-  <script src="game.js?v=8.6.1" defer></script>
+  <link rel="stylesheet" href="styles.css?v=8.6.6">
+  <script>window.TTG_APP_VERSION='8.6.6';</script>
+  <script src="update-manager.js?v=8.6.6" defer></script>
+  <script src="data.js?v=8.6.6" defer></script>
+  <script src="assets/config/imageManager.js?v=8.6.6" defer></script>
+  <script src="game.js?v=8.6.6" defer></script>
 </head>
 <body>
-  <div id="lpw-boot-screen"><div><b>LEGACY</b><span>PRO WRESTLING</span><small>Loading current game data…</small></div></div>
-  <header><button onclick="home()" class="logo"><span>LEGACY</span><b>PRO WRESTLING</b></button><div class="header-meta"><span class="build-tag">VERSION 8.6.5</span><div class="streak">STREAK <strong id="streak">0</strong></div></div></header>
+  <div id="lpw-boot-screen"><div class="lpw-start-inner"><img class="lpw-start-logo" src="assets/branding/lpw-logo-splash-1600.webp" alt="LEGACY Pro Wrestling"><div class="lpw-start-version">VERSION 8.6.6</div><button id="lpw-press-start" class="lpw-start-button" type="button" disabled>PRESS START</button><small class="lpw-start-status">LOADING GAME DATA…</small></div></div>
+  <header><button onclick="home()" class="logo brand-header-logo" aria-label="LEGACY Pro Wrestling main menu"><img src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling"></button><div class="header-meta"><span class="build-tag">VERSION 8.6.6</span><div class="streak">STREAK <strong id="streak">0</strong></div></div></header>
   <main id="app"></main><div id="overlay"></div>
   <script>
-    window.setTimeout(function(){
-      if(!window.__LPW_BOOT_COMPLETE__){
-        var note=document.querySelector('#lpw-boot-screen small');
-        if(note) note.textContent='Still checking the current release…';
+    (function(){
+      var button=document.getElementById('lpw-press-start');
+      var status=document.querySelector('.lpw-start-status');
+      function refresh(){
+        if(window.__LPW_BOOT_COMPLETE__){button.disabled=false;status.textContent='READY';}
+        else window.setTimeout(refresh,120);
       }
-    },5000);
+      button.addEventListener('click',function(){
+        if(button.disabled)return;
+        document.documentElement.classList.add('lpw-ready');
+        document.documentElement.classList.remove('lpw-booting');
+        try{sessionStorage.setItem('lpw-started-8.6.6','1')}catch(e){}
+      });
+      refresh();
+    })();
   </script>
 </body>
 </html>

@@ -1,7 +1,8 @@
 {
-  "version": "8.6.4",
-  "build": "Jett Decision Interaction Polish",
+  "version": "8.6.6",
+  "build": "brand-identity",
   "date": "2026-07-23",
-  "notes": "Adds selected-card transition feedback, first-use NEW ribbons, outcome colour coding, animated count-up rewards, selected-card resolution animation and wrestling-focused result status copy.",
-  "updated": "2026-07-23"
+  "notes": "Adds the approved official LPW logo, PRESS START boot screen, WebP-only branding assets, branded main menu and Career screens, and the official gold/blue/red/white/black palette across the game.",
+  "updated": "2026-07-23",
+  "label": "LEGACY Pro Wrestling 8.6.6 \u2014 Brand Identity"
 }

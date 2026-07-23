@@ -2097,3 +2097,34 @@ body:not(.gauntlet-mode) header .header-meta{justify-content:flex-end}
 .jett-decision-outcome.outcome-major-success .jett-resolution-card,.jett-decision-outcome.outcome-success .jett-resolution-card{border-color:#d6b94e}
 .jett-decision-outcome.outcome-failure .jett-resolution-card,.jett-decision-outcome.outcome-major-failure .jett-resolution-card{border-color:#8f4b36}
 @media(max-width:760px){.jett-card-new{left:7px;top:6px;padding:3px 7px;font-size:9px}.jett-decision-grid.is-resolving .jett-decision-card.is-selected{transform:translateY(-4px) scale(1.025)}}
+
+/* ============================================================
+   LEGACY PRO WRESTLING 8.6.6 — OFFICIAL BRAND PALETTE
+   Gold #FFCC26 · Blue #1746B6 · Red #E7302A · White #FFFFFF · Black #05070D
+   ============================================================ */
+:root{
+ --lpw-gold:#ffcc26;--lpw-blue:#1746b6;--lpw-blue-dark:#0c245e;--lpw-red:#e7302a;
+ --lpw-white:#fff;--lpw-black:#05070d;--lpw-panel:#090d18;--lpw-muted:#b8bcc8;
+ --yellow:#ffcc26;--gold:#ffcc26;
+}
+body{background:radial-gradient(circle at 50% 0,rgba(23,70,182,.28),transparent 32%),linear-gradient(155deg,#05070d 0,#090d18 48%,#05070d 100%)!important;color:var(--lpw-white)}
+header{border-bottom:3px solid var(--lpw-red)!important;background:linear-gradient(90deg,#05070d,#0c245e 52%,#05070d)!important;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.brand-header-logo{padding:0!important;width:clamp(118px,18vw,205px);display:block!important}.brand-header-logo img{display:block;width:100%;height:auto}.brand-header-logo span,.brand-header-logo b{display:none!important}
+.build-tag{color:var(--lpw-gold)!important}.streak{border-color:var(--lpw-gold)!important;background:#05070d!important}.streak strong{color:var(--lpw-gold)!important}
+.panel,.game-hub,.collection-screen,.profile-screen,.framework-screen,.achievement-screen,.help-screen{background:linear-gradient(145deg,rgba(9,13,24,.98),rgba(5,7,13,.99))!important;border-color:rgba(255,204,38,.55)!important;box-shadow:0 22px 60px rgba(0,0,0,.62)}
+.tv-kicker,.section-heading strong,.live-chip,.profile-copy>small,.collection-section-title,.profile-facts small{color:var(--lpw-gold)!important}
+h1,h2,h3,.name b{color:var(--lpw-white)}
+.btn,.hub-option.primary,.live-primary,.profile-play{background:linear-gradient(180deg,#f13d36,#b81518)!important;border-color:#ff766f!important;color:#fff!important;box-shadow:0 0 0 1px #7b0d11 inset}
+.btn.secondary,.hub-option:not(.primary),.shell-back,.framework-options button,.live-choice-grid button{background:linear-gradient(180deg,#142f78,#09183f)!important;border-color:#3e6bdd!important;color:#fff!important}
+.btn:hover,.hub-option:hover,.shell-back:hover,.framework-options button:hover,.live-choice-grid button:hover{border-color:var(--lpw-gold)!important;box-shadow:0 0 20px rgba(255,204,38,.2)!important}
+.card,.collection-tile,.live-founder-card,.live-stable-card,.achievement,.profile-facts>div,.lpw837-recap-cards article{background:linear-gradient(155deg,#0e1b43,#070910 66%)!important;border-color:#3156ad!important}
+.card:hover,.collection-tile:hover,.live-founder-card:hover{border-color:var(--lpw-gold)!important}
+.meter i,.live-attribute-meter i{background:linear-gradient(90deg,var(--lpw-blue),var(--lpw-gold))!important}
+.commentary-feed,.commentary,.final-log{border-color:#3156ad!important;background:#03050a!important}
+.your-call-label,.story-decision .your-call-label{background:var(--lpw-gold)!important;color:#05070d!important}
+.story-decision,.jett-decision-outcome{border-color:var(--lpw-gold)!important;background:linear-gradient(160deg,#111626,#05070d)!important}
+.lpw-brand-logo{display:block;object-fit:contain;filter:drop-shadow(0 12px 18px rgba(0,0,0,.55))}.lpw-brand-logo-main{width:min(680px,100%);margin:0 auto 12px}.lpw-main-brand{max-height:255px}.lpw-visually-hidden-brand-title{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+.lpw-career-brand{width:clamp(118px,18vw,190px);max-height:105px;margin:0 0 12px auto;opacity:.96}.lpw-career-home .lpw-career-brand{width:min(520px,75%);max-height:225px;margin:0 auto 14px}
+.lpw-home .hub-copy{padding-top:8px}.lpw-home .hub-copy>.tv-kicker{margin-top:0}
+.live-cycle{border-color:#3156ad!important;background:#070b15!important}.live-cycle b{color:var(--lpw-gold)!important}
+@media(max-width:760px){header{padding:8px 12px!important}.brand-header-logo{width:116px}.lpw-brand-logo-main{width:92%;max-height:190px}.lpw-career-brand{width:112px;max-height:68px;margin-bottom:6px}.lpw-career-home .lpw-career-brand{width:72%;max-height:160px}.header-meta{gap:7px}.build-tag{font-size:9px!important}}
