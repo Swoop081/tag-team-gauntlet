@@ -2,7 +2,11 @@
   "version": "9.0.0",
   "build": "brand-url-and-project-cleanup",
   "date": "2026-07-23",
-  "notes": "Standalone Last Man Standing test mode, 40-card higher/lower engine, momentum, abilities, records, and Version 9 foundations.",
+  "notes": [
+    "Added standalone Specialty Matches menu.",
+    "Added playable Last Man Standing match.",
+    "No Career Mode integration or other system changes."
+  ],
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 9.0 \u2014 Specialty Matches and Last Man Standing"
+  "label": "LEGACY Pro Wrestling 9.0 \u2014 Specialty Matches: Last Man Standing"
 }

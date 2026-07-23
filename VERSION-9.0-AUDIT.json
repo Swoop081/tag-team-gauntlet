@@ -1,38 +1,27 @@
 {
-  "sourceBuild": "8.6.20",
-  "targetBuild": "9.0.0",
-  "audit": {
-    "projectType": "Static PWA / GitHub Pages",
-    "coreFiles": ["index.html", "styles.css", "data.js", "game.js", "service-worker.js", "manifest.webmanifest"],
-    "preserved": [".nojekyll", "existing roster assets", "Career Mode", "Quick Match", "Tag Team Gauntlet", "Battle Royal", "Collection"],
-    "observations": [
-      "The game remains a monolithic JavaScript application with layered historical patches in game.js.",
-      "Career already contains Living Careers, rankings, one World Championship and CPU simulation foundations.",
-      "Battle Royal already uses a standalone dedicated match engine.",
-      "No aging or retirement system was added.",
-      "The current roster remains unchanged; the final four launch wrestlers are not created in this build."
-    ]
-  },
-  "implemented": [
-    "Version 9 main-menu structure",
-    "Specialty Matches menu with no future placeholders",
-    "Playable standalone Last Man Standing match",
-    "40-card shared deck with four copies of 1-10",
-    "Automatic reshuffle when ten cards remain",
-    "Ten-notch resilience bars",
-    "Higher/lower player and CPU turns",
-    "Three-correct-call momentum pressure",
-    "Wrestler signature ability framework",
-    "Last Man Standing history and wrestler records",
-    "Dedicated commentary and broadcast presentation",
-    "Career exclusion until standalone testing is complete",
-    "Version 9 feature flags for living universe, no aging and no retirement"
+  "baseline": "User-supplied LEGACY Pro Wrestling 8.6.20",
+  "target": "9.0.0",
+  "scope": "Add only Specialty Matches > Last Man Standing",
+  "preserved": [
+    "Existing home Featured Wrestler layout and logo",
+    "Career Mode systems and bookings",
+    "Quick Match",
+    "Tag Team Gauntlet",
+    "20-Person Battle Royal",
+    "Collection, achievements, settings and existing assets",
+    ".nojekyll and GitHub Pages project structure"
   ],
-  "deferred": [
-    "Career integration of Last Man Standing",
-    "Final four launch-roster wrestlers",
-    "Full commentary-memory expansion across every existing mode",
-    "Final featured-wrestler hero-art standardisation",
-    "Additional specialty match types"
-  ]
+  "added": [
+    "Specialty Matches main-menu option",
+    "Standalone Last Man Standing wrestler and opponent selection",
+    "Match preview",
+    "10-notch resilience bars",
+    "40-card deck with four copies of 1-10",
+    "Automatic fresh-deck reshuffle at 10 cards remaining",
+    "Alternating player and CPU Higher/Lower turns",
+    "Three-correct-call momentum pressure",
+    "Once-per-match wrestler abilities",
+    "Ten-count themed result screen"
+  ],
+  "careerIntegration": false
 }

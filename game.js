@@ -4357,123 +4357,112 @@ render=function(html){
 };
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.0 — SPECIALTY MATCHES / LAST MAN STANDING
+   LEGACY PRO WRESTLING 9.0 — SPECIALTY MATCHES: LAST MAN STANDING
+   Standalone test mode only. No Career integration.
    ============================================================================= */
 (function(){
- const BUILD='9.0.0';
- const LMS_STATS_KEY='lpw-last-man-standing-stats-v1';
+ 'use strict';
+ const LMS_VERSION='9.0.0';
  let LMS=null;
- const ABILITIES=[
-  {id:'scout',name:'RING AWARENESS',desc:'Peek at the next card before choosing.'},
-  {id:'resolve',name:'IRON RESOLVE',desc:'Ignore one incorrect prediction.'},
-  {id:'comeback',name:'SECOND WIND',desc:'Recover one resilience at 3 or lower.'},
-  {id:'redraw',name:'CHANGE THE PACE',desc:'Discard the current card and reveal another.'},
-  {id:'pressure',name:'PRESSURE BURST',desc:'Your opponent’s next mistake costs two resilience.'},
-  {id:'focus',name:'LOCKED IN',desc:'A correct prediction immediately grants another turn.'},
-  {id:'guard',name:'DAMAGE CONTROL',desc:'The next two-point hit against you is reduced to one.'}
- ];
- function readStats(){try{return JSON.parse(localStorage.getItem(LMS_STATS_KEY)||'{"matches":0,"wins":0,"losses":0,"history":[],"wrestlers":{}}')}catch(e){return {matches:0,wins:0,losses:0,history:[],wrestlers:{}}}}
- function saveStats(s){localStorage.setItem(LMS_STATS_KEY,JSON.stringify(s))}
- function wrestler(id){return WRESTLERS.find(w=>w.id===id)}
- function portrait(w,screen='matchPortrait'){return imageWithFallback(w,'portrait','art-portrait',screen)}
- function abilityFor(w){
-  const explicit={'jack-mercer':'scout','victor-royale':'pressure','jett-valentine':'comeback','revenant':'resolve','hollowman':'guard','mateo-vega':'redraw','ryder-phoenix':'focus'};
-  const id=explicit[w.id]||ABILITIES[Math.abs([...w.id].reduce((a,c)=>a+c.charCodeAt(0),0))%ABILITIES.length].id;
-  return ABILITIES.find(a=>a.id===id);
+ const byId=id=>WRESTLERS.find(w=>w.id===id);
+ const shuffle=list=>{const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+ const portrait=w=>imageWithFallback(w,'portrait','art-portrait','matchPortrait');
+ const full=w=>imageWithFallback(w,'full','art-full','quickMatch');
+ const abilityFor=w=>{
+  const variants=[
+   {key:'scout',name:'RING AWARENESS',desc:'Peek at the next card before making your call.'},
+   {key:'recover',name:'SECOND WIND',desc:'Recover one resilience notch when at 3 or fewer.'},
+   {key:'guard',name:'IRON WILL',desc:'Ignore the next resilience loss.'},
+   {key:'redraw',name:'CHANGE THE PACE',desc:'Discard the current card and reveal a new one.'}
+  ];
+  let total=0;for(const c of String(w?.id||''))total+=c.charCodeAt(0);return variants[total%variants.length];
+ };
+ function freshDeck(){const d=[];for(let n=1;n<=10;n++)for(let i=0;i<4;i++)d.push(n);return shuffle(d)}
+ function refillIfNeeded(){if(LMS.deck.length<=10){LMS.deck=freshDeck();LMS.reshuffles++;LMS.notice='DECK RESHUFFLED · 40 NEW CARDS';}}
+ function draw(){refillIfNeeded();return LMS.deck.pop()}
+ function drawDecisionCard(){let n=draw(),guard=0;while((n===1||n===10)&&guard++<20)n=draw();return n}
+ function wrestlerCard(w,action){return `<button type="button" class="lms-roster-card" onclick="${action}">${portrait(w)}<span><b>${w.name}</b><small>${w.title} · OVR ${w.overall}</small></span></button>`}
+ function installMenuButton(){
+  const nav=document.querySelector('.hub-menu');
+  if(!nav||document.getElementById('specialtyMatchesMenuButton'))return;
+  const b=document.createElement('button');b.type='button';b.id='specialtyMatchesMenuButton';b.className='hub-option specialty-menu-option';b.onclick=()=>window.specialtyMatchesHome();
+  b.innerHTML='<b>SPECIALTY MATCHES</b><small>Experience match types with completely different gameplay.</small>';
+  const battle=document.getElementById('battleRoyalMenuButton');
+  if(battle)battle.after(b);else{const collection=[...nav.querySelectorAll('button')].find(x=>x.textContent.includes('COLLECTION'));collection?collection.before(b):nav.appendChild(b)}
  }
- function deck(){const a=[];for(let n=1;n<=10;n++)for(let i=0;i<4;i++)a.push(n);return shuffle(a)}
- function freshSide(w,isCpu=false){return {id:w.id,health:10,streak:0,pressure:false,abilityUsed:false,guard:false,correct:0,wrong:0,longest:0,isCpu}}
- function drawRaw(){if(LMS.deck.length<=10){LMS.deck=deck();LMS.reshuffles++;LMS.notice='DECK RESHUFFLED · 40 NEW CARDS';LMS.logs.unshift('The shared deck reached ten cards and was reshuffled.')}return LMS.deck.pop()}
- function drawPlayable(){let n=drawRaw(),guard=0;while((n===1||n===10)&&guard++<20){LMS.logs.unshift(`${n} cannot begin a prediction. A new card is drawn.`);n=drawRaw()}return n}
- function side(which){return which==='player'?LMS.player:LMS.cpu}
- function other(which){return which==='player'?LMS.cpu:LMS.player}
- function name(which){return wrestler(side(which).id).name}
- function probability(choice,current){return choice==='higher'?(10-current)/10:(current-1)/10}
- function cpuChoice(){
-  const c=LMS.current, ai=wrestler(LMS.cpu.id), personality=ai?.power>=ai?.technique?'aggressive':ai?.technique>=ai?.speed?'calculated':'risk-taking';
-  let pick=c<=5?'higher':'lower';
-  if(c===5||c===6){if(personality==='aggressive')pick=Math.random()<.5?'higher':'lower';else pick=c===5?'higher':'lower'}
-  return pick;
- }
- function commentary(correct,which,damage,next){
-  const actor=name(which), victim=name(which==='player'?'cpu':'player');
-  if(next===LMS.current)return `${actor} calls it level. No damage, but the pressure remains.`;
-  if(correct)return one([`${actor} reads the moment perfectly.`,`${actor} gets the call right and stays alive.`,`${actor} keeps composure under pressure.`]);
-  if(damage===2)return `${actor} misjudges it — ${victim}'s momentum makes the mistake cost double.`;
-  return one([`${actor} gets it wrong and loses a notch of resilience.`,`${actor} makes a costly read.`,`${actor} cannot absorb many more mistakes.`]);
- }
- function resolve(choice,which){
-  if(!LMS||LMS.finished)return;
-  const active=side(which), opponent=other(which), old=LMS.current, next=drawRaw();
-  const correct=choice==='higher'?next>old:next<old;
-  let damage=0;
-  if(next===old){active.streak=0;}
-  else if(correct){active.correct++;active.streak++;active.longest=Math.max(active.longest,active.streak);if(active.streak===3){active.pressure=true;LMS.logs.unshift(`${name(which)} builds three-call momentum. The opponent's next mistake will cost double.`)}}
-  else{
-   active.wrong++;active.streak=0;damage=opponent.pressure?2:1;opponent.pressure=false;
-   if(active.guard&&damage>1){damage=1;active.guard=false}
-   if(abilityFor(wrestler(active.id)).id==='resolve'&&!active.abilityUsed){damage=0;active.abilityUsed=true;LMS.logs.unshift(`${name(which)} activates IRON RESOLVE and absorbs the mistake.`)}
-   active.health=Math.max(0,active.health-damage);
-  }
-  const keepTurn=correct&&LMS.focus===which;if(keepTurn){LMS.focus=null;LMS.logs.unshift(`${name(which)} stays LOCKED IN and keeps the turn.`)}
-  LMS.current=(next===1||next===10)?drawPlayable():next;LMS.turn=keepTurn?which:(which==='player'?'cpu':'player');LMS.turns++;
-  LMS.commentary=commentary(correct,which,damage,next);
-  LMS.logs.unshift(`${name(which)} chose ${choice.toUpperCase()}: ${old} → ${next}. ${correct?'Correct':next===old?'Level':'Wrong'}${damage?` · -${damage}`:''}`);
-  if(active.health<=0){LMS.finished=true;LMS.winner=which==='player'?'cpu':'player';recordResult();return lmsResults()}
-  lmsRender();
-  if(LMS.turn==='cpu')setTimeout(cpuTurn,700);
- }
- function useAbility(which){
-  if(!LMS||LMS.finished)return;const s=side(which),a=abilityFor(wrestler(s.id));if(s.abilityUsed)return;
-  if(a.id==='scout'){s.abilityUsed=true;LMS.peek=LMS.deck[LMS.deck.length-1];LMS.notice=`RING AWARENESS · NEXT CARD IS ${LMS.peek}`}
-  else if(a.id==='resolve'){LMS.notice='IRON RESOLVE activates automatically on your next mistake.';return}
-  else if(a.id==='comeback'){if(s.health>3)return; s.abilityUsed=true;s.health=Math.min(10,s.health+1);LMS.notice='SECOND WIND · +1 RESILIENCE'}
-  else if(a.id==='redraw'){s.abilityUsed=true;LMS.current=drawPlayable();LMS.notice=`CHANGE THE PACE · NEW CARD ${LMS.current}`}
-  else if(a.id==='pressure'){s.abilityUsed=true;s.pressure=true;LMS.notice='PRESSURE BURST · OPPONENT NEXT MISTAKE COSTS 2'}
-  else if(a.id==='focus'){s.abilityUsed=true;LMS.focus=which;LMS.notice='LOCKED IN · A CORRECT CALL KEEPS YOUR TURN'}
-  else if(a.id==='guard'){s.abilityUsed=true;s.guard=true;LMS.notice='DAMAGE CONTROL · NEXT DOUBLE HIT REDUCED'}
-  LMS.logs.unshift(`${name(which)} uses ${a.name}.`);lmsRender();if(which==='cpu')setTimeout(cpuTurn,500)
- }
- function cpuTurn(){
-  if(!LMS||LMS.finished||LMS.turn!=='cpu')return;
-  const s=LMS.cpu,a=abilityFor(wrestler(s.id));
-  if(!s.abilityUsed&&((a.id==='comeback'&&s.health<=3)||(a.id==='pressure'&&LMS.player.health<=4)||(a.id==='guard'&&LMS.player.pressure)||(a.id==='redraw'&&(LMS.current===5||LMS.current===6))||(a.id==='scout'&&Math.random()<.25)||(a.id==='focus'&&Math.random()<.2))){useAbility('cpu');return}
-  const choice=cpuChoice();LMS.cpuAnnounce=`${name('cpu')} chooses ${choice.toUpperCase()}`;lmsRender();setTimeout(()=>resolve(choice,'cpu'),650)
- }
- function recordResult(){
-  const s=readStats(),won=LMS.winner==='player';s.matches++;won?s.wins++:s.losses++;
-  for(const key of ['player','cpu']){const x=side(key),r=s.wrestlers[x.id]||(s.wrestlers[x.id]={matches:0,wins:0,losses:0,longestStreak:0});r.matches++;(LMS.winner===key?r.wins++:r.losses++);r.longestStreak=Math.max(r.longestStreak,x.longest)}
-  s.history.unshift({date:new Date().toISOString(),player:LMS.player.id,cpu:LMS.cpu.id,winner:side(LMS.winner).id,turns:LMS.turns,remaining:side(LMS.winner).health,reshuffles:LMS.reshuffles});s.history=s.history.slice(0,30);saveStats(s)
- }
- function health(x){return `<div class="lms-health" aria-label="${x.health} of 10 resilience">${Array.from({length:10},(_,i)=>`<i class="${i<x.health?'on':''}"></i>`).join('')}</div>`}
- function abilityButton(which){const s=side(which),a=abilityFor(wrestler(s.id)),blocked=s.abilityUsed||(a.id==='comeback'&&s.health>3)||(a.id==='resolve');return `<button class="lms-ability" ${blocked?'disabled':''} onclick="lastManStandingAbility('${which}')"><small>${s.abilityUsed?'USED':'SIGNATURE ABILITY'}</small><b>${a.name}</b><span>${a.desc}</span></button>`}
+ const priorHome=window.home;
+ window.home=function(){const r=priorHome.apply(this,arguments);setTimeout(installMenuButton,0);return r};
+
  window.specialtyMatchesHome=function(){
-  setActiveGameMode('specialty');const s=readStats();
-  render(`<section class="panel specialty-home">${shellBack()}<div class="tv-kicker">NEW WAYS TO COMPETE</div><h1>SPECIALTY MATCHES</h1><p>Every specialty match uses its own dedicated gameplay engine.</p><button class="specialty-card" onclick="lastManStandingHome()"><span><small>PLAYABLE NOW</small><b>LAST MAN STANDING</b><em>Higher or Lower · 10 resilience · one survivor</em></span><strong>${s.wins}-${s.losses}<small>YOUR RECORD</small></strong></button></section>`)
+  setActiveGameMode('specialty');
+  render(`<section class="panel lms-home">${shellBack()}<div class="tv-kicker">SPECIALTY MATCHES · PLAYABLE TEST MODE</div><h1>LAST MAN STANDING</h1><p>Outlast your opponent in a fast-paced battle of judgement, momentum and resilience.</p><div class="lms-rules"><span><b>10</b><small>RESILIENCE</small></span><span><b>40</b><small>CARD DECK</small></span><span><b>3</b><small>MOMENTUM STREAK</small></span></div><button class="btn live-primary" onclick="lastManStandingChoosePlayer()">CHOOSE YOUR WRESTLER</button></section>`)
  };
- window.lastManStandingHome=function(){const s=readStats();render(`<section class="panel lms-home">${shellBack()}<div class="tv-kicker">STANDALONE TEST MODE</div><h1>LAST MAN STANDING</h1><p>Read the next card, protect your resilience and leave your opponent unable to answer the count.</p><div class="lms-rules"><article><b>10</b><span>RESILIENCE</span></article><article><b>40</b><span>CARD DECK</span></article><article><b>10</b><span>RESHUFFLE POINT</span></article></div><button class="btn live-primary" onclick="lastManStandingChoose()">CHOOSE YOUR WRESTLER</button><button class="btn secondary" onclick="lastManStandingHistory()">MATCH HISTORY · ${s.matches}</button><button class="btn secondary" onclick="specialtyMatchesHome()">BACK</button></section>`)};
- window.lastManStandingChoose=function(){render(`<section class="panel lms-select">${shellBack()}<div class="tv-kicker">LAST MAN STANDING</div><h1>CHOOSE YOUR WRESTLER</h1><div class="lms-select-grid">${WRESTLERS.map(w=>`<button onclick="lastManStandingOpponent('${w.id}')">${portrait(w)}<b>${w.name}</b><small>${abilityFor(w).name}</small></button>`).join('')}</div></section>`)};
- window.lastManStandingOpponent=function(id){const p=wrestler(id);render(`<section class="panel lms-select">${shellBack()}<div class="tv-kicker">SELECT THE OPPOSITION</div><h1>${p.name} VS...</h1><div class="lms-select-grid">${WRESTLERS.filter(w=>w.id!==id).map(w=>`<button onclick="lastManStandingStart('${id}','${w.id}')">${portrait(w)}<b>${w.name}</b><small>OVR ${w.overall}</small></button>`).join('')}</div></section>`)};
- window.lastManStandingStart=function(playerId,cpuId){
-  const d=deck();LMS={deck:d,current:0,player:freshSide(wrestler(playerId)),cpu:freshSide(wrestler(cpuId),true),turn:'player',turns:0,reshuffles:0,logs:[],commentary:'The bell rings. Endurance and instinct will decide this one.',notice:'',peek:null,cpuAnnounce:'',finished:false,winner:null};LMS.current=drawPlayable();lmsRender()
+ window.lastManStandingChoosePlayer=function(){
+  LMS=null;
+  render(`<section class="panel lms-select">${shellBack()}<div class="tv-kicker">LAST MAN STANDING</div><h1>CHOOSE YOUR WRESTLER</h1><p>Select the wrestler you want to control.</p><div class="lms-roster-grid">${WRESTLERS.map(w=>wrestlerCard(w,`lastManStandingChooseOpponent('${w.id}')`)).join('')}</div></section>`)
  };
- window.lastManStandingPick=function(choice){if(LMS?.turn==='player')resolve(choice,'player')};
- window.lastManStandingAbility=function(which){if(which==='player'&&LMS?.turn!=='player')return;useAbility(which)};
- window.lmsRender=function(){
-  if(!LMS)return lastManStandingHome();const p=wrestler(LMS.player.id),c=wrestler(LMS.cpu.id),turn=LMS.turn;
-  render(`<section class="panel lms-match"><div class="lms-broadcast"><button class="shell-back" onclick="lastManStandingConfirmExit()">← EXIT MATCH</button><span>LAST MAN STANDING</span><b>TURN ${LMS.turns+1}</b></div><div class="lms-versus"><article class="${turn==='player'?'active':''}">${portrait(p)}<div><small>YOU</small><b>${p.name}</b>${health(LMS.player)}</div></article><strong>VS</strong><article class="${turn==='cpu'?'active':''}">${portrait(c)}<div><small>CPU</small><b>${c.name}</b>${health(LMS.cpu)}</div></article></div>${LMS.notice?`<div class="lms-notice">${LMS.notice}</div>`:''}<div class="lms-table"><div class="lms-deck"><small>CARDS REMAINING</small><b>${LMS.deck.length}</b><span>${LMS.reshuffles} reshuffle${LMS.reshuffles===1?'':'s'}</span></div><div class="lms-card"><small>CURRENT CARD</small><b>${LMS.current}</b>${LMS.peek!==null?`<em>NEXT: ${LMS.peek}</em>`:''}</div><div class="lms-turn"><small>${turn==='player'?'YOUR CALL':'CPU CALL'}</small><b>${turn==='player'?'HIGHER OR LOWER?':(LMS.cpuAnnounce||'THINKING...')}</b></div></div><div class="lms-commentary"><b>MIKE SULLIVAN</b><p>${LMS.commentary}</p></div>${turn==='player'?`<div class="lms-actions"><button onclick="lastManStandingPick('higher')"><b>HIGHER</b><small>${Math.round(probability('higher',LMS.current)*100)}% raw chance</small></button><button onclick="lastManStandingPick('lower')"><b>LOWER</b><small>${Math.round(probability('lower',LMS.current)*100)}% raw chance</small></button></div>${abilityButton('player')}`:`<div class="lms-cpu-wait">${LMS.cpuAnnounce||`${c.name} studies the card...`}</div>`}<details class="lms-log"><summary>MATCH LOG</summary>${LMS.logs.slice(0,8).map(x=>`<p>${x}</p>`).join('')}</details></section>`);
-  LMS.notice='';LMS.cpuAnnounce='';LMS.peek=null
+ window.lastManStandingChooseOpponent=function(playerId){
+  const player=byId(playerId);if(!player)return lastManStandingChoosePlayer();
+  LMS={playerId,opponentId:null};
+  render(`<section class="panel lms-select"><button class="shell-back" onclick="lastManStandingChoosePlayer()">← CHANGE WRESTLER</button><div class="tv-kicker">LAST MAN STANDING</div><h1>CHOOSE YOUR OPPONENT</h1><p>${player.name} is ready. Select the opposition.</p><div class="lms-roster-grid">${WRESTLERS.filter(w=>w.id!==playerId).map(w=>wrestlerCard(w,`lastManStandingPreview('${w.id}')`)).join('')}</div></section>`)
  };
- window.lmsResults=function(){const win=wrestler(side(LMS.winner).id),lost=wrestler(other(LMS.winner).id),playerWon=LMS.winner==='player';render(`<section class="panel lms-results"><div class="tv-kicker">THE COUNT REACHES TEN</div><h1>${win.name} IS THE LAST MAN STANDING</h1><div class="lms-winner">${imageWithFallback(win,'victory','art-victory','resultVictory')}<div><small>${playerWon?'VICTORY':'DEFEAT'}</small><b>${win.name}</b><span>${side(LMS.winner).health} resilience remaining</span></div></div><div class="lms-result-grid"><article><small>TURNS</small><b>${LMS.turns}</b></article><article><small>RESHUFFLES</small><b>${LMS.reshuffles}</b></article><article><small>BEST STREAK</small><b>${Math.max(LMS.player.longest,LMS.cpu.longest)}</b></article><article><small>FINAL COUNT</small><b>10</b></article></div><p>${lost.name} cannot answer the count. ${win.name} survives the specialty match.</p><div class="lms-result-actions"><button class="btn live-primary" onclick="lastManStandingStart('${LMS.player.id}','${LMS.cpu.id}')">RUN IT BACK</button><button class="btn secondary" onclick="lastManStandingChoose()">NEW MATCH</button><button class="btn secondary" onclick="specialtyMatchesHome()">SPECIALTY MATCHES</button></div></section>`)};
- window.lastManStandingHistory=function(){const s=readStats();render(`<section class="panel lms-history">${shellBack()}<div class="tv-kicker">SPECIALTY MATCH RECORD BOOK</div><h1>LAST MAN STANDING HISTORY</h1><div class="lms-history-summary"><article><b>${s.matches}</b><span>MATCHES</span></article><article><b>${s.wins}</b><span>WINS</span></article><article><b>${s.losses}</b><span>LOSSES</span></article></div>${s.history.length?`<div class="lms-history-list">${s.history.map(r=>`<article><b>${wrestler(r.winner)?.name||r.winner}</b><span>defeated ${r.winner===r.player?wrestler(r.cpu)?.name:wrestler(r.player)?.name}</span><small>${r.turns} turns · ${r.remaining} resilience left · ${r.reshuffles} reshuffles</small></article>`).join('')}</div>`:'<p>No completed matches yet.</p>'}<button class="btn live-primary" onclick="lastManStandingHome()">BACK</button></section>`)};
- window.lastManStandingConfirmExit=function(){if(confirm('Leave this Last Man Standing match?')){LMS=null;specialtyMatchesHome()}};
- const originalHome=home;
- home=function(){
-  setActiveGameMode('home');clearStoryTimer();M=null;overlay.innerHTML='';const w=featuredSuperstar();
-  render(`<section class="game-hub lpw-home"><div class="hub-copy"><div class="tv-kicker">LEGACY PRO WRESTLING</div><h1>WELCOME TO <span>LPW</span></h1><p>Choose your path and build a legacy across a living wrestling world.</p><nav class="hub-menu"><button class="hub-option primary live-menu-option" onclick="gauntletLiveHome()"><b>CAREER</b><small>Pursue greatness in a never-ending Career Mode where the stakes change daily.</small></button><button class="hub-option" onclick="quickMatchMenu()"><b>QUICK MATCH</b><small>Create a Singles or Tag Team exhibition.</small></button><button class="hub-option" onclick="classicHome()"><b>TAG TEAM GAUNTLET</b><small>Run the Gauntlet as you try to build your dream team. One loss ends the run.</small></button><button id="battleRoyalMenuButton" class="hub-option battle-royal-menu" onclick="battleRoyalHome()"><b>BATTLE ROYAL</b><small>Twenty enter, one survives. Can you outlast the field in the Battle Royal?</small></button><button class="hub-option specialty-menu" onclick="specialtyMatchesHome()"><b>SPECIALTY MATCHES</b><small>Experience match types with completely different gameplay.</small></button><button class="hub-option" onclick="collection()"><b>COLLECTION</b><small>Explore the roster and discover every wrestler in LEGACY Pro Wrestling.</small></button><button class="hub-option" onclick="statisticsMenu()"><b>STATISTICS</b><small>Records, results and the history of your legacy.</small></button><button class="hub-option muted" onclick="optionsMenu()"><b>OPTIONS</b><small>Presentation settings.</small></button></nav></div><article class="featured-superstar"><div class="live-chip">FEATURED WRESTLER</div>${imageWithFallback(w,'full','art-full','homeFeature')}<div class="featured-lower-third"><small>${w.title}</small><h2>${w.name}</h2><p>${FEATURE_LINES[w.id]||w.signature}</p><button onclick="collectionProfile('${w.id}')">VIEW PROFILE</button></div></article></section>`)
+ window.lastManStandingPreview=function(opponentId){
+  if(!LMS?.playerId)return lastManStandingChoosePlayer();
+  const player=byId(LMS.playerId),opponent=byId(opponentId);if(!player||!opponent||player.id===opponent.id)return lastManStandingChooseOpponent(LMS.playerId);
+  LMS.opponentId=opponentId;
+  const pa=abilityFor(player),oa=abilityFor(opponent);
+  render(`<section class="panel lms-preview"><button class="shell-back" onclick="lastManStandingChooseOpponent('${player.id}')">← CHANGE OPPONENT</button><div class="tv-kicker">SPECIALTY MATCH · LAST MAN STANDING</div><h1>WHO WILL ANSWER THE COUNT?</h1><div class="lms-versus"><div>${full(player)}<b>${player.name}</b><small>${pa.name}</small></div><strong>VS</strong><div>${full(opponent)}<b>${opponent.name}</b><small>${oa.name}</small></div></div><div class="lms-preview-rules"><p>Call <b>HIGHER</b> or <b>LOWER</b>. A wrong call costs one resilience notch.</p><p>Three correct calls build Momentum Pressure: the opponent's next mistake costs two.</p></div><button class="btn live-primary" onclick="lastManStandingStart()">START MATCH</button></section>`)
  };
- const helpOriginal=helpMenu;
- helpMenu=function(){helpOriginal();const grid=document.querySelector('.help-grid');if(grid)grid.insertAdjacentHTML('beforeend','<article><h2>Last Man Standing</h2><p>Predict whether the next card will be higher or lower. Both wrestlers have ten resilience notches. A wrong call costs resilience, three correct calls build momentum, and the 40-card deck reshuffles when ten cards remain.</p></article>')};
- window.LPW_VERSION_9={version:BUILD,specialtyMatches:true,lastManStanding:true,livingUniverse:true,aging:false,retirement:false,launchRosterTarget:40,careerIntegrationLastManStanding:false};
- document.querySelectorAll('.build-tag').forEach(n=>n.textContent='VERSION 9.0');
+ window.lastManStandingStart=function(){
+  if(!LMS?.playerId||!LMS?.opponentId)return specialtyMatchesHome();
+  LMS={...LMS,deck:freshDeck(),current:null,turn:'player',playerHealth:10,cpuHealth:10,playerStreak:0,cpuStreak:0,playerPressure:false,cpuPressure:false,playerAbilityUsed:false,cpuAbilityUsed:false,playerGuard:false,cpuGuard:false,peek:null,round:0,reshuffles:0,notice:'THE BELL RINGS',log:[],finished:false,winner:null};
+  LMS.current=drawDecisionCard();LMS.log.push(`The opening card is ${LMS.current}.`);lastManStandingRender();
+ };
+ function healthBar(value){return `<div class="lms-health">${Array.from({length:10},(_,i)=>`<i class="${i<value?'active':''}"></i>`).join('')}</div>`}
+ function latestLog(){return LMS.log.slice(-4).reverse().map(x=>`<p>${x}</p>`).join('')}
+ function abilityButton(){const w=byId(LMS.playerId),a=abilityFor(w);if(LMS.playerAbilityUsed)return `<button disabled>ABILITY USED · ${a.name}</button>`;let disabled=a.key==='recover'&&LMS.playerHealth>3;return `<button ${disabled?'disabled':''} onclick="lastManStandingUseAbility()"><b>${a.name}</b><small>${a.desc}</small></button>`}
+ window.lastManStandingRender=function(){
+  if(!LMS)return specialtyMatchesHome();if(LMS.finished)return lastManStandingResult();
+  const p=byId(LMS.playerId),o=byId(LMS.opponentId),playerTurn=LMS.turn==='player';
+  render(`<section class="panel lms-match"><div class="lms-match-top"><button class="shell-back" onclick="lastManStandingExit()">← MAIN MENU</button><span>ROUND <b>${LMS.round+1}</b></span><span>CARDS <b>${LMS.deck.length}</b></span></div><div class="tv-kicker">LAST MAN STANDING</div><div class="lms-scoreboard"><article>${portrait(p)}<div><small>YOU</small><b>${p.name}</b>${healthBar(LMS.playerHealth)}<em>${LMS.playerPressure?'MOMENTUM PRESSURE ARMED':`${LMS.playerStreak}/3 MOMENTUM`}</em></div></article><strong>VS</strong><article>${portrait(o)}<div><small>CPU</small><b>${o.name}</b>${healthBar(LMS.cpuHealth)}<em>${LMS.cpuPressure?'MOMENTUM PRESSURE ARMED':`${LMS.cpuStreak}/3 MOMENTUM`}</em></div></article></div><div class="lms-table"><small>CURRENT CARD</small><div class="lms-card">${LMS.current}</div>${LMS.peek!==null?`<p class="lms-peek">NEXT CARD: <b>${LMS.peek}</b></p>`:''}<p class="lms-turn">${playerTurn?'YOUR CALL':`${o.name.toUpperCase()} IS MAKING THE CALL…`}</p></div>${LMS.notice?`<div class="lms-notice">${LMS.notice}</div>`:''}<div class="lms-commentary">${latestLog()}</div>${playerTurn?`<div class="lms-actions"><button onclick="lastManStandingGuess('higher')">HIGHER</button><button onclick="lastManStandingGuess('lower')">LOWER</button></div><div class="lms-ability">${abilityButton()}</div>`:`<button class="btn live-primary lms-cpu-button" onclick="lastManStandingCpuTurn()">CONTINUE CPU TURN</button>`}</section>`);
+  LMS.notice='';
+ };
+ function evaluate(side,guess,next){
+  const old=LMS.current;const correct=guess==='higher'?next>old:next<old;const equal=next===old;
+  const actor=side==='player'?byId(LMS.playerId):byId(LMS.opponentId);
+  if(equal){LMS.log.push(`${actor.name} called ${guess.toUpperCase()}, but ${next} matched ${old}. No resilience lost.`);side==='player'?(LMS.playerStreak=0):(LMS.cpuStreak=0)}
+  else if(correct){
+   LMS.log.push(`${actor.name} called ${guess.toUpperCase()} correctly: ${old} → ${next}.`);
+   if(side==='player'){LMS.playerStreak++;if(LMS.playerStreak>=3){LMS.playerPressure=true;LMS.playerStreak=0;LMS.notice='MOMENTUM PRESSURE ARMED'}}else{LMS.cpuStreak++;if(LMS.cpuStreak>=3){LMS.cpuPressure=true;LMS.cpuStreak=0;LMS.notice='CPU MOMENTUM PRESSURE ARMED'}}
+  }else{
+   let damage=1;
+   if(side==='player'&&LMS.cpuPressure){damage=2;LMS.cpuPressure=false}
+   if(side==='cpu'&&LMS.playerPressure){damage=2;LMS.playerPressure=false}
+   if(side==='player'&&LMS.playerGuard){damage=0;LMS.playerGuard=false;LMS.notice='IRON WILL BLOCKED THE DAMAGE'}
+   if(side==='cpu'&&LMS.cpuGuard){damage=0;LMS.cpuGuard=false}
+   if(side==='player'){LMS.playerHealth=Math.max(0,LMS.playerHealth-damage);LMS.playerStreak=0}else{LMS.cpuHealth=Math.max(0,LMS.cpuHealth-damage);LMS.cpuStreak=0}
+   LMS.log.push(`${actor.name} called ${guess.toUpperCase()} incorrectly: ${old} → ${next}.${damage?` Lost ${damage} resilience.`:' No resilience lost.'}`)
+  }
+  LMS.current=(next===1||next===10)?drawDecisionCard():next;LMS.peek=null;LMS.round++;
+  if(LMS.playerHealth<=0||LMS.cpuHealth<=0){LMS.finished=true;LMS.winner=LMS.playerHealth>0?'player':'cpu'}else LMS.turn=side==='player'?'cpu':'player';
+ }
+ window.lastManStandingGuess=function(guess){if(!LMS||LMS.turn!=='player'||!['higher','lower'].includes(guess))return;const next=LMS.peek!==null?LMS.peek:draw();evaluate('player',guess,next);lastManStandingRender()};
+ window.lastManStandingCpuTurn=function(){if(!LMS||LMS.turn!=='cpu')return;const cpu=byId(LMS.opponentId),ability=abilityFor(cpu);
+  if(!LMS.cpuAbilityUsed){if(ability.key==='recover'&&LMS.cpuHealth<=3){LMS.cpuHealth=Math.min(10,LMS.cpuHealth+1);LMS.cpuAbilityUsed=true;LMS.log.push(`${cpu.name} used ${ability.name} and recovered one resilience.`)}else if(ability.key==='guard'&&LMS.cpuHealth<=5){LMS.cpuGuard=true;LMS.cpuAbilityUsed=true;LMS.log.push(`${cpu.name} activated ${ability.name}.`)}else if(ability.key==='redraw'&&(LMS.current<=2||LMS.current>=9)){LMS.current=drawDecisionCard();LMS.cpuAbilityUsed=true;LMS.log.push(`${cpu.name} used ${ability.name} to change the current card.`)}}
+  let guess=LMS.current<=5?'higher':'lower';const risk=Math.max(0.08,Math.min(.3,(100-(cpu.technique||80))/100));if(Math.random()<risk)guess=guess==='higher'?'lower':'higher';const next=draw();LMS.notice=`${cpu.name.toUpperCase()} CHOSE ${guess.toUpperCase()}`;evaluate('cpu',guess,next);lastManStandingRender()};
+ window.lastManStandingUseAbility=function(){if(!LMS||LMS.turn!=='player'||LMS.playerAbilityUsed)return;const w=byId(LMS.playerId),a=abilityFor(w);
+  if(a.key==='scout'){LMS.peek=draw();LMS.playerAbilityUsed=true;LMS.log.push(`${w.name} used ${a.name} and scouted the next card.`)}
+  else if(a.key==='recover'){if(LMS.playerHealth>3)return;LMS.playerHealth=Math.min(10,LMS.playerHealth+1);LMS.playerAbilityUsed=true;LMS.log.push(`${w.name} used ${a.name} and recovered one resilience.`)}
+  else if(a.key==='guard'){LMS.playerGuard=true;LMS.playerAbilityUsed=true;LMS.log.push(`${w.name} activated ${a.name}.`)}
+  else if(a.key==='redraw'){LMS.current=drawDecisionCard();LMS.playerAbilityUsed=true;LMS.log.push(`${w.name} used ${a.name} to change the current card.`)}
+  lastManStandingRender()
+ };
+ window.lastManStandingExit=function(){LMS=null;home()};
+ window.lastManStandingResult=function(){
+  const p=byId(LMS.playerId),o=byId(LMS.opponentId),win=LMS.winner==='player',winner=win?p:o,loser=win?o:p;
+  render(`<section class="panel lms-result ${win?'win':'loss'}"><div class="tv-kicker">LAST MAN STANDING · FINAL RESULT</div><h1>${win?'YOU SURVIVED':'YOU COULD NOT ANSWER THE COUNT'}</h1><div class="lms-result-art">${imageWithFallback(winner,'victory','art-full','resultVictory')}</div><h2>${winner.name}</h2><p>${loser.name} is unable to answer the referee's ten-count.</p><div class="lms-result-stats"><span><small>RESILIENCE LEFT</small><b>${win?LMS.playerHealth:LMS.cpuHealth}/10</b></span><span><small>ROUNDS</small><b>${LMS.round}</b></span><span><small>RESHUFFLES</small><b>${LMS.reshuffles}</b></span></div><button class="btn live-primary" onclick="lastManStandingStart()">REMATCH</button><button class="btn secondary" onclick="specialtyMatchesHome()">SPECIALTY MATCHES</button><button class="btn secondary" onclick="home()">MAIN MENU</button></section>`)
+ };
+ window.LPW_SPECIALTY_MATCHES_VERSION=LMS_VERSION;
 })();
+
+;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0');
