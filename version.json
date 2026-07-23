@@ -1,8 +1,8 @@
 {
-  "version": "8.6.6",
-  "build": "brand-identity",
+  "version": "8.6.8",
+  "build": "main-menu-layout-polish",
   "date": "2026-07-23",
-  "notes": "Adds the approved official LPW logo, PRESS START boot screen, WebP-only branding assets, branded main menu and Career screens, and the official gold/blue/red/white/black palette across the game.",
+  "notes": "Completes the approved main-menu copy updates, removes the redundant main-menu tagline, extends the featured-wrestler hero background to the artwork crop, and improves logo spacing, centring and gold section division.",
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 8.6.6 \u2014 Brand Identity"
+  "label": "LEGACY Pro Wrestling 8.6.8 — Main Menu Layout Polish"
 }

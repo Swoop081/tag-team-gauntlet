@@ -2128,3 +2128,58 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
 .lpw-home .hub-copy{padding-top:8px}.lpw-home .hub-copy>.tv-kicker{margin-top:0}
 .live-cycle{border-color:#3156ad!important;background:#070b15!important}.live-cycle b{color:var(--lpw-gold)!important}
 @media(max-width:760px){header{padding:8px 12px!important}.brand-header-logo{width:116px}.lpw-brand-logo-main{width:92%;max-height:190px}.lpw-career-brand{width:112px;max-height:68px;margin-bottom:6px}.lpw-career-home .lpw-career-brand{width:72%;max-height:160px}.header-meta{gap:7px}.build-tag{font-size:9px!important}}
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.8 — MAIN MENU LAYOUT POLISH
+   Keeps the featured artwork fully inside a solid hero panel and gives the
+   official LPW logo a clean, deliberate transition into the menu section.
+   ============================================================================= */
+.lpw-home .featured-superstar{
+  background:#020306!important;
+  isolation:isolate;
+}
+.lpw-home .featured-superstar:before{
+  z-index:0!important;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.82) 0,rgba(0,0,0,.18) 32%,rgba(0,0,0,.08) 68%,rgba(0,0,0,.42) 100%),
+    radial-gradient(circle at 58% 28%,rgba(34,74,170,.24),transparent 62%)!important;
+}
+.lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+  z-index:1!important;
+  object-position:center bottom!important;
+}
+.lpw-home .hub-copy{
+  border-top:3px solid var(--lpw-gold,#ffcc26)!important;
+  padding-top:clamp(26px,4vw,48px)!important;
+}
+.lpw-home .lpw-main-brand{
+  align-self:center;
+  margin:0 auto clamp(22px,3vw,34px)!important;
+  object-position:center!important;
+}
+.lpw-home .hub-menu{
+  margin-top:0!important;
+}
+@media(max-width:900px){
+  .lpw-home .featured-superstar{
+    min-height:clamp(500px,72vh,650px)!important;
+  }
+  .lpw-home .hub-copy{
+    padding-left:clamp(14px,4vw,28px)!important;
+    padding-right:clamp(14px,4vw,28px)!important;
+  }
+}
+@media(max-width:600px){
+  .lpw-home .featured-superstar{
+    min-height:520px!important;
+  }
+  .lpw-home .hub-copy{
+    padding-top:30px!important;
+  }
+  .lpw-home .lpw-main-brand{
+    width:min(92%,520px)!important;
+    max-height:205px!important;
+    margin-bottom:26px!important;
+  }
+}
