@@ -372,3 +372,17 @@ Object.assign(window.TTG_IMAGE_MANAGER, Object.fromEntries([
 Object.assign(window.TTG_IMAGE_MANAGER,{
   'derek-pierce':{assets:{full:'assets/wrestlers/derek-pierce/full.webp',portrait:'assets/wrestlers/derek-pierce/portrait.webp'},transforms:{full:{scale:1,x:0,y:0},portrait:{scale:1,x:0,y:0}},screens:{}}
 });
+
+/* LEGACY Pro Wrestling 8.6.12 — blanket home-feature standardisation
+   Every featured wrestler now uses Sienna's exact homeFeature scale and X/Y
+   positioning. Other screen-specific image presets remain unchanged. */
+(function standardiseHomeFeatureToSienna(manager){
+  if(!manager)return;
+  const siennaPreset=manager['sienna']?.screens?.homeFeature;
+  if(!siennaPreset)return;
+  Object.values(manager).forEach(config=>{
+    if(!config||typeof config!=='object')return;
+    config.screens=config.screens||{};
+    config.screens.homeFeature={...siennaPreset};
+  });
+})(window.TTG_IMAGE_MANAGER);

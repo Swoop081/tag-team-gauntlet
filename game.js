@@ -4329,15 +4329,15 @@ const _gauntletLiveHomeB3QA=gauntletLiveHome;gauntletLiveHome=function(){const r
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================================= */
 (function(){
- window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.11';
- document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.11');
+ window.LPW_DECISION_SCORE_AUDIT_VERSION='8.6.12';
+ document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 8.6.12');
 })();
 
 
 /* ============================================================
    LEGACY PRO WRESTLING 8.6.6 — BRAND IDENTITY INTEGRATION
    ============================================================ */
-window.LPW_BRAND_VERSION='8.6.11';
+window.LPW_BRAND_VERSION='8.6.12';
 function lpwBrandLogo(size='header',extra=''){
  const file=size==='main'?'lpw-logo-main-menu-1200.webp':size==='compact'?'lpw-logo-compact-400.webp':'lpw-logo-header-800.webp';
  return `<img class="lpw-brand-logo lpw-brand-logo-${size} ${extra}" src="assets/branding/${file}" alt="LEGACY Pro Wrestling">`;
