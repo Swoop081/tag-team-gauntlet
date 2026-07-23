@@ -2261,3 +2261,69 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
     padding:0!important;
   }
 }
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.10 — FEATURED WRESTLER STANDARDISATION
+   ============================================================================= */
+.lpw-home .featured-superstar{
+  min-height:clamp(500px,66vh,650px)!important;
+}
+.lpw-home .lpw-feature-logo{
+  top:12px!important;
+  left:14px!important;
+  width:clamp(145px,27vw,230px)!important;
+}
+.lpw-home .live-chip{
+  top:12px!important;
+  right:14px!important;
+}
+.lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+  inset:72px 0 0!important;
+  width:100%!important;
+  height:calc(100% - 72px)!important;
+  max-width:none!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  transform:none!important;
+  transform-origin:center bottom!important;
+}
+.lpw-home .featured-lower-third{
+  inset:auto 18px 18px 18px!important;
+}
+.lpw-home .hub-copy{
+  padding:0 14px 20px!important;
+}
+.lpw-home .hub-menu{
+  padding-top:8px!important;
+}
+.lpw-home .lpw-main-brand{
+  display:none!important;
+}
+@media(max-width:600px){
+  .lpw-home .featured-superstar{
+    min-height:500px!important;
+  }
+  .lpw-home .lpw-feature-logo{
+    top:10px!important;
+    left:12px!important;
+    width:150px!important;
+  }
+  .lpw-home .live-chip{
+    top:10px!important;
+    right:12px!important;
+  }
+  .lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+    inset:60px 0 0!important;
+    height:calc(100% - 60px)!important;
+  }
+  .lpw-home .featured-lower-third{
+    inset:auto 10px 14px 10px!important;
+  }
+  .lpw-home .hub-copy{
+    padding:0 12px 16px!important;
+  }
+  .lpw-home .hub-menu{
+    padding-top:6px!important;
+  }
+}
