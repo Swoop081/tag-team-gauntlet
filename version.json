@@ -1,8 +1,8 @@
 {
-  "version": "8.6.20",
+  "version": "9.0.0",
   "build": "brand-url-and-project-cleanup",
   "date": "2026-07-23",
-  "notes": "Adds the official full LPW logo as the iOS/PWA app icon, changes the GitHub Pages app identity to legacy-pro-wrestling, and removes non-runtime historical/QA files and duplicate PNG source assets.",
+  "notes": "Standalone Last Man Standing test mode, 40-card higher/lower engine, momentum, abilities, records, and Version 9 foundations.",
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 8.6.20 \u2014 Original Roster Featured Wrestler Calibration"
+  "label": "LEGACY Pro Wrestling 9.0 \u2014 Specialty Matches and Last Man Standing"
 }
