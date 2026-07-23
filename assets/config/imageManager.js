@@ -404,7 +404,7 @@ Object.assign(window.TTG_IMAGE_MANAGER,{
 })(window.TTG_IMAGE_MANAGER);
 
 
-/* LEGACY Pro Wrestling 8.6.16 — verified full-body home-feature assets */
+/* LEGACY Pro Wrestling 8.6.17 — verified full-body home-feature assets */
 (function useVerifiedHomeFeatureAssets(manager){
   if(!manager)return;
   Object.entries(manager).forEach(([id,config])=>{

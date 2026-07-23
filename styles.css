@@ -2438,3 +2438,17 @@ h1,h2,h3,.name b{color:var(--lpw-white)}
   padding:0!important; object-fit:contain!important; object-position:center bottom!important;
   transform:none!important; transform-origin:center bottom!important;
 }
+
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 8.6.17 — HEAD-ANCHORED FEATURED WRESTLERS
+   Dedicated home-feature assets are pre-normalised around each wrestler's head.
+   CSS must not introduce per-character transforms or silhouette centring.
+   ============================================================================= */
+.lpw-home .featured-superstar > .wrestler-art[data-image-screen="homeFeature"]{
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  transform:none!important;
+  translate:none!important;
+  scale:none!important;
+}

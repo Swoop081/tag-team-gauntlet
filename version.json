@@ -1,8 +1,8 @@
 {
-  "version": "8.6.16",
+  "version": "8.6.17",
   "build": "brand-url-and-project-cleanup",
   "date": "2026-07-23",
   "notes": "Adds the official full LPW logo as the iOS/PWA app icon, changes the GitHub Pages app identity to legacy-pro-wrestling, and removes non-runtime historical/QA files and duplicate PNG source assets.",
   "updated": "2026-07-23",
-  "label": "LEGACY Pro Wrestling 8.6.16 \u2014 App Icon, URL & Project Cleanup"
+  "label": "LEGACY Pro Wrestling 8.6.17 \u2014 Head-Anchored Featured Wrestler Alignment"
 }

@@ -1,6 +1,6 @@
 # LEGACY Pro Wrestling
 
-Current web build: **8.6.16**
+Current web build: **8.6.17**
 
 GitHub Pages repository: `legacy-pro-wrestling`  
 Published URL: `https://swoop081.github.io/legacy-pro-wrestling/`

@@ -1,0 +1,767 @@
+[
+  {
+    "slug": "ace-riot",
+    "box": [
+      902,
+      169,
+      243,
+      243
+    ],
+    "method": "haar",
+    "scale": 1.1069958847736625,
+    "paste": [
+      -109,
+      3
+    ]
+  },
+  {
+    "slug": "ava-cross",
+    "box": [
+      902,
+      193,
+      320,
+      320
+    ],
+    "method": "haar",
+    "scale": 0.840625,
+    "paste": [
+      131,
+      28
+    ]
+  },
+  {
+    "slug": "axel-voss",
+    "box": [
+      905,
+      135,
+      237,
+      237
+    ],
+    "method": "haar",
+    "scale": 1.1350210970464134,
+    "paste": [
+      -138,
+      37
+    ]
+  },
+  {
+    "slug": "bianca-balboa",
+    "box": [
+      922,
+      205,
+      271,
+      271
+    ],
+    "method": "haar",
+    "scale": 0.992619926199262,
+    "paste": [
+      -26,
+      -13
+    ]
+  },
+  {
+    "slug": "chloe-carter",
+    "box": [
+      906,
+      193,
+      228,
+      228
+    ],
+    "method": "haar",
+    "scale": 1.1798245614035088,
+    "paste": [
+      -179,
+      -38
+    ]
+  },
+  {
+    "slug": "coach-hank-dawson",
+    "box": [
+      802,
+      116,
+      319,
+      319
+    ],
+    "method": "haar",
+    "scale": 0.8432601880877743,
+    "paste": [
+      213,
+      92
+    ]
+  },
+  {
+    "slug": "damian-black",
+    "box": [
+      933,
+      178,
+      207,
+      207
+    ],
+    "method": "haar",
+    "scale": 1.2995169082125604,
+    "paste": [
+      -323,
+      -41
+    ]
+  },
+  {
+    "slug": "dave-maddox",
+    "box": [
+      914,
+      170,
+      219,
+      219
+    ],
+    "method": "haar",
+    "scale": 1.2283105022831051,
+    "paste": [
+      -233,
+      -19
+    ]
+  },
+  {
+    "slug": "derek-pierce",
+    "box": [
+      944,
+      83,
+      301,
+      301
+    ],
+    "method": "haar",
+    "scale": 0.893687707641196,
+    "paste": [
+      46,
+      116
+    ]
+  },
+  {
+    "slug": "dr-lena-hart",
+    "box": [
+      977,
+      130,
+      255,
+      255
+    ],
+    "method": "haar",
+    "scale": 1.0549019607843138,
+    "paste": [
+      -141,
+      53
+    ]
+  },
+  {
+    "slug": "el-rey-del-cielo",
+    "box": [
+      875,
+      105,
+      300,
+      300
+    ],
+    "method": "manual",
+    "scale": 0.8966666666666666,
+    "paste": [
+      105,
+      96
+    ]
+  },
+  {
+    "slug": "elias-crowe",
+    "box": [
+      741,
+      157,
+      365,
+      365
+    ],
+    "method": "haar",
+    "scale": 0.736986301369863,
+    "paste": [
+      343,
+      74
+    ]
+  },
+  {
+    "slug": "ethan-brooks",
+    "box": [
+      874,
+      186,
+      222,
+      222
+    ],
+    "method": "haar",
+    "scale": 1.2117117117117118,
+    "paste": [
+      -170,
+      -35
+    ]
+  },
+  {
+    "slug": "everest",
+    "box": [
+      898,
+      108,
+      254,
+      254
+    ],
+    "method": "haar",
+    "scale": 1.0590551181102361,
+    "paste": [
+      -62,
+      76
+    ]
+  },
+  {
+    "slug": "graham-archer",
+    "box": [
+      888,
+      35,
+      259,
+      259
+    ],
+    "method": "haar",
+    "scale": 1.0386100386100385,
+    "paste": [
+      -33,
+      154
+    ]
+  },
+  {
+    "slug": "hollowman",
+    "box": [
+      900,
+      105,
+      250,
+      250
+    ],
+    "method": "manual",
+    "scale": 1.076,
+    "paste": [
+      -79,
+      77
+    ]
+  },
+  {
+    "slug": "hollywood-titan",
+    "box": [
+      839,
+      171,
+      286,
+      286
+    ],
+    "method": "haar",
+    "scale": 0.9405594405594405,
+    "paste": [
+      100,
+      29
+    ]
+  },
+  {
+    "slug": "jack-mercer",
+    "box": [
+      870,
+      155,
+      308,
+      308
+    ],
+    "method": "haar",
+    "scale": 0.8733766233766234,
+    "paste": [
+      130,
+      55
+    ]
+  },
+  {
+    "slug": "jasmine-monroe",
+    "box": [
+      915,
+      173,
+      249,
+      249
+    ],
+    "method": "haar",
+    "scale": 1.0803212851405624,
+    "paste": [
+      -99,
+      3
+    ]
+  },
+  {
+    "slug": "jett-valentine",
+    "box": [
+      900,
+      125,
+      255,
+      255
+    ],
+    "method": "manual",
+    "scale": 1.0549019607843138,
+    "paste": [
+      -60,
+      58
+    ]
+  },
+  {
+    "slug": "johnny-cannon",
+    "box": [
+      886,
+      22,
+      323,
+      323
+    ],
+    "method": "haar",
+    "scale": 0.8328173374613003,
+    "paste": [
+      152,
+      172
+    ]
+  },
+  {
+    "slug": "kaori-mizuno",
+    "box": [
+      915,
+      187,
+      227,
+      227
+    ],
+    "method": "haar",
+    "scale": 1.1850220264317182,
+    "paste": [
+      -195,
+      -32
+    ]
+  },
+  {
+    "slug": "katie-morgan",
+    "box": [
+      849,
+      166,
+      290,
+      290
+    ],
+    "method": "haar",
+    "scale": 0.9275862068965517,
+    "paste": [
+      102,
+      36
+    ]
+  },
+  {
+    "slug": "leon-ward",
+    "box": [
+      911,
+      87,
+      284,
+      284
+    ],
+    "method": "haar",
+    "scale": 0.9471830985915493,
+    "paste": [
+      27,
+      108
+    ]
+  },
+  {
+    "slug": "logan-steele",
+    "box": [
+      885,
+      66,
+      286,
+      286
+    ],
+    "method": "haar",
+    "scale": 0.9405594405594405,
+    "paste": [
+      57,
+      128
+    ]
+  },
+  {
+    "slug": "lucas-bennett",
+    "box": [
+      919,
+      121,
+      239,
+      239
+    ],
+    "method": "haar",
+    "scale": 1.1255230125523012,
+    "paste": [
+      -145,
+      54
+    ]
+  },
+  {
+    "slug": "magnus-fury",
+    "box": [
+      909,
+      258,
+      226,
+      226
+    ],
+    "method": "haar",
+    "scale": 1.1902654867256637,
+    "paste": [
+      -192,
+      -117
+    ]
+  },
+  {
+    "slug": "marco-montana",
+    "box": [
+      927,
+      141,
+      221,
+      221
+    ],
+    "method": "haar",
+    "scale": 1.2171945701357465,
+    "paste": [
+      -239,
+      18
+    ]
+  },
+  {
+    "slug": "marcus-king",
+    "box": [
+      833,
+      162,
+      232,
+      232
+    ],
+    "method": "haar",
+    "scale": 1.1594827586206897,
+    "paste": [
+      -76,
+      2
+    ]
+  },
+  {
+    "slug": "mason-marks",
+    "box": [
+      911,
+      133,
+      271,
+      271
+    ],
+    "method": "haar",
+    "scale": 0.992619926199262,
+    "paste": [
+      -15,
+      58
+    ]
+  },
+  {
+    "slug": "mateo-vega",
+    "box": [
+      916,
+      174,
+      300,
+      300
+    ],
+    "method": "haar",
+    "scale": 0.8966666666666666,
+    "paste": [
+      68,
+      34
+    ]
+  },
+  {
+    "slug": "max-justice",
+    "box": [
+      896,
+      133,
+      251,
+      251
+    ],
+    "method": "haar",
+    "scale": 1.0717131474103585,
+    "paste": [
+      -71,
+      47
+    ]
+  },
+  {
+    "slug": "mike-sullivan",
+    "box": [
+      914,
+      28,
+      309,
+      309
+    ],
+    "method": "haar",
+    "scale": 0.8705501618122977,
+    "paste": [
+      94,
+      166
+    ]
+  },
+  {
+    "slug": "nightwatch",
+    "box": [
+      928,
+      152,
+      189,
+      189
+    ],
+    "method": "haar",
+    "scale": 1.4232804232804233,
+    "paste": [
+      -431,
+      -26
+    ]
+  },
+  {
+    "slug": "preston-cole",
+    "box": [
+      887,
+      112,
+      326,
+      326
+    ],
+    "method": "haar",
+    "scale": 0.8251533742331288,
+    "paste": [
+      158,
+      98
+    ]
+  },
+  {
+    "slug": "primal",
+    "box": [
+      931,
+      122,
+      309,
+      309
+    ],
+    "method": "haar",
+    "scale": 0.8705501618122977,
+    "paste": [
+      79,
+      84
+    ]
+  },
+  {
+    "slug": "raymond-briggs",
+    "box": [
+      957,
+      89,
+      222,
+      222
+    ],
+    "method": "haar",
+    "scale": 1.2117117117117118,
+    "paste": [
+      -270,
+      82
+    ]
+  },
+  {
+    "slug": "rex-hunter",
+    "box": [
+      900,
+      110,
+      255,
+      255
+    ],
+    "method": "manual",
+    "scale": 1.0549019607843138,
+    "paste": [
+      -60,
+      74
+    ]
+  },
+  {
+    "slug": "ryder-phoenix",
+    "box": [
+      872,
+      168,
+      221,
+      221
+    ],
+    "method": "haar",
+    "scale": 1.2171945701357465,
+    "paste": [
+      -172,
+      -14
+    ]
+  },
+  {
+    "slug": "savannah-sinclair",
+    "box": [
+      916,
+      148,
+      236,
+      236
+    ],
+    "method": "haar",
+    "scale": 1.1398305084745763,
+    "paste": [
+      -155,
+      21
+    ]
+  },
+  {
+    "slug": "scarlett-storm",
+    "box": [
+      822,
+      41,
+      349,
+      349
+    ],
+    "method": "haar",
+    "scale": 0.7707736389684814,
+    "paste": [
+      256,
+      158
+    ]
+  },
+  {
+    "slug": "sienna",
+    "box": [
+      845,
+      192,
+      269,
+      269
+    ],
+    "method": "haar",
+    "scale": 1.0,
+    "paste": [
+      44,
+      -2
+    ]
+  },
+  {
+    "slug": "slater-nova",
+    "box": [
+      878,
+      160,
+      217,
+      217
+    ],
+    "method": "haar",
+    "scale": 1.23963133640553,
+    "paste": [
+      -199,
+      -8
+    ]
+  },
+  {
+    "slug": "sterling-sinclair",
+    "box": [
+      894,
+      144,
+      191,
+      191
+    ],
+    "method": "haar",
+    "scale": 1.4083769633507854,
+    "paste": [
+      -370,
+      -13
+    ]
+  },
+  {
+    "slug": "the-revenant",
+    "box": [
+      914,
+      118,
+      247,
+      247
+    ],
+    "method": "haar",
+    "scale": 1.0890688259109311,
+    "paste": [
+      -106,
+      61
+    ]
+  },
+  {
+    "slug": "tommy-sparks",
+    "box": [
+      889,
+      211,
+      269,
+      269
+    ],
+    "method": "haar",
+    "scale": 1.0,
+    "paste": [
+      0,
+      -21
+    ]
+  },
+  {
+    "slug": "travis-stone",
+    "box": [
+      911,
+      120,
+      227,
+      227
+    ],
+    "method": "haar",
+    "scale": 1.1850220264317182,
+    "paste": [
+      -190,
+      48
+    ]
+  },
+  {
+    "slug": "valkyrie-hale",
+    "box": [
+      907,
+      169,
+      240,
+      240
+    ],
+    "method": "haar",
+    "scale": 1.1208333333333333,
+    "paste": [
+      -127,
+      1
+    ]
+  },
+  {
+    "slug": "veronica-vale",
+    "box": [
+      935,
+      182,
+      260,
+      260
+    ],
+    "method": "haar",
+    "scale": 1.0346153846153847,
+    "paste": [
+      -78,
+      2
+    ]
+  },
+  {
+    "slug": "victor-royale",
+    "box": [
+      915,
+      137,
+      231,
+      231
+    ],
+    "method": "haar",
+    "scale": 1.1645021645021645,
+    "paste": [
+      -176,
+      30
+    ]
+  },
+  {
+    "slug": "zara-monroe",
+    "box": [
+      916,
+      168,
+      227,
+      227
+    ],
+    "method": "haar",
+    "scale": 1.1850220264317182,
+    "paste": [
+      -196,
+      -9
+    ]
+  }
+]
