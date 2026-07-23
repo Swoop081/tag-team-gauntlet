@@ -4472,22 +4472,31 @@ render=function(html){
    Static is deliberately exclusive to the moment a new Career is entered.
    ============================================================================= */
 (function(){
- const ONBOARDING_VERSION='9.0.2';
+ const ONBOARDING_VERSION='9.0.3';
  let channelTimer=null;
  function clearChannelTimer(){if(channelTimer){clearTimeout(channelTimer);channelTimer=null}}
  function careerChampion(c){return liveFounder(c?.championships?.world)||liveFounder('jack-mercer')}
  function careerPlayer(c){return liveFounder(c?.active)}
  function possessive(name){return /s$/i.test(name)?`${name}'`:`${name}'s`}
 
+ function mountChannelOverlay(markup){
+  document.querySelectorAll('.lpw902-channel-static,.lpw902-breaking-card').forEach(node=>node.remove());
+  const host=document.createElement('div');
+  host.innerHTML=markup.trim();
+  const node=host.firstElementChild;
+  document.body.appendChild(node);
+  return node;
+ }
+ function clearChannelOverlay(){document.querySelectorAll('.lpw902-channel-static,.lpw902-breaking-card').forEach(node=>node.remove())}
  window.lpw902CareerStatic=function(){
   clearChannelTimer();
-  render(`<section class="lpw902-channel-static" aria-label="Television channel tuning"><div class="lpw902-static-noise"></div><div class="lpw902-static-band"></div><div class="lpw902-static-vignette"></div></section>`);
+  mountChannelOverlay(`<section class="lpw902-channel-static" aria-label="Television channel tuning"><div class="lpw902-static-noise"></div><div class="lpw902-static-band"></div><div class="lpw902-static-vignette"></div></section>`);
   channelTimer=setTimeout(window.lpw902CareerBreakingNews,700);
  };
  window.lpw902CareerBreakingNews=function(){
   clearChannelTimer();
-  render(`<section class="lpw902-breaking-card"><div class="lpw902-breaking-rule"></div><small>BREAKING NEWS</small><h1>LIVE FROM BACKSTAGE</h1><span>LEGACY PRO WRESTLING</span></section>`);
-  channelTimer=setTimeout(()=>window.lpw902ChampionInterview(0),1250);
+  mountChannelOverlay(`<section class="lpw902-breaking-card"><div class="lpw902-breaking-rule"></div><small>BREAKING NEWS</small><h1>LIVE FROM BACKSTAGE</h1><span>LEGACY PRO WRESTLING</span></section>`);
+  channelTimer=setTimeout(()=>{clearChannelOverlay();window.lpw902ChampionInterview(0)},1250);
  };
  window.lpw902ChampionInterview=function(page=0){
   clearChannelTimer();
@@ -4498,7 +4507,7 @@ render=function(html){
    {speaker:'Katie Morgan',role:'BACKSTAGE INTERVIEWER',copy:`Good evening, everyone. I'm Katie Morgan, and we're live from backstage. Joining me now is the reigning LEGACY World Champion, ${champ.name}.`},
    {speaker:'Katie Morgan',role:'BACKSTAGE INTERVIEWER',copy:`A new season begins, and every wrestler in LEGACY has one goal: taking your World Championship. What does the landscape look like from where you stand?`},
    {speaker:champ.name,role:'LEGACY WORLD CHAMPION',copy:`The landscape looks exactly as it should. Everyone is looking up at me. They can chase this championship, but chasing it and being ready for it are two very different things.`},
-   {speaker:'Katie Morgan',role:'BACKSTAGE INTERVIEWER',copy:`One of those wrestlers is brand new to Career Mode: ${firstName}. Have you heard much about ${player.name}?`},
+   {speaker:'Katie Morgan',role:'BACKSTAGE INTERVIEWER',copy:`One of those wrestlers makes their LEGACY debut tonight: ${firstName}. Have you heard much about ${player.name}?`},
    {speaker:champ.name,role:'LEGACY WORLD CHAMPION',copy:`Every newcomer believes they will be the one who changes everything. I will take notice when ${player.name} earns the right to stand across the ring from me.`},
    {speaker:'Katie Morgan',role:'BACKSTAGE INTERVIEWER',copy:`For LEGACY Pro Wrestling, I'm Katie Morgan… back to you.`,signoff:true}
   ];
@@ -4508,7 +4517,7 @@ render=function(html){
    <div class="tv-kicker">BREAKING NEWS · LIVE FROM BACKSTAGE</div>
    <h1>THE WORLD CHAMPION SPEAKS</h1>
    <div class="lpw902-interview-stage">
-    <article class="lpw902-interviewer ${speakerIsKatie?'speaking':''}">${npcImage('katie-morgan','full')}<small>BACKSTAGE INTERVIEWER</small><b>Katie Morgan</b></article>
+    <article class="lpw902-interviewer lpw-katie-left ${speakerIsKatie?'speaking':''}">${npcImage('katie-morgan','full')}<small>BACKSTAGE INTERVIEWER</small><b>Katie Morgan</b></article>
     <article class="lpw902-champion ${!speakerIsKatie?'speaking':''}">${imageWithFallback(champ,'full','art-full','resultVictory')}<small>REIGNING LEGACY WORLD CHAMPION</small><b>${champ.name}</b>${typeof lpw837BeltGraphic==='function'?lpw837BeltGraphic():''}</article>
    </div>
    <div class="lpw902-dialogue-card ${d.signoff?'signoff':''}"><small>${d.role}</small><h2>${d.speaker}</h2><p>“${d.copy}”</p></div>
@@ -4536,4 +4545,4 @@ render=function(html){
  window.LPW_CAREER_ONBOARDING_VERSION=ONBOARDING_VERSION;
 })();
 
-;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0.2');
+;document.querySelectorAll('.build-tag').forEach(node=>node.textContent='VERSION 9.0.3');
