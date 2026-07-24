@@ -2763,3 +2763,43 @@ body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!importan
 .lpw913-living-world .lpw908-rank-row>strong .lpw912-rank-movement,
 .lpw913-living-world .lpw908-rank-row>strong .lpw911-rank-movement,
 .lpw913-living-world .lpw908-rank-row>strong .lpw914-rank-move{display:none!important}
+
+/* LEGACY Pro Wrestling 9.1.4 Career Hub header hotfix */
+.lpw914-career-header{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:96px minmax(0,1fr) minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:0 0 8px!important;
+}
+.lpw914-career-logo{
+  display:block!important;
+  width:92px!important;
+  height:64px!important;
+  object-fit:contain!important;
+  margin:0!important;
+}
+.lpw914-career-nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:52px!important;
+  margin:0!important;
+  padding:10px 6px!important;
+  box-sizing:border-box!important;
+  font-size:.68rem!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:clip!important;
+  background:linear-gradient(180deg,#173887,#0c2056)!important;
+  color:#fff!important;
+}
+@media(max-width:560px){
+  .lpw914-career-header{grid-template-columns:84px minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}
+  .lpw914-career-logo{width:80px!important;height:56px!important}
+  .lpw914-career-nav{min-height:48px!important;padding:8px 4px!important;font-size:.59rem!important}
+}

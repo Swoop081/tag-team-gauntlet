@@ -1,4 +1,4 @@
-# LEGACY Pro Wrestling 9.1.3 — Career Hub News & Ranking Fix
+# LEGACY Pro Wrestling 9.1.4 — Career Hub Header Hotfix
 
 Changed-files patch for the cumulative working build.
 

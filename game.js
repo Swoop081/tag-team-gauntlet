@@ -6903,3 +6903,31 @@ render=function(html){
  window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
  later(()=>{renderHubFeed();cleanRankingMarkers()},80);
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.4 — CAREER HUB HEADER HOTFIX
+   Rebuilds the Career Hub navigation with explicit text buttons and a valid
+   compact logo asset. No inherited image/icon controls are reused.
+   ============================================================================= */
+(function(){
+  const previousRender=window.render;
+  function repairCareerHubHeader(){
+    const screen=document.querySelector('.live-calendar-screen');
+    const top=screen&&screen.querySelector('.live-calendar-top');
+    if(!top)return;
+
+    const row=document.createElement('div');
+    row.className='lpw914-career-header';
+    row.innerHTML=`
+      <img class="lpw914-career-logo" src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling">
+      <button type="button" class="shell-back lpw914-career-nav" onclick="home()">← MAIN MENU</button>
+      <button type="button" class="shell-back lpw914-career-nav" onclick="gauntletLiveHome()">CAREER MENU</button>`;
+
+    top.replaceChildren(row);
+  }
+  window.render=function(html){
+    const result=previousRender.call(this,html);
+    setTimeout(repairCareerHubHeader,40);
+    return result;
+  };
+})();
