@@ -4937,3 +4937,150 @@ render=function(html){
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
  window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.9 — WORLD DEPTH, HOUSE SHOWS & TEST RESET
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.9';
+ const esc909=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+ const dayKey909=c=>`${Number(c?.year||1)}:${Number(c?.month||1)}:${Number(c?.week||1)}:${Number(c?.day||0)}`;
+ const seed909=c=>(Number(c?.year||1)*10000)+(Number(c?.month||1)*500)+(Number(c?.week||1)*31)+Number(c?.day||0);
+ const choose909=(arr,seed,offset=0)=>arr.length?arr[Math.abs(seed+offset)%arr.length]:'';
+ const unique909=arr=>[...new Set(arr.filter(Boolean))];
+ function career909(c,id){
+  c.livingCareers=c.livingCareers||{};
+  return c.livingCareers[id]||(c.livingCareers[id]={id,wins:0,losses:0,streak:0,lastResult:null,momentum:50,popularity:20,rival:null,status:'Active',history:[],monthsControlled:0,monthsAI:0});
+ }
+ function ranking909(c,id){return Array.isArray(c.rankings)?c.rankings.find(r=>r.id===id):null}
+ function roster909(c){
+  const ids=(Array.isArray(c.rankings)&&c.rankings.length?c.rankings.map(r=>r.id):WRESTLERS.map(w=>w.id));
+  return unique909(ids).filter(id=>liveFounder(id)&&id!==c.active&&id!==c.world?.injury?.id);
+ }
+ function isTelevised909(c){return Number(c.day)===0||Number(c.day)===3||liveIsSupercard(c)}
+ function simulateHouseShow909(c){
+  c.world=c.world||{};c.world.houseShows=c.world.houseShows||{};
+  const key=dayKey909(c);if(isTelevised909(c)||c.world.houseShows[key])return;
+  const seed=seed909(c),ids=roster909(c);
+  const totals=id=>{const x=career909(c,id);return Number(x.wins||0)+Number(x.losses||0)};
+  ids.sort((a,b)=>totals(a)-totals(b)||String(a).localeCompare(String(b)));
+  const matchCount=2+(seed%2),needed=Math.min(ids.length,matchCount*2),priority=ids.slice(0,Math.min(needed+4,ids.length));
+  const selected=[];
+  while(selected.length<needed&&priority.length){selected.push(priority.splice((seed+selected.length*7)%priority.length,1)[0])}
+  while(selected.length<needed){const left=ids.filter(id=>!selected.includes(id));if(!left.length)break;selected.push(left[(seed+selected.length*11)%left.length])}
+  const matches=[];
+  for(let i=0;i+1<selected.length&&matches.length<matchCount;i+=2){
+   const a=selected[i],b=selected[i+1],ra=ranking909(c,a),rb=ranking909(c,b);
+   const scoreA=Number(ra?.points||50)+((seed+i*13)%23),scoreB=Number(rb?.points||50)+((seed+i*17+9)%23);
+   const winner=scoreA>=scoreB?a:b,loser=winner===a?b:a,wx=career909(c,winner),lx=career909(c,loser),wr=ranking909(c,winner),lr=ranking909(c,loser);
+   wx.wins=Number(wx.wins||0)+1;wx.streak=Math.max(1,Number(wx.streak||0)+1);wx.lastResult='W';
+   lx.losses=Number(lx.losses||0)+1;lx.streak=Math.min(-1,Number(lx.streak||0)-1);lx.lastResult='L';
+   if(wr){wr.wins=wx.wins;wr.losses=wx.losses;wr.points=Math.max(0,Number(wr.points||50)+5)}
+   if(lr){lr.wins=lx.wins;lr.losses=lx.losses;lr.points=Math.max(0,Number(lr.points||50)-3)}
+   matches.push({winner,loser,upset:Number(wr?.points||0)<Number(lr?.points||0)});
+  }
+  if(Array.isArray(c.rankings))c.rankings.sort((a,b)=>Number(b.points||0)-Number(a.points||0)||Number(b.wins||0)-Number(a.wins||0));
+  c.world.houseShows[key]={key,month:c.month,week:c.week,day:c.day,matches};
+  c.world.latestHouseShow=c.world.houseShows[key];
+ }
+ const advance909=liveAdvanceDay;
+ liveAdvanceDay=function(c){if(c)simulateHouseShow909(c);return advance909(c)};
+ window.liveAdvanceDay=liveAdvanceDay;
+
+ window.lpw909ResetPrompt=function(){
+  render(`<section class="panel lpw909-reset-screen"><button class="shell-back" onclick="optionsMenu()">← OPTIONS</button><div class="tv-kicker">TESTING & DATA</div><h1>RESET ALL PROGRESS?</h1><p>This will permanently wipe all game data, Career progress, collections, achievements, unlocks, records and settings. The game will return to a true first-launch state.</p><strong>THIS CANNOT BE UNDONE.</strong><div class="lpw909-reset-actions"><button class="btn secondary" onclick="optionsMenu()">CANCEL</button><button class="btn lpw909-danger" onclick="lpw909ConfirmReset()">YES, RESET EVERYTHING</button></div></section>`);
+ };
+ window.lpw909ConfirmReset=function(){
+  try{localStorage.clear();sessionStorage.clear()}catch(e){}
+  try{if('caches' in window)caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k))))}catch(e){}
+  location.reload();
+ };
+ optionsMenu=function(){
+  render(`<section class="panel mode-landing lpw909-options">${shellBack()}<div class="mode-landing-copy"><div class="tv-kicker">GAME SETTINGS</div><h1>OPTIONS</h1><p>Manage presentation settings and testing data.</p><div class="lpw909-option-list"><button class="hub-option lpw909-reset-option" onclick="lpw909ResetPrompt()"><b>RESET PROGRESS</b><small>Wipe all saved game data and return to first launch.</small></button></div></div></section>`);
+ };
+ window.optionsMenu=optionsMenu;
+
+ window.LPW_RETURN_TO_HUB=false;
+ function patchReturn909(){
+  if(!window.LPW_RETURN_TO_HUB)return;
+  document.querySelectorAll('.shell-back').forEach(btn=>{btn.textContent='← CAREER HUB';btn.setAttribute('onclick','LPW_RETURN_TO_HUB=false;gauntletLiveCalendar()')});
+  document.querySelectorAll('button').forEach(btn=>{if(/RETURN TO CAREER|CALENDAR|DASHBOARD/.test(btn.textContent||''))btn.setAttribute('onclick','LPW_RETURN_TO_HUB=false;gauntletLiveCalendar()')});
+ }
+ function openFromHub909(fn){window.LPW_RETURN_TO_HUB=true;fn();setTimeout(patchReturn909,0)}
+ window.lpw909OpenRankings=()=>openFromHub909(()=>lpw8RankingScreen());
+ window.lpw909OpenNews=()=>openFromHub909(()=>lpw84NewsNetwork());
+ window.lpw909OpenArchive=()=>openFromHub909(()=>gauntletLiveArchive());
+
+ function rankWindow909(c){
+  const rows=typeof lpw8Rankings==='function'?lpw8Rankings(c):(c.rankings||[]),idx=Math.max(0,rows.findIndex(r=>r.id===c.active)),from=Math.max(0,Math.min(idx-2,Math.max(0,rows.length-5)));
+  return rows.slice(from,from+5).map((row,i)=>({row,rank:from+i+1,w:liveFounder(row.id)}));
+ }
+ function latestHouse909(c){
+  const hs=c.world?.latestHouseShow;if(!hs?.matches?.length)return null;
+  const m=hs.matches[0],w=liveFounder(m.winner),l=liveFounder(m.loser);return w&&l?{...m,w,l}:null;
+ }
+ function dailyFeed909(c){
+  const seed=seed909(c),player=liveFounder(c.active),rival=liveFeudOpponent(c),champ=liveFounder(c.championships?.world),rows=typeof lpw8Rankings==='function'?lpw8Rankings(c):(c.rankings||[]),idx=rows.findIndex(r=>r.id===c.active),rank=idx+1;
+  const above=idx>0?liveFounder(rows[idx-1].id):null,below=idx>=0&&idx<rows.length-1?liveFounder(rows[idx+1].id):null,house=latestHouse909(c);
+  const others=rows.map(r=>liveFounder(r.id)).filter(w=>w&&w.id!==c.active&&w.id!==rival?.id&&w.id!==champ?.id),a=choose909(others,seed,2),b=choose909(others,seed,7),d=choose909(others,seed,12);
+  const headlines=unique909([
+   house?`${house.w.name} defeated ${house.l.name} on the latest non-televised house show${house.upset?", producing one of the week's biggest upsets":''}.`:'',
+   a&&b?`${a.name} and ${b.name} are both pushing for a higher-profile booking after strong internal reviews.`:'',
+   champ?`${champ.name}'s position as World Champion continues to shape every decision near the top of the rankings.`:'',
+   rival?`${rival.name} has changed the tone of the rivalry ahead of the next confrontation.`:'',
+   above?`${above.name} is protecting the ranking directly above ${player.name}, but the gap is narrowing.`:'',
+   below?`${below.name} is now close enough to threaten ${player.name}'s #${rank} position.`:'',
+   d?`${d.name} has quietly become one of the most active wrestlers on the live-event circuit.`:'',
+   `Officials are reviewing recent results before finalising the next round of televised matches.`,
+   `Several wrestlers outside the spotlight improved their records at the latest house show.`,
+   `The locker room is paying closer attention to win-loss records as the month develops.`
+  ]);
+  const ava=[
+   `@AvaCross: Tonight's conversation is bigger than one match. Keep an eye on the full LPW roster.`,
+   `@AvaCross: New results are in, rankings have moved, and the next show already feels different.`,
+   `@AvaCross: House shows matter. Every win counts, even when the cameras are not there.`,
+   `@AvaCross: Which wrestler deserves more television time this week? The replies are open.`,
+   `@AvaCross: Match announcements, backstage clips and rankings updates are coming throughout the day.`,
+   `@AvaCross: The LPW audience has been loud about ${a?.name||'the rising contenders'}. We are listening.`,
+   `@AvaCross: One result can change an entire month. That is not promotion—it is the standings.`,
+   `@AvaCross: Today's house-show report is live. Some records look very different now.`,
+   `@AvaCross: The road to the next SuperCard continues whether the cameras are rolling or not.`,
+   `@AvaCross: Fan poll—who has earned the next main-event opportunity?`
+  ];
+  const voices=unique909([
+   a?`@${a.name.replace(/\s+/g,'')}: “I do not need every headline. I need the next win.”`:'',
+   b?`@${b.name.replace(/\s+/g,'')}: “Check the record after the next bell.”`:'',
+   house?`@LPWFans: ${house.w.name}'s house-show win has people asking for a televised opportunity.`:'',
+   `@LPWOfficial: Results from across the roster have been added to the official records.`,
+   `@RingsideReport: The middle of the Power Rankings is becoming the most unpredictable part of LPW.`,
+   `@LPWFans: Not every important story involves the current rivalry. The whole roster is moving.`,
+   `@BackstageWire: Several wrestlers are asking for tougher opponents after recent wins.`
+  ]);
+  const dirt=unique909([
+   house?`Officials were reportedly impressed by ${house.w.name}'s victory over ${house.l.name} at the latest house show.`:'',
+   a?`${a.name} is believed to be lobbying for a televised match after increased live-event activity.`:'',
+   b&&d?`There has been internal discussion about pairing ${b.name} with ${d.name} in a fresh programme.`:'',
+   rival?`The rivalry involving ${player.name} and ${rival.name} may be heading toward a new stipulation.`:'',
+   `Producers are said to be using house-show performance to influence upcoming television bookings.`,
+   `A wrestler currently outside the top ten is reportedly receiving strong backstage reviews.`,
+   `The rankings committee is placing more weight on recent activity and strength of opposition.`,
+   `One planned match may be changed after an unexpected result away from television.`,
+   `Several names with fewer appearances have been prioritised for upcoming live events.`
+  ]);
+  return {headlines:[choose909(headlines,seed,0),choose909(headlines,seed,3)],social:[choose909(ava,seed,1),choose909(voices,seed,5)],dirt:[choose909(dirt,seed,2),choose909(dirt,seed,6)],champ,rankingWindow:rankWindow909(c)};
+ }
+ function mount909(){
+  const host=document.querySelector('.lpw908-living-world,.lpw-future-hub');if(!host)return;const c=liveLoad();if(!c)return;const feed=dailyFeed909(c);
+  host.className='lpw908-living-world lpw909-living-world';
+  host.innerHTML=`<div class="lpw908-feed-heading"><small>LPW LIVING WORLD</small><h2>AROUND THE LIVING WORLD</h2><p>Updated every in-game day as results, stories and rankings evolve.</p></div>
+  <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>LATEST HEADLINES</h3><button onclick="lpw909OpenNews()">VIEW NEWS</button></div>${feed.headlines.map((x,i)=>`<article><small>${i?'AROUND LPW':'TOP STORY'}</small><p>${esc909(x)}</p></article>`).join('')}</section>
+  <section class="lpw908-feed-section lpw908-rankings"><div class="lpw908-section-title"><h3>POWER RANKINGS</h3><button onclick="lpw909OpenRankings()">FULL RANKINGS</button></div><div class="lpw908-champion"><small>WORLD CHAMPION</small><b>${esc909(feed.champ?.name||'VACANT')}</b></div>${feed.rankingWindow.map(x=>`<div class="lpw908-rank-row ${x.row.id===c.active?'is-player':''}"><strong>#${x.rank}</strong><span>${esc909(x.w?.name||'Unknown')}</span>${x.row.id===c.active?'<em>YOU</em>':''}</div>`).join('')}</section>
+  <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>SOCIAL PULSE</h3></div>${feed.social.map(x=>`<article class="lpw908-social"><p>${esc909(x)}</p></article>`).join('')}</section>
+  <section class="lpw908-feed-section"><div class="lpw908-section-title"><h3>DIRT SHEET DIGEST</h3><button onclick="lpw909OpenArchive()">MEDIA ARCHIVE</button></div>${feed.dirt.map(x=>`<article><small>SOURCES SAY…</small><p>${esc909(x)}</p></article>`).join('')}</section>`;
+ }
+ const calendar909=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){window.LPW_RETURN_TO_HUB=false;const out=calendar909.apply(this,arguments);setTimeout(mount909,0);return out};window.gauntletLiveCalendar=gauntletLiveCalendar;
+ const home909=gauntletLiveHome;
+ gauntletLiveHome=function(){const out=home909.apply(this,arguments);setTimeout(()=>document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`),0);return out};window.gauntletLiveHome=gauntletLiveHome;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);window.LPW_GAMEPLAY_BUILD=BUILD;
+})();

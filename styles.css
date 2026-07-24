@@ -2623,3 +2623,6 @@ body>.lpw904-show-bumper .lpw-show-logo,body>.lpw904-show-bumper img{max-height:
 .lpw908-rank-row.is-player{background:#202a49;border:1px solid #4266bd;border-radius:9px}
 .lpw908-social{border-left:3px solid #4367bd}
 @media(max-width:520px){.lpw908-living-world{margin-top:1.25rem}.lpw908-feed-section{padding:.85rem}.lpw908-feed-heading h2{font-size:1.35rem}}
+
+/* LEGACY Pro Wrestling 9.0.9 */
+.lpw909-options .mode-landing-copy{max-width:760px}.lpw909-option-list{margin-top:28px}.lpw909-reset-option{width:100%;border-color:#7d2727;background:linear-gradient(135deg,rgba(94,18,18,.88),rgba(35,12,12,.96));text-align:left}.lpw909-reset-option b{color:#ffb3b3}.lpw909-reset-screen{max-width:760px;margin:auto;text-align:center}.lpw909-reset-screen>strong{display:block;margin:20px 0;color:#ff8f8f;letter-spacing:.08em}.lpw909-reset-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}.btn.lpw909-danger{background:#8d1f1f;border-color:#d65a5a;color:white}.lpw909-living-world .lpw908-social:first-of-type{border-left:3px solid #d5aa39}.lpw909-living-world .lpw908-social:first-of-type p{font-weight:700}@media(max-width:620px){.lpw909-reset-actions{grid-template-columns:1fr}}
