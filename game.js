@@ -6598,3 +6598,119 @@ render=function(html){
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
  window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.2 — FINAL RENDER-PATH CONSOLIDATION
+   Removes legacy component fallbacks and routes every Career QA entry point to
+   the approved 9.1 layouts.
+   ============================================================================= */
+(function(){
+ const BUILD='9.1.2';
+ const pick=a=>a[Math.floor(Math.random()*a.length)];
+ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+ const portrait=id=>typeof lpw836NpcVisual==='function'?lpw836NpcVisual(id,'portrait'):npcImage(id,'portrait');
+ const getCareer=c=>{c.livingCareers=c.livingCareers||{};return c.livingCareers[c.active]||(c.livingCareers[c.active]={id:c.active,wins:0,losses:0,momentum:50,popularity:20,relationships:{},modifiers:{},opportunities:{},history:[]})};
+ const rankOf=(c,id)=>{const rows=typeof lpw8Rankings==='function'?lpw8Rankings(c):(c.rankings||[]);const i=rows.findIndex(x=>x.id===id);return i<0?null:i+1};
+ const rosterPool=c=>(typeof liveOtherPool==='function'?liveOtherPool(c):WRESTLERS).filter(w=>w&&w.id!==c.active);
+ function later(fn){setTimeout(fn,25)}
+ function logoNode(){const img=document.createElement('img');img.src='assets/branding/legacy-logo.webp';img.alt='LEGACY Pro Wrestling';return img}
+
+ function finalDomCleanup(){
+  document.querySelectorAll('.lpw84-dashboard-btn,.lpw84-home-dashboard,[onclick*="lpw84Dashboard"]')
+   .forEach(n=>{if(/DASHBOARD/i.test(n.textContent||''))n.remove()});
+  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+  document.querySelectorAll('.result-stars,.lpw913-stars').forEach(n=>{const t=n.textContent||'';if(/<i class=["']lpw913-star/.test(t))n.innerHTML=t});
+  document.querySelectorAll('.live-match-card,.live-show-intro').forEach(root=>{
+   root.querySelectorAll('img').forEach(i=>{if(/legacy-logo/i.test(i.src||''))i.remove()});
+   root.querySelectorAll('.lpw913-legacy-mark,.lpw-brand-logo').forEach(n=>n.remove());
+  });
+  document.querySelectorAll('.live-npc-scene.large').forEach(scene=>{
+   scene.classList.remove('large');scene.classList.add('lpw912-npc-portrait');
+   const img=scene.querySelector('img');if(img)img.src=img.src.replace('/full.','/portrait.');
+  });
+ }
+
+ function rebuildCareerHeader(){
+  const screen=document.querySelector('.live-calendar-screen');
+  const oldTop=screen?.querySelector('.live-calendar-top');
+  if(!screen||!oldTop)return;
+  oldTop.querySelectorAll('.lpw912-career-header').forEach(n=>n.remove());
+  const buttons=[...oldTop.querySelectorAll('button')].filter(b=>/MAIN MENU|CAREER MENU/i.test(b.textContent||''));
+  const row=document.createElement('div');row.className='lpw912-career-header';row.appendChild(logoNode());
+  buttons.slice(0,2).forEach(b=>row.appendChild(b));
+  oldTop.prepend(row);
+  [...oldTop.children].forEach(ch=>{if(ch!==row&&ch.tagName==='IMG'&&/legacy-logo/i.test(ch.src||''))ch.remove()});
+ }
+
+ function fixRankingMovement(){
+  const c=typeof liveLoad==='function'?liveLoad():null;
+  const fresh=!!c&&Object.values(c.livingCareers||{}).every(x=>Number(x.wins||0)+Number(x.losses||0)===0);
+  document.querySelectorAll('.lpw8-ranking-list article,.lpw919-rank-row,.lpw918-rank-row,.lpw-living-rank-row,.power-rankings article').forEach(row=>{
+   const movement=[...row.querySelectorAll('i,em,small,span')].find(n=>/^[▲▼↑↓]\s*\d*$/.test((n.textContent||'').trim()));
+   if(!movement)return;
+   if(fresh){movement.remove();return}
+   const name=[...row.querySelectorAll('b,span')].find(n=>{
+    const t=(n.textContent||'').trim();return t.length>2&&!/^#?\d+$/.test(t)&&!/^(YOU|ACTIVE|WORLD CHAMPION)$/i.test(t)&&n!==movement&&!n.contains(movement)
+   });
+   if(name){movement.classList.add('lpw912-rank-movement');name.insertAdjacentElement('afterend',movement)}
+  });
+ }
+
+ function postRender(){later(()=>{finalDomCleanup();rebuildCareerHeader();fixRankingMovement()})}
+ const rawRender=window.render;
+ window.render=function(html){const r=rawRender.call(this,html);postRender();return r};
+
+ // Compact Katie interview is the only active Katie render path.
+ window.gauntletLiveKatieInterview=function(){
+  const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c),rk=rankOf(c,c.active),x=getCareer(c);
+  const questions=[
+   `${p.name}, your latest results have moved you to #${rk||'—'}. Do you demand tougher opposition, or keep letting the wins speak?`,
+   `${r?`${r.name} keeps escalating this rivalry.`:'The rankings are beginning to tighten around you.'} What message do you want the locker room to hear?`,
+   `You are ${x.wins||0}-${x.losses||0} this season. Is this about proving yourself, building your stable, or chasing the World Championship?`,
+   `The audience is paying closer attention. How much responsibility comes with becoming one of LPW's most discussed wrestlers?`
+  ];
+  render(`<section class="panel live-world-screen lpw912-npc-screen"><div class="tv-kicker">BACKSTAGE INTERVIEW</div><header class="lpw912-npc-header">${portrait('katie-morgan')}<div><small>BACKSTAGE INTERVIEWER</small><h1>Katie Morgan</h1></div></header><blockquote>“${esc(pick(questions))}”</blockquote><div class="live-choice-grid lpw912-quote-choices"><button onclick="lpw91ApplyOutcome('katie-morgan','OPPORTUNITY REQUESTED',{popularity:4},'Your ambition becomes a major talking point.','Management may offer stronger opposition.')"><b>“Give me the toughest opponent available. I want every win to mean something.”</b><span>Call your shot · Popularity +4</span></button><button onclick="lpw91ApplyOutcome('katie-morgan','RESULTS SPEAK',{momentum:4},'The measured answer earns respect backstage.','Your next performance carries added significance.')"><b>“I do not need to make promises. The results will keep speaking for me.”</b><span>Stay focused · Momentum +4</span></button><button onclick="lpw91ApplyOutcome('katie-morgan','RIVAL WARNED',{momentum:3,feud:6},'Your rival receives a direct warning through the broadcast.','The next confrontation may arrive sooner.')"><b>“${r?`${r.name} knows where to find me. The next move is theirs.`:'Anyone who wants my place can step forward.'}”</b><span>Escalate · Momentum +3 · Feud +6</span></button></div></section>`)
+ };
+
+ function socialPosts(c,p,r){
+  const others=rosterPool(c),o1=pick(others)||p,o2=pick(others.filter(w=>w.id!==o1.id))||p,rk=rankOf(c,c.active),last=c.world?.lastResult;
+  const pools=[
+   {avatar:'ava-cross',name:'Ava Cross',handle:'@AvaCrossLPW',official:true,text:pick([`${p.name} is ranked #${rk||'—'}. Who should be the next test?`,`Clips from the latest broadcast are moving fast. What moment deserves another look?`,`The LPW audience has been debating the rankings all morning. Keep the replies coming.`])},
+   {name:'LPW Official',handle:'@LPWOfficial',official:true,text:pick([`The next televised card is taking shape.`, `House-show results have been added to the official records.`, `${o1.name} is among the most active wrestlers this week.`])},
+   {avatar:r?.id||o1.id,name:r?.name||o1.name,handle:'@'+(r?.name||o1.name).replace(/[^A-Za-z0-9]/g,''),text:pick([`One result does not change the hierarchy.`,`The rankings can wait. The next bell tells the truth.`,`I do not need every headline. I need the next win.`])},
+   {avatar:o2.id,name:o2.name,handle:'@'+o2.name.replace(/[^A-Za-z0-9]/g,''),text:pick([`Everybody is watching the same few names. That will change.`,`The middle of the rankings is where the real fight is happening.`,`A quiet week can become a career-changing week with one result.`])},
+   {name:'LPW Fans',handle:'@LPWFans',text:pick([`Which wrestler deserves more television time?`,`The title picture feels one result away from changing.`,`Who had the strongest performance of the week?`])}
+  ];
+  if(last?.win)pools.push({avatar:'johnny-cannon',name:'Johnny Cannon',handle:'@CannonCalls',text:`A win creates momentum. The next opponent decides whether it becomes a run.`});
+  return pools.sort(()=>Math.random()-.5).slice(0,3)
+ }
+ window.lpw912AvaPulse=function(){
+  const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c),posts=socialPosts(c,p,r);
+  render(`<section class="panel live-world-screen lpw912-social"><header>${portrait('ava-cross')}<h1>AVA'S PULSE</h1><span>LPW SOCIAL FEED · TRENDING NOW</span></header><div class="lpw912-feed">${posts.map((z,i)=>`<article class="${z.official?'official':''}"><div class="lpw912-post-head">${z.avatar?portrait(z.avatar):'<span class="lpw912-avatar">LPW</span>'}<p><b>${esc(z.name)}${z.official?' ✓':''}</b><small>${esc(z.handle)} · ${8+i*14}m</small></p></div><p>${esc(z.text)}</p><small>♡ ${(1.4+i*.7).toFixed(1)}K   ↻ ${180+i*137}   💬 ${84+i*91}</small></article>`).join('')}</div><h2>CHOOSE YOUR RESPONSE</h2><div class="live-choice-grid lpw912-post-choices"><button onclick="lpw837SocialChoice('YOUR POST GOES VIRAL',{popularity:4,momentum:2,feud:5},'A confident post spreads across the LPW audience.')"><b>“${r?`${r.name} can keep talking. I’ll keep winning.`:'The whole roster can watch what happens next.'}”</b><span>Bold · Popularity +4 · Momentum +2${r?' · Feud +5':''}</span></button><button onclick="lpw837SocialChoice('FANS RESPECT THE FOCUS',{popularity:3,momentum:4},'A measured response earns respect without losing focus.')"><b>“Respect to everyone in LPW. My focus is the next match.”</b><span>Professional · Popularity +3 · Momentum +4</span></button></div></section>`)
+ };
+ window.lpw837AvaPulse=window.lpw912AvaPulse;window.lpw836AvaPulse=window.lpw912AvaPulse;window.gauntletLiveAvaEvent=window.lpw912AvaPulse;
+
+ window.lpw912DirtSheet=function(supercard=false){
+  const c=liveLoad(),p=liveFounder(c.active),r=liveFeudOpponent(c),pool=rosterPool(c),rise=pick(pool)||p,fall=pick(pool.filter(w=>w.id!==rise.id))||r||p,last=c.world?.lastResult,rating=Number(last?.rating||3.5),week=typeof liveMonthWeek==='function'?liveMonthWeek(c):c.week;
+  const stories=[
+   ['LEAD STORY',last?(last.win?`${p.name} forces a rankings rethink`:`Questions follow ${p.name}'s latest result`):pick(['The rankings race begins again','Backstage attention turns to the new month','A crowded field prepares for the next broadcast']),last?.win?`${p.name}'s latest victory has changed how the locker room views the current pecking order.`:'Derek Pierce examines the most consequential story developing across LPW.'],
+   ['MATCH OF THE WEEK',last?`${p.name} vs ${liveFounder(last.opponent)?.name||'Opponent'}`:`${rise.name} vs ${fall.name}`,`${rating.toFixed(1)} stars · The match still generating debate.`],
+   ['SUPERSTAR OF THE WEEK',rise.name,pick(['A sharp performance has changed the conversation.','Backstage confidence is rising quickly.','The strongest week on the live-event circuit belongs here.'])],
+   ['STOCK FALLING',fall.name,pick(['The next appearance now carries added pressure.','One more setback could reshape the ranking outlook.','A difficult result has raised uncomfortable questions.'])],
+   ['CONTRACT GOSSIP',pick(pool)?.name||p.name,pick(['Talent Relations is believed to be discussing future opportunities.','Officials may be considering a higher-profile programme.','Sources claim management has taken notice of recent consistency.'])],
+   ['RUMOUR OF THE WEEK','SOURCES SAY...',r?pick([`Officials are considering a stipulation for ${p.name} and ${r.name}.`,`${r.name} may demand another confrontation before the SuperCard.`,`Management is discussing how far the ${p.name}-${r.name} rivalry should escalate.`]):'A major announcement may be closer than officials are admitting.']
+  ];
+  render(`<section class="panel live-world-screen lpw912-dirt"><header>${portrait('derek-pierce')}<h1>${supercard?'INSTANT REACTION':'DIRT SHEET DIGEST'}</h1><span>SEASON ${Math.floor((Number(c.month||1)-1)/12)+1} · WEEK ${week} · DEREK PIERCE</span></header><button class="btn live-primary lpw912-centered" onclick="lpw836CompleteMedia()">CONTINUE TO NEXT DAY</button><div class="lpw912-publication">${stories.map((s,i)=>`<article class="${i===0?'lead':''}"><small>${s[0]}</small><h2>${esc(s[1])}</h2><p>${esc(s[2])}</p><em>By Derek Pierce · ${4+i*11}m ago</em></article>`).join('')}</div><p class="lpw-disclaimer">Rumours are based on anonymous sources and backstage speculation. LPW has not verified these claims.</p><button class="btn live-primary lpw912-centered" onclick="lpw836CompleteMedia()">CONTINUE</button></section>`)
+ };
+ window.lpw837DirtSheet=window.lpw912DirtSheet;window.lpw836DirtSheet=window.lpw912DirtSheet;
+ window.lpw836MediaDay=function(){const c=liveLoad(),w=typeof lpw836Week==='function'?lpw836Week(c):c.week;if(w===1||w===3)return window.lpw912AvaPulse();return window.lpw912DirtSheet(w===4)};
+
+ // Remove all obsolete dashboard/version mutations after every hub render.
+ const oldCalendar=window.gauntletLiveCalendar;
+ window.gauntletLiveCalendar=function(){const c=liveLoad();if(c){const x=getCareer(c);c.momentum=Number(x.momentum??50);c.popularity=Number(x.popularity??20);liveSave(c)}const r=oldCalendar.apply(this,arguments);postRender();return r};
+ const oldHome=window.gauntletLiveHome;
+ if(typeof oldHome==='function')window.gauntletLiveHome=function(){const r=oldHome.apply(this,arguments);later(finalDomCleanup);return r};
+
+ window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+ later(finalDomCleanup);
+})();
