@@ -2627,18 +2627,22 @@ body>.lpw904-show-bumper .lpw-show-logo,body>.lpw904-show-bumper img{max-height:
 /* LEGACY Pro Wrestling 9.0.9 */
 .lpw909-options .mode-landing-copy{max-width:760px}.lpw909-option-list{margin-top:28px}.lpw909-reset-option{width:100%;border-color:#7d2727;background:linear-gradient(135deg,rgba(94,18,18,.88),rgba(35,12,12,.96));text-align:left}.lpw909-reset-option b{color:#ffb3b3}.lpw909-reset-screen{max-width:760px;margin:auto;text-align:center}.lpw909-reset-screen>strong{display:block;margin:20px 0;color:#ff8f8f;letter-spacing:.08em}.lpw909-reset-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}.btn.lpw909-danger{background:#8d1f1f;border-color:#d65a5a;color:white}.lpw909-living-world .lpw908-social:first-of-type{border-left:3px solid #d5aa39}.lpw909-living-world .lpw908-social:first-of-type p{font-weight:700}@media(max-width:620px){.lpw909-reset-actions{grid-template-columns:1fr}}
 
-/* LEGACY Pro Wrestling 9.0.10 — televised match preview layout */
-.lpw-match-card-910{position:relative;padding-top:78px!important}
-.lpw-match-card-910 .lpw-match-calendar-back{position:absolute!important;top:18px!important;left:18px!important;z-index:10;margin:0!important}
-.lpw-match-card-910 .lpw-match-branding{display:flex;justify-content:center;align-items:center;text-align:center}
-.lpw-match-card-910 .lpw-show-logo,.lpw-match-card-910 .lpw-ple-title{margin:0 auto 14px}
-.lpw-match-card-910 .lpw-broadcast-button-top{display:block;margin:0 auto 28px;min-width:min(360px,100%)}
-.lpw-match-card-910>h1{margin-top:0}
-.lpw-match-card-910 .lpw-portrait-card .lpw-match-rank{display:block;position:static!important;text-align:center;background:#10131bcc;color:#f2c84b;font-style:normal;font-size:.72rem;font-weight:900;letter-spacing:.08em;padding:7px 8px 9px;border-top:1px solid #ffffff14}
+/* LEGACY Pro Wrestling 9.0.11 — safe match-preview layout correction */
+body.career-view:has(.lpw-match-card-911) header{position:relative;min-height:106px;padding:12px 18px;border-bottom:0}
+body.career-view:has(.lpw-match-card-911) header .brand-header-logo{position:absolute;top:12px;right:18px;left:auto;margin:0;width:clamp(112px,18vw,170px);z-index:20}
+body.career-view:has(.lpw-match-card-911) header .header-meta{display:none!important}
+.lpw-match-card-911{position:relative;padding-top:76px!important}
+.lpw-match-card-911 .lpw-match-calendar-back{position:absolute!important;top:12px!important;left:12px!important;z-index:25;margin:0!important}
+.lpw-match-card-911 .lpw-match-branding{display:block;margin:0 auto 12px!important;text-align:center}
+.lpw-match-card-911 .lpw-broadcast-button-top{display:block!important;width:min(520px,88%);margin:0 auto 26px!important}
+.lpw-match-card-911>h1{margin-top:0}
+.lpw-match-card-911 .lpw-match-rank{display:block;position:static!important;text-align:center;background:#10131bcc;color:#f2c84b;font-style:normal;font-size:.72rem;font-weight:900;letter-spacing:.08em;padding:7px 8px 9px;border-top:1px solid #ffffff14}
+.lpw-match-card-911 .lpw904-momentum{display:block!important}
 @media(max-width:700px){
- .lpw-match-card-910{padding-top:72px!important}
- .lpw-match-card-910 .lpw-match-calendar-back{top:12px!important;left:12px!important}
- .lpw-match-card-910 .lpw-broadcast-button-top{margin-bottom:24px;width:82%;min-width:0}
- .lpw-match-card-910 .lpw-show-logo{max-width:92%;box-sizing:border-box}
- .lpw-match-card-910 .lpw-portrait-card b{min-height:54px}
+ body.career-view:has(.lpw-match-card-911) header{min-height:96px;padding:8px 12px}
+ body.career-view:has(.lpw-match-card-911) header .brand-header-logo{top:8px;right:12px;width:112px}
+ .lpw-match-card-911{padding-top:70px!important}
+ .lpw-match-card-911 .lpw-match-calendar-back{top:8px!important;left:8px!important}
+ .lpw-match-card-911 .lpw-broadcast-button-top{width:82%;margin-bottom:22px!important}
+ .lpw-match-card-911 .lpw-show-logo{max-width:94%;box-sizing:border-box}
 }
