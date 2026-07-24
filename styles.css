@@ -2803,3 +2803,52 @@ body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!importan
   .lpw914-career-logo{width:80px!important;height:56px!important}
   .lpw914-career-nav{min-height:48px!important;padding:8px 4px!important;font-size:.59rem!important}
 }
+
+
+/* LEGACY Pro Wrestling 9.1.5 Career Hub structural header fix */
+.live-calendar-top.lpw915-career-header{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:96px minmax(0,1fr) minmax(0,1fr)!important;
+  align-items:center!important;
+  justify-content:stretch!important;
+  gap:8px!important;
+  margin:0 0 8px!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+.live-calendar-top.lpw915-career-header>.lpw915-career-logo{
+  display:block!important;
+  width:92px!important;
+  height:64px!important;
+  max-width:100%!important;
+  object-fit:contain!important;
+  margin:0!important;
+  grid-column:1!important;
+}
+.live-calendar-top.lpw915-career-header>.lpw915-career-nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:52px!important;
+  margin:0!important;
+  padding:10px 5px!important;
+  box-sizing:border-box!important;
+  font-size:.66rem!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  background:linear-gradient(180deg,#173887,#0c2056)!important;
+  color:#fff!important;
+}
+.live-calendar-top.lpw915-career-header>.lpw915-career-nav:nth-of-type(1){grid-column:2!important}
+.live-calendar-top.lpw915-career-header>.lpw915-career-nav:nth-of-type(2){grid-column:3!important}
+@media(max-width:560px){
+  .live-calendar-top.lpw915-career-header{grid-template-columns:82px minmax(0,1fr) minmax(0,1fr)!important;gap:6px!important}
+  .live-calendar-top.lpw915-career-header>.lpw915-career-logo{width:78px!important;height:56px!important}
+  .live-calendar-top.lpw915-career-header>.lpw915-career-nav{min-height:48px!important;padding:8px 3px!important;font-size:.58rem!important;letter-spacing:.01em!important}
+}

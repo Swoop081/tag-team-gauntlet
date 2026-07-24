@@ -6905,9 +6905,9 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.1.4 — CAREER HUB HEADER HOTFIX
-   Rebuilds the Career Hub navigation with explicit text buttons and a valid
-   compact logo asset. No inherited image/icon controls are reused.
+   LEGACY PRO WRESTLING 9.1.5 — CAREER HUB HEADER STRUCTURAL FIX
+   Rebuilds the actual .live-calendar-top element and clears all inherited
+   header classes from earlier patches so the navigation cannot collapse.
    ============================================================================= */
 (function(){
   const previousRender=window.render;
@@ -6916,18 +6916,28 @@ render=function(html){
     const top=screen&&screen.querySelector('.live-calendar-top');
     if(!top)return;
 
-    const row=document.createElement('div');
-    row.className='lpw914-career-header';
-    row.innerHTML=`
-      <img class="lpw914-career-logo" src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling">
-      <button type="button" class="shell-back lpw914-career-nav" onclick="home()">← MAIN MENU</button>
-      <button type="button" class="shell-back lpw914-career-nav" onclick="gauntletLiveHome()">CAREER MENU</button>`;
-
-    top.replaceChildren(row);
+    // Earlier 9.1.x patches added grid classes directly to this element. They
+    // must be removed or they constrain the replacement header to one grid cell.
+    [...top.classList].forEach(cls=>{if(/^lpw91\d*-career-header$/.test(cls)||cls==='lpw91-career-header')top.classList.remove(cls)});
+    top.classList.add('lpw915-career-header');
+    top.removeAttribute('style');
+    top.innerHTML=`
+      <img class="lpw915-career-logo" src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling">
+      <button type="button" class="shell-back lpw915-career-nav" onclick="home()">← MAIN MENU</button>
+      <button type="button" class="shell-back lpw915-career-nav" onclick="gauntletLiveHome()">CAREER MENU</button>`;
   }
+  window.LPW915_repairCareerHubHeader=repairCareerHubHeader;
   window.render=function(html){
     const result=previousRender.call(this,html);
-    setTimeout(repairCareerHubHeader,40);
+    setTimeout(repairCareerHubHeader,0);
+    setTimeout(repairCareerHubHeader,60);
+    return result;
+  };
+  const previousCalendar=window.gauntletLiveCalendar;
+  if(typeof previousCalendar==='function')window.gauntletLiveCalendar=function(){
+    const result=previousCalendar.apply(this,arguments);
+    setTimeout(repairCareerHubHeader,0);
+    setTimeout(repairCareerHubHeader,80);
     return result;
   };
 })();
