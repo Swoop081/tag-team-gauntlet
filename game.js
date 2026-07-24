@@ -7132,85 +7132,50 @@ render=function(html){
 })();
 
 /* =============================================================================
-   LEGACY PRO WRESTLING 9.1.10 — INITIAL MAIN MENU SYNCHRONISATION
-   Ensures late-loaded menu extensions are present on the very first home render.
+   LEGACY PRO WRESTLING 9.1.10 — CENTRED SHOW LOGO ZOOM TRANSITION
+   Keeps the exact approved intro-logo clone centred while it expands beyond
+   the viewport, then hands off to the broadcast.
    ============================================================================= */
 (function(){
- 'use strict';
  const BUILD='9.1.10';
+ const previousRun=window.gauntletLiveRunShowSegment;
+ const DURATION=1450;
 
- function makeMenuButton(id,className,title,description,handler){
-  const button=document.createElement('button');
-  button.type='button';
-  button.id=id;
-  button.className=`hub-option ${className}`;
-  button.addEventListener('click',handler);
-  button.innerHTML=`<b>${title}</b><small>${description}</small>`;
-  return button;
- }
+ if(typeof previousRun==='function'){
+  window.gauntletLiveRunShowSegment=function(){
+   const intro=document.querySelector('.live-show-intro,.lpw-show-open');
+   if(!intro)return previousRun.apply(this,arguments);
+   const approved=intro.querySelector('.lpw-show-logo,.lpw-ple-title,.lpw904-supercard-title');
+   if(!approved)return previousRun.apply(this,arguments);
 
- function ensureMainMenuExtensions(root=document){
-  const nav=root.querySelector?.('.hub-menu');
-  if(!nav)return false;
+   const buildLogo=typeof window.lpw919BuildExactTransitionLogo==='function'
+    ? window.lpw919BuildExactTransitionLogo
+    : source=>source.cloneNode(true);
 
-  let battle=nav.querySelector('#battleRoyalMenuButton');
-  if(!battle&&typeof window.battleRoyalHome==='function'){
-   battle=makeMenuButton(
-    'battleRoyalMenuButton',
-    'battle-royal-menu',
-    '20-PERSON BATTLE ROYAL',
-    'Twenty enter, one survives. Can you outlast the field in the Battle Royal?',
-    ()=>window.battleRoyalHome()
-   );
-   const career=nav.querySelector('button');
-   career?.after(battle);
-  }
+   const overlay=document.createElement('section');
+   overlay.className='lpw9110-show-bumper';
+   overlay.setAttribute('aria-hidden','true');
 
-  let specialty=nav.querySelector('#specialtyMatchesMenuButton');
-  if(!specialty&&typeof window.specialtyMatchesHome==='function'){
-   specialty=makeMenuButton(
-    'specialtyMatchesMenuButton',
-    'specialty-menu-option',
-    'SPECIALTY MATCHES',
-    'Experience match types with completely different gameplay.',
-    ()=>window.specialtyMatchesHome()
-   );
-   battle=nav.querySelector('#battleRoyalMenuButton');
-   if(battle)battle.after(specialty);
-   else{
-    const collection=[...nav.querySelectorAll('button')].find(node=>node.textContent.includes('COLLECTION'));
-    collection?collection.before(specialty):nav.appendChild(specialty);
-   }
-  }
-  return !!nav.querySelector('#specialtyMatchesMenuButton');
- }
+   const zoom=document.createElement('div');
+   zoom.className='lpw9110-transition-zoom';
+   zoom.appendChild(buildLogo(approved));
+   overlay.appendChild(zoom);
+   document.body.appendChild(overlay);
 
- window.lpw9110EnsureMainMenuExtensions=ensureMainMenuExtensions;
+   // Force the initial frame before applying the animated state.
+   void zoom.offsetWidth;
+   requestAnimationFrame(()=>zoom.classList.add('is-running'));
 
- // Run after every render so the initial home screen and any future re-render match.
- const previousRender=window.render;
- if(typeof previousRender==='function'){
-  window.render=function(){
-   const result=previousRender.apply(this,arguments);
-   ensureMainMenuExtensions(document);
-   requestAnimationFrame(()=>ensureMainMenuExtensions(document));
-   return result;
+   intro.remove();
+   const args=arguments,self=this;
+   setTimeout(()=>{
+    overlay.remove();
+    previousRun.apply(self,args);
+   },DURATION);
   };
  }
 
- // game.js has already produced the first home screen before this final module loads.
- ensureMainMenuExtensions(document);
- requestAnimationFrame(()=>ensureMainMenuExtensions(document));
- window.addEventListener('DOMContentLoaded',()=>ensureMainMenuExtensions(document),{once:true});
- window.addEventListener('pageshow',()=>ensureMainMenuExtensions(document));
-
- // Guard against a cached/legacy home renderer replacing the menu after startup.
- const observer=new MutationObserver(()=>{
-  if(document.querySelector('.hub-menu'))ensureMainMenuExtensions(document);
- });
- observer.observe(document.getElementById('app')||document.body,{childList:true,subtree:true});
-
  window.TTG_APP_VERSION=BUILD;
  window.LPW_GAMEPLAY_BUILD=BUILD;
- document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();

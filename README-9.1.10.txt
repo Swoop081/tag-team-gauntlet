@@ -1,10 +1,5 @@
-LEGACY Pro Wrestling 9.1.10 — Initial Main Menu Synchronisation
+LEGACY Pro Wrestling 9.1.10 — Centred Show Logo Zoom Transition
 
-Changed files:
-- game.js
-- index.html
-- version.json
-- service-worker.js
-- manifest.webmanifest
+Changed files only.
 
-Fixes the first-load main menu so late-loaded modes, including Specialty Matches, are inserted immediately without requiring the player to enter another screen and return.
+The show transition uses the exact approved show-intro logo, holds its centre point, then scales smoothly beyond the viewport before handing off to the broadcast. The animation applies to Mayhem, Throwdown and SuperCard transitions.

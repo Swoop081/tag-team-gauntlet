@@ -2960,3 +2960,45 @@ body>.lpw904-show-bumper.lpw916-show-bumper .lpw-show-logo span,
  box-sizing:border-box!important;background:#050505!important;overflow:hidden!important;
 }
 .lpw919-show-bumper>.lpw919-exact-transition-logo{flex:0 0 auto!important}
+
+/* 9.1.10 — exact intro logo remains centred while zooming beyond the screen. */
+.lpw9110-show-bumper{
+ position:fixed!important;
+ inset:0!important;
+ z-index:100001!important;
+ display:grid!important;
+ place-items:center!important;
+ width:100vw!important;
+ height:100dvh!important;
+ margin:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ background:#050505!important;
+ box-sizing:border-box!important;
+}
+.lpw9110-transition-zoom{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ flex:0 0 auto!important;
+ transform:translate3d(0,0,0) scale(1)!important;
+ transform-origin:50% 50%!important;
+ opacity:1!important;
+ will-change:transform,opacity!important;
+}
+.lpw9110-transition-zoom>.lpw919-exact-transition-logo{
+ flex:0 0 auto!important;
+ margin:0!important;
+}
+.lpw9110-transition-zoom.is-running{
+ animation:lpw9110LogoZoom 1.45s cubic-bezier(.22,.72,.18,1) forwards!important;
+}
+@keyframes lpw9110LogoZoom{
+ 0%{transform:translate3d(0,0,0) scale(1);opacity:1}
+ 58%{transform:translate3d(0,0,0) scale(1.72);opacity:1}
+ 82%{transform:translate3d(0,0,0) scale(2.55);opacity:1}
+ 100%{transform:translate3d(0,0,0) scale(3.35);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+ .lpw9110-transition-zoom.is-running{animation-duration:.45s!important}
+}
