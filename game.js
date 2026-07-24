@@ -5335,3 +5335,151 @@ render=function(html){
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
  window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.0.14 — TABLED QA CORRECTIONS
+   Show-brand cleanup, true post-reset achievement handling, ranking movement,
+   and canonical Career momentum/popularity synchronisation.
+   ============================================================================= */
+(function(){
+ const BUILD='9.0.14';
+ const statKeys=new Set(['power','speed','technique','charisma','recovery']);
+
+ function activeCareer914(c){
+  try{return typeof ensureCareer==='function'?ensureCareer(c,c.active):null}catch(e){return null}
+ }
+ function syncCareerStats914(c){
+  if(!c)return c;
+  const x=activeCareer914(c);
+  if(x){
+   x.momentum=Number.isFinite(Number(c.momentum))?Number(c.momentum):Number(x.momentum||50);
+   x.popularity=Number.isFinite(Number(c.popularity))?Number(c.popularity):Number(x.popularity||20);
+  }
+  return c;
+ }
+
+ // Career NPC/event outcomes must update both the shared Career values and the
+ // active wrestler's Living Career record before the save migration runs.
+ lpw836ApplyOutcome=function(npcId,title,changes,reaction,ripple){
+  const c=liveLoad();if(!c)return gauntletLiveHome();
+  const p=liveProgress(c.active,c),f=liveFeud(c),x=activeCareer914(c),before={};
+  if(typeof rememberPresenter==='function')rememberPresenter(c,npcId,'choice');
+  Object.keys(changes||{}).forEach(k=>{
+   before[k]=statKeys.has(k)?p.stats[k]:k==='feud'?(f?.intensity||0):Number(c[k]||0);
+  });
+  Object.entries(changes||{}).forEach(([k,vRaw])=>{
+   const v=Number(vRaw)||0;
+   if(k==='feud'){
+    if(f)f.intensity=liveClamp(Number(f.intensity||0)+v,0,100);
+   }else if(statKeys.has(k)){
+    p.stats[k]=Math.min(p.caps[k],Number(p.stats[k]||0)+v);
+   }else{
+    c[k]=liveClamp(Number(c[k]||0)+v,0,100);
+    if(x&&(k==='momentum'||k==='popularity'))x[k]=c[k];
+   }
+  });
+  syncCareerStats914(c);
+  const after={};
+  Object.keys(changes||{}).forEach(k=>{
+   after[k]=statKeys.has(k)?p.stats[k]:k==='feud'?(f?.intensity||0):Number(c[k]||0);
+  });
+  if(typeof lpw837Log==='function'){
+   const wrestler=liveFounder(c.active);
+   lpw837Log(c,'decision',`${wrestler?.name||'The active wrestler'}: ${title}. ${reaction||''}`,{npc:npcId,changes});
+  }
+  liveAwardXp(c,c.active,35,'Career activity');
+  liveAdvanceDay(c);
+  syncCareerStats914(c);
+  liveSave(c);
+  const clean=typeof cleanBroadcastText==='function'?cleanBroadcastText:(v=>v);
+  lpw836Outcome(clean(title),npcId,before,after,clean(reaction),clean(ripple));
+ };
+ window.lpw836ApplyOutcome=lpw836ApplyOutcome;
+
+ // Keep canonical values aligned whenever the Career Hub is opened.
+ const calendar914=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){
+  const c=liveLoad();
+  if(c){syncCareerStats914(c);liveSave(c)}
+  return calendar914.apply(this,arguments);
+ };
+ window.gauntletLiveCalendar=gauntletLiveCalendar;
+
+ // A Career match can never unlock the Classic Gauntlet personal-best award.
+ // The first Classic run after a reset silently establishes its baseline.
+ const milestone914=milestoneData;
+ milestoneData=function(){
+  const items=milestone914.apply(this,arguments)||[];
+  if(S?.liveMode)return items.filter(item=>item?.[0]!=='NEW PERSONAL BEST');
+  const baseline=Math.max(0,Number(S?.gauntletRecordAtStart||0));
+  return items.filter(item=>item?.[0]!=='NEW PERSONAL BEST'||(baseline>0&&Number(S.streak)>baseline));
+ };
+ window.milestoneData=milestoneData;
+
+ // Persist movement relative to the last genuinely different rankings order.
+ function rankingOrder914(c){
+  const rows=typeof lpw8Rankings==='function'?lpw8Rankings(c):[...(c?.rankings||[])].sort((a,b)=>Number(b.points||0)-Number(a.points||0));
+  return rows.map(r=>r.id);
+ }
+ function updateRankingMovement914(c){
+  if(!c)return;
+  c.world=c.world||{};
+  const current=rankingOrder914(c),previous=Array.isArray(c.world.rankingOrderSnapshot)?c.world.rankingOrderSnapshot:null;
+  if(!previous){c.world.rankingOrderSnapshot=current; c.world.rankingMovement={}; return}
+  if(current.join('|')===previous.join('|'))return;
+  const oldPos=Object.fromEntries(previous.map((id,i)=>[id,i+1]));
+  const movement={};
+  current.forEach((id,i)=>{
+   const prior=oldPos[id];
+   movement[id]=prior?prior-(i+1):0;
+  });
+  c.world.rankingMovement=movement;
+  c.world.rankingOrderSnapshot=current;
+ }
+ const save914=liveSave;
+ liveSave=function(c){if(c){syncCareerStats914(c);updateRankingMovement914(c)}return save914(c)};
+ window.liveSave=liveSave;
+ function movementMarkup914(c,id){
+  const move=Number(c?.world?.rankingMovement?.[id]||0);
+  return move>0?`<i class="lpw914-rank-move up" aria-label="Moved up ${move}">▲${move>1?move:''}</i>`:move<0?`<i class="lpw914-rank-move down" aria-label="Moved down ${Math.abs(move)}">▼${move<-1?Math.abs(move):''}</i>`:'';
+ }
+ function decorateRankings914(){
+  const c=liveLoad();if(!c)return;
+  const rows=typeof lpw8Rankings==='function'?lpw8Rankings(c):c.rankings||[];
+  const full=[...document.querySelectorAll('.lpw8-ranking-list article')];
+  full.forEach((node,i)=>{
+   const row=rows[i];if(!row||node.querySelector('.lpw914-rank-move'))return;
+   const rank=node.querySelector('strong');if(rank)rank.insertAdjacentHTML('beforeend',movementMarkup914(c,row.id));
+  });
+  document.querySelectorAll('.lpw908-rank-row').forEach(node=>{
+   if(node.querySelector('.lpw914-rank-move'))return;
+   const name=[...node.querySelectorAll('*')].find(el=>el.children.length===0&&rows.some(r=>liveFounder(r.id)?.name===(el.textContent||'').trim()));
+   const row=rows.find(r=>liveFounder(r.id)?.name===(name?.textContent||'').trim());
+   const rank=node.querySelector('strong');if(row&&rank)rank.insertAdjacentHTML('beforeend',movementMarkup914(c,row.id));
+  });
+ }
+ const rankScreen914=lpw8RankingScreen;
+ lpw8RankingScreen=function(){const out=rankScreen914.apply(this,arguments);setTimeout(decorateRankings914,0);return out};
+ window.lpw8RankingScreen=lpw8RankingScreen;
+ const calendarDecorate914=gauntletLiveCalendar;
+ gauntletLiveCalendar=function(){const out=calendarDecorate914.apply(this,arguments);setTimeout(decorateRankings914,0);return out};
+ window.gauntletLiveCalendar=gauntletLiveCalendar;
+
+ // Remove the corporate LEGACY mark from show intros and match previews so the
+ // individual show identity owns the available branding space.
+ function removeExtraBrand914(){
+  const intro=document.querySelector('.live-show-intro.lpw-show-open');
+  if(intro){intro.querySelectorAll('.lpw-career-brand,.lpw913-brand-row .lpw-career-brand').forEach(n=>n.remove());intro.classList.add('lpw914-show-brand-only')}
+  const preview=document.querySelector('.live-match-card');
+  if(preview)preview.classList.add('lpw914-preview-brand-only');
+ }
+ const intro914=gauntletLiveShowIntro;
+ gauntletLiveShowIntro=function(){const out=intro914.apply(this,arguments);setTimeout(removeExtraBrand914,30);return out};
+ window.gauntletLiveShowIntro=gauntletLiveShowIntro;
+ const matchCard914=gauntletLiveMatchCard65;
+ gauntletLiveMatchCard65=function(){const out=matchCard914.apply(this,arguments);setTimeout(removeExtraBrand914,0);return out};
+ window.gauntletLiveMatchCard65=gauntletLiveMatchCard65;
+
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(node=>node.textContent=`VERSION ${BUILD}`);
+ window.TTG_APP_VERSION=BUILD;window.LPW_GAMEPLAY_BUILD=BUILD;
+})();

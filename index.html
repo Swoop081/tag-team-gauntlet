@@ -6,17 +6,17 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>LEGACY Pro Wrestling 9.0.13</title>
+  <title>LEGACY Pro Wrestling 9.0.14</title>
   <meta name="theme-color" content="#05070d">
   <meta name="application-name" content="LEGACY Pro Wrestling">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="LEGACY">
   <link rel="canonical" href="https://swoop081.github.io/legacy-pro-wrestling/">
-  <link rel="manifest" href="manifest.webmanifest?v=9.0.13">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=9.0.13">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png?v=9.0.13">
-  <link rel="shortcut icon" href="favicon.ico?v=9.0.13">
+  <link rel="manifest" href="manifest.webmanifest?v=9.0.14">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=9.0.14">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png?v=9.0.14">
+  <link rel="shortcut icon" href="favicon.ico?v=9.0.14">
   <style>
     html.lpw-booting body{background:#05070d;overflow:hidden}
     html.lpw-booting header,html.lpw-booting main,html.lpw-booting #overlay{visibility:hidden}
@@ -33,7 +33,7 @@
   </style>
   <script>
   (function(){
-    var key='lpw-cache-9.0.13';
+    var key='lpw-cache-9.0.14';
     if(!sessionStorage.getItem(key)){
       sessionStorage.setItem(key,'1');
       if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister();}));}).catch(function(){});}
@@ -41,16 +41,16 @@
     }
   })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=9.0.13">
-  <script>window.TTG_APP_VERSION='9.0.13';</script>
-  <script src="update-manager.js?v=9.0.13" defer></script>
-  <script src="data.js?v=9.0.13" defer></script>
-  <script src="assets/config/imageManager.js?v=9.0.13" defer></script>
-  <script src="game.js?v=9.0.13" defer></script>
+  <link rel="stylesheet" href="styles.css?v=9.0.14">
+  <script>window.TTG_APP_VERSION='9.0.14';</script>
+  <script src="update-manager.js?v=9.0.14" defer></script>
+  <script src="data.js?v=9.0.14" defer></script>
+  <script src="assets/config/imageManager.js?v=9.0.14" defer></script>
+  <script src="game.js?v=9.0.14" defer></script>
 </head>
 <body>
-  <div id="lpw-boot-screen"><div class="lpw-start-inner"><img class="lpw-start-logo" src="assets/branding/lpw-logo-splash-1600.webp" alt="LEGACY Pro Wrestling"><div class="lpw-start-version">VERSION 9.0.13</div><button id="lpw-press-start" class="lpw-start-button" type="button" disabled>PRESS START</button><small class="lpw-start-status">LOADING GAME DATA…</small></div></div>
-  <header><button onclick="home()" class="logo brand-header-logo" aria-label="LEGACY Pro Wrestling main menu"><img src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling"></button><div class="header-meta"><span class="build-tag">VERSION 9.0.13</span><div class="streak">STREAK <strong id="streak">0</strong></div></div></header>
+  <div id="lpw-boot-screen"><div class="lpw-start-inner"><img class="lpw-start-logo" src="assets/branding/lpw-logo-splash-1600.webp" alt="LEGACY Pro Wrestling"><div class="lpw-start-version">VERSION 9.0.14</div><button id="lpw-press-start" class="lpw-start-button" type="button" disabled>PRESS START</button><small class="lpw-start-status">LOADING GAME DATA…</small></div></div>
+  <header><button onclick="home()" class="logo brand-header-logo" aria-label="LEGACY Pro Wrestling main menu"><img src="assets/branding/lpw-logo-compact-400.webp" alt="LEGACY Pro Wrestling"></button><div class="header-meta"><span class="build-tag">VERSION 9.0.14</span><div class="streak">STREAK <strong id="streak">0</strong></div></div></header>
   <main id="app"></main><div id="overlay"></div>
   <script>
     (function(){
@@ -64,7 +64,7 @@
         if(button.disabled)return;
         document.documentElement.classList.add('lpw-ready');
         document.documentElement.classList.remove('lpw-booting');
-        try{sessionStorage.setItem('lpw-started-9.0.13','1')}catch(e){}
+        try{sessionStorage.setItem('lpw-started-9.0.14','1')}catch(e){}
       });
       refresh();
     })();

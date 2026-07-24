@@ -2667,3 +2667,22 @@ body>.lpw904-show-bumper .lpw-show-logo b{font-size:clamp(3rem,13vw,6rem)!import
  .lpw913-brand-row .lpw-show-logo span{font-size:.62rem!important;letter-spacing:.27em!important}
  .lpw913-brand-row .lpw-career-brand{width:92px!important;max-width:21%!important}
 }
+
+/* LEGACY Pro Wrestling 9.0.14 — tabled QA corrections */
+body.career-view:has(.lpw914-preview-brand-only) header .brand-header-logo{display:none!important}
+body.career-view:has(.lpw914-preview-brand-only) header{min-height:18px!important;padding:0!important}
+.lpw914-preview-brand-only{padding-top:76px!important}
+.lpw914-preview-brand-only .lpw-match-branding{width:min(92%,650px);margin-left:auto!important;margin-right:auto!important}
+.lpw914-show-brand-only .lpw913-brand-row{display:block!important;margin:12px 0 18px!important}
+.lpw914-show-brand-only .lpw913-brand-row .lpw-show-logo,
+.lpw914-show-brand-only .show-intro-copy>.lpw-show-logo{display:block!important;width:min(100%,690px)!important;max-width:none!important;margin:0 auto!important;box-sizing:border-box}
+.lpw914-show-brand-only .lpw913-brand-row .lpw-ple-title{display:block!important;width:100%;max-width:none!important;text-align:center}
+.lpw914-rank-move{display:inline-block;margin-left:.38rem;font-style:normal;font-size:.72em;vertical-align:.12em;letter-spacing:0}
+.lpw914-rank-move.up{color:#36c96b;text-shadow:0 0 8px rgba(54,201,107,.3)}
+.lpw914-rank-move.down{color:#ef4d54;text-shadow:0 0 8px rgba(239,77,84,.3)}
+@media(max-width:700px){
+ .lpw914-preview-brand-only{padding-top:62px!important}
+ .lpw914-show-brand-only .lpw913-brand-row .lpw-show-logo,
+ .lpw914-show-brand-only .show-intro-copy>.lpw-show-logo{width:100%!important;padding:10px 16px 8px!important}
+ .lpw914-show-brand-only .lpw-show-logo b{font-size:clamp(3rem,14vw,5rem)!important}
+}
