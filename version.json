@@ -1,5 +1,5 @@
 {
-  "version": "9.1.10",
-  "build": "centred-logo-zoom",
-  "name": "Centred Show Logo Zoom Transition"
+  "version": "9.1.11",
+  "build": "forced-centred-logo-zoom",
+  "name": "Forced Centred Show Logo Zoom Transition"
 }

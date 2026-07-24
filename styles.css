@@ -3002,3 +3002,35 @@ body>.lpw904-show-bumper.lpw916-show-bumper .lpw-show-logo span,
 @media (prefers-reduced-motion:reduce){
  .lpw9110-transition-zoom.is-running{animation-duration:.45s!important}
 }
+
+/* 9.1.11 — forced centred zoom container. The transform is updated inline by
+   requestAnimationFrame so no older !important transition rule can freeze it. */
+.lpw9111-show-bumper{
+ position:fixed!important;
+ inset:0!important;
+ z-index:100010!important;
+ display:grid!important;
+ place-items:center!important;
+ width:100vw!important;
+ height:100dvh!important;
+ margin:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ background:#050505!important;
+ box-sizing:border-box!important;
+}
+.lpw9111-transition-stage{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:max-content!important;
+ height:max-content!important;
+ margin:0!important;
+ padding:0!important;
+ transform-origin:50% 50%!important;
+ will-change:transform,opacity!important;
+}
+.lpw9111-transition-stage>.lpw919-exact-transition-logo{
+ flex:0 0 auto!important;
+ margin:0!important;
+}

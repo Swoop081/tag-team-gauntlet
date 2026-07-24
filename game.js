@@ -7179,3 +7179,66 @@ render=function(html){
  window.LPW_GAMEPLAY_BUILD=BUILD;
  document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
 })();
+
+/* =============================================================================
+   LEGACY PRO WRESTLING 9.1.11 — FORCED CENTRED LOGO ZOOM
+   Uses a requestAnimationFrame transform written as an inline !important value,
+   so older transition CSS and reduced-motion overrides cannot suppress scaling.
+   ============================================================================= */
+(function(){
+ const BUILD='9.1.11';
+ const previousRun=window.gauntletLiveRunShowSegment;
+ const DURATION=1550;
+
+ function easeOutCubic(t){return 1-Math.pow(1-t,3)}
+
+ if(typeof previousRun==='function'){
+  window.gauntletLiveRunShowSegment=function(){
+   const intro=document.querySelector('.live-show-intro,.lpw-show-open');
+   if(!intro)return previousRun.apply(this,arguments);
+   const approved=intro.querySelector('.lpw-show-logo,.lpw-ple-title,.lpw904-supercard-title');
+   if(!approved)return previousRun.apply(this,arguments);
+
+   const buildLogo=typeof window.lpw919BuildExactTransitionLogo==='function'
+    ? window.lpw919BuildExactTransitionLogo
+    : source=>source.cloneNode(true);
+
+   const overlay=document.createElement('section');
+   overlay.className='lpw9111-show-bumper';
+   overlay.setAttribute('aria-hidden','true');
+
+   const stage=document.createElement('div');
+   stage.className='lpw9111-transition-stage';
+   stage.appendChild(buildLogo(approved));
+   overlay.appendChild(stage);
+   document.body.appendChild(overlay);
+
+   // Remove the intro before invoking older code later; this makes every older
+   // transition wrapper fall straight through to the broadcast renderer.
+   intro.remove();
+   const args=arguments,self=this,start=performance.now();
+
+   function frame(now){
+    const raw=Math.min(1,(now-start)/DURATION);
+    const eased=easeOutCubic(raw);
+    const scale=1+(4.6-1)*eased;
+    const fadeStart=.72;
+    const opacity=raw<fadeStart?1:Math.max(0,1-(raw-fadeStart)/(1-fadeStart));
+    stage.style.setProperty('transform',`translate3d(0,0,0) scale(${scale})`,'important');
+    stage.style.setProperty('opacity',String(opacity),'important');
+    if(raw<1){requestAnimationFrame(frame);return;}
+    overlay.remove();
+    previousRun.apply(self,args);
+   }
+
+   // Paint one stable frame at the exact intro size before zooming.
+   stage.style.setProperty('transform','translate3d(0,0,0) scale(1)','important');
+   stage.style.setProperty('opacity','1','important');
+   requestAnimationFrame(frame);
+  };
+ }
+
+ window.TTG_APP_VERSION=BUILD;
+ window.LPW_GAMEPLAY_BUILD=BUILD;
+ document.querySelectorAll('.build-tag,.live-cycle b').forEach(n=>n.textContent=`VERSION ${BUILD}`);
+})();
